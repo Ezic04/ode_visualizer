@@ -7,3 +7,6 @@ build/
 #vscode
 .vscode/
 .vs/
+
+#build
+build.bat
