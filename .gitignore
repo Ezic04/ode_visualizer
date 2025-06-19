@@ -1,0 +1,9 @@
+#cmake
+build/
+
+#clanged
+.cache/
+
+#vscode
+.vscode/
+.vs/
