@@ -1,5 +1,7 @@
 
-add_executable(${PROJECT_NAME} main.cpp)
+set(expr_src expr/tree.cpp expr/parser.cpp)
+
+add_executable(${PROJECT_NAME} ${expr_src} main.cpp)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
