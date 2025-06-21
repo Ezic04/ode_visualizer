@@ -1,12 +1,23 @@
+add_subdirectory(expr)
 
-set(expr_src expr/tree.cpp expr/parser.cpp)
-
-add_executable(${PROJECT_NAME} ${expr_src} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
+    target_link_libraries(
+        ${PROJECT_NAME} 
+        PRIVATE 
+        stdc++exp
+    )
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
+target_link_libraries(
+    ${PROJECT_NAME} 
+    PRIVATE 
+    EXPR_LIB
+)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${include_path})
+target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${INCLUDE_DIR}
+)

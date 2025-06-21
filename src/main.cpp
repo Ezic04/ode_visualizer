@@ -1,5 +1,3 @@
-#include <SDL3/SDL_rect.h>
-
 #include <print>
 
 #include "expr/tree.hpp"
