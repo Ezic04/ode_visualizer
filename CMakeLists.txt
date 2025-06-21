@@ -1,15 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
-project("ode_visualizer")
+project(ode_visualizer)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
-
-set(SDL3_include_path ${CMAKE_SOURCE_DIR}/deps/SDL3/include/SDL3)
-set(include_path ${CMAKE_SOURCE_DIR}/include)
-
-add_subdirectory(deps/SDL3 EXCLUDE_FROM_ALL)
 add_subdirectory(src)
