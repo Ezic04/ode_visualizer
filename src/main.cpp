@@ -1,10 +1,14 @@
 #include <print>
 
+#include "graphics/Window.hpp"
 #include "expr/tree.hpp"
 
 using namespace expr;
 
 int main() {
+
+  graphics::Window w;
+
   ExprPtr x = std::make_shared<Var>("x");
   ExprPtr one = std::make_shared<Const>(1.0);
   ExprPtr two = std::make_shared<Const>(2.0);

@@ -10,12 +10,12 @@ project(GLAD LANGUAGES C)
 set(GLAD_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 
 add_library(
-    ${PROJECT_NAME}
-    src/glad.c
+  ${PROJECT_NAME}
+  src/glad.c
 )
 
 target_include_directories(
-    ${PROJECT_NAME}
-    PRIVATE
-    ${GLAD_INCLUDE_DIR}
+  ${PROJECT_NAME}
+  PRIVATE
+  ${GLAD_INCLUDE_DIR}
 )
