@@ -24,7 +24,7 @@ Window::Window(int width, int height, const char* title) {
 
   if (!m_window) {
     glfwTerminate();
-    throw std::runtime_error("Failed to initialise a GLFW window instance.");
+    throw std::runtime_error("Failed to initialize a GLFW window instance.");
   }
 
   glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_window));
