@@ -2,6 +2,12 @@
 
 namespace graphics {
 
+/* 
+ * @brief Wrapper around 
+ *  GLFW library for creating 
+ *  and managing a graphic window
+ *  with it's OpenGL context.
+ */ 
 class Window {
 public:
 
@@ -29,9 +35,38 @@ public:
    */
   ~Window(void);
 
+  /*
+   * @brief Checks if the window 
+   *  should close.
+   * 
+   * @return bool True if the 
+   *  window should close, false
+   *  otherwise.
+   */
+  [[nodiscard]] bool shouldClose(void);
+
+  /*
+   * @brief Clears the window's 
+   *  color and depth buffers.
+   */
+  void clear(void);
+
+  /* 
+   * @brief Swaps the window's 
+   *  frame buffers. 
+   */
+  void swapBuffers(void);
+
+  /* 
+   * @brief Polls the events
+   *  mouse and keyboard events. 
+   */
+  void pollEvents(void);
+
 private:
 
   void* m_window; //GLFWwindow* undercover
+  bool m_is_initialized;
 
 };
     

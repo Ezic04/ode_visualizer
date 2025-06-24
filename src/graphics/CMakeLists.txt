@@ -2,6 +2,7 @@ add_library(
   Graphics
   STATIC
   Window.cpp
+  Shader.cpp
 )
 
 target_link_libraries(
