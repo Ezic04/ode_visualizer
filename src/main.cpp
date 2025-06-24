@@ -1,25 +1,14 @@
-#include <print>
-
+#include "expr/expr.hpp"
 #include "graphics/Window.hpp"
-#include "expr/tree.hpp"
-
-using namespace expr;
+#include "tests/eval_test.hpp"
+#include <iostream>
 
 int main() {
-
   graphics::Window w;
-
-  ExprPtr x = std::make_shared<Var>("x");
-  ExprPtr one = std::make_shared<Const>(1.0);
-  ExprPtr two = std::make_shared<Const>(2.0);
-
-  ExprPtr x_plus_1 = std::make_shared<BinaryOp>(BinaryOpType::kAdd, x, one);
-  ExprPtr two_x = std::make_shared<BinaryOp>(BinaryOpType::kMul, two, x);
-  ExprPtr sin_2x = std::make_shared<UnaryOp>(UnaryOpType::kSin, two_x);
-  ExprPtr expr = std::make_shared<BinaryOp>(BinaryOpType::kMul, x_plus_1, sin_2x);
-
-  std::unordered_map<std::string, double> vars = {{"x", 0.5}};
-
-  std::println("{}", expr->eval(vars));
+  expr::ExprPtr expr = std::make_shared<expr::Var>("x");
+  std::cout << expr->eval({{"x", 2.0}}) << '\n';
+  try {
+    benchmark_exprs();
+  } catch (std::exception &e) { std::cout << e.what() << '\n'; }
   return 0;
 }

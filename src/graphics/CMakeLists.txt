@@ -1,18 +1,18 @@
 add_library(
-  GRAPHICS_LIB
+  Graphics
   STATIC
   Window.cpp
 )
 
 target_link_libraries(
-  GRAPHICS_LIB
+  Graphics
   PRIVATE
   GLAD
   glfw
 )
 
 target_include_directories(
-  GRAPHICS_LIB
+  Graphics
   PRIVATE
   ${INCLUDE_DIR}
   ${GLAD_INCLUDE_DIR}

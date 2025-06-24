@@ -1,12 +1,12 @@
 add_library(
-  EXPR_LIB
+  Expr
   STATIC
+  dynamic.cpp
   parser.cpp
-  tree.cpp
 )
 
 target_include_directories(
-  EXPR_LIB
+  Expr
   PRIVATE
   ${INCLUDE_DIR}
 )

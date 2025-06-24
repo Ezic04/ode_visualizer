@@ -1,5 +1,13 @@
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 2
 UseTab: Never
-AllowShortFunctionsOnASingleLine: Inline
 ColumnLimit: 100
+
+PointerAlignment: Right
+ReferenceAlignment: Right
+
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true

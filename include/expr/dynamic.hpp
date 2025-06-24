@@ -3,7 +3,9 @@
 #include <string>
 #include <unordered_map>
 
-namespace expr {
+#include "expr/uility.hpp"
+
+namespace expr::dynamic {
 
 /**
  * Abstract base class for all expression nodes.
@@ -34,18 +36,18 @@ struct Const : Expr {
   inline double eval(const std::unordered_map<std::string, double> &vars) const override {
     return m_value;
   }
-  const double m_value;  ///< constant value
+  const double m_value; ///< constant value
 };
 
 /**
  * Variable node.
  */
 struct Var : Expr {
-  explicit Var(std::string name) : m_name(std::move(name)) {}
+  explicit Var(std::string identifier) : m_identifier(std::move(identifier)) {}
   inline double eval(const std::unordered_map<std::string, double> &vars) const override {
-    return vars.at(m_name);
+    return vars.at(m_identifier);
   }
-  std::string m_name;  ///< variable name
+  std::string m_identifier; ///< variable identifier
 };
 
 /**
@@ -54,20 +56,11 @@ struct Var : Expr {
 struct IntPow : Expr {
   IntPow(ExprPtr base, int exponent) : m_base(std::move(base)), m_exponent(exponent) {}
   double eval(const std::unordered_map<std::string, double> &vars) const override {
-    return int_pow(m_base->eval(vars), m_exponent);
+    return intPow(m_base->eval(vars), m_exponent);
   }
 
-  ExprPtr m_base;  ///< base expression
-  int m_exponent;  ///< integer exponent
-
- private:
-  /**
-   * Computes x raised to integer power n.
-   * @param x base
-   * @param n exponent
-   * @return x^n
-   */
-  static double int_pow(double x, int n);
+  ExprPtr m_base; ///< base expression
+  int m_exponent; ///< integer exponent
 };
 
 /**
@@ -77,8 +70,8 @@ struct UnaryOp : Expr {
   explicit UnaryOp(UnaryOpType op, ExprPtr expr) : m_operator(op), m_operand(std::move(expr)) {}
   double eval(const std::unordered_map<std::string, double> &vars) const override;
 
-  UnaryOpType m_operator;  ///< operator type
-  ExprPtr m_operand;       ///< operand
+  UnaryOpType m_operator; ///< operator type
+  ExprPtr m_operand;      ///< operand
 };
 
 /**
@@ -89,9 +82,8 @@ struct BinaryOp : Expr {
       : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
   double eval(const std::unordered_map<std::string, double> &vars) const override;
 
-  BinaryOpType m_operator;  ///< operator type
-  ExprPtr m_left;           ///< left operand
-  ExprPtr m_right;          ///< right operand
+  BinaryOpType m_operator; ///< operator type
+  ExprPtr m_left;          ///< left operand
+  ExprPtr m_right;         ///< right operand
 };
-
-}  // namespace expr
+} // namespace expr::dynamic

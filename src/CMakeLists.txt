@@ -1,7 +1,8 @@
 add_subdirectory(expr)
 add_subdirectory(graphics)
+set(TEST_SRC tests/eval_test.cpp)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} ${TEST_SRC} main.cpp)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_link_libraries(
@@ -14,8 +15,8 @@ endif()
 target_link_libraries(
   ${PROJECT_NAME} 
   PRIVATE 
-  EXPR_LIB
-  GRAPHICS_LIB
+  Expr
+  Graphics
 )
 
 target_include_directories(
