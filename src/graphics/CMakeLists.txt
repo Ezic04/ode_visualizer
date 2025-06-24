@@ -10,6 +10,7 @@ target_link_libraries(
   PRIVATE
   GLAD
   glfw
+  glm::glm
 )
 
 target_include_directories(
@@ -18,5 +19,6 @@ target_include_directories(
   ${INCLUDE_DIR}
   ${GLAD_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
+  ${GLM_SOURCE_DIR}
 )
 

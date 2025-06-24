@@ -15,6 +15,10 @@ set(GLFW_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/glfw)
 set(GLFW_INCLUDE_DIR ${GLFW_SOURCE_DIR}/include)
 add_subdirectory(${GLFW_SOURCE_DIR})
 
+# link GLM
+set(GLM_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/glm) # src and incl dirs are the same
+add_subdirectory(${GLM_SOURCE_DIR})
+
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(src)
