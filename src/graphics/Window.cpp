@@ -9,7 +9,7 @@
 
 using namespace graphics;
 
-Window::Window(int width, int height, const char* title) : m_is_initialized(false) {
+Window::Window(int width, int height, const std::string& title) : m_is_initialized(false) {
 
   if (!glfwInit()) {
     throw std::runtime_error("Failed to initialise GLFW");
@@ -21,7 +21,7 @@ Window::Window(int width, int height, const char* title) : m_is_initialized(fals
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // for macOS
 
-  m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+  m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!m_window) {
     glfwTerminate();
     throw std::runtime_error("Failed to initialize a GLFW window instance.");

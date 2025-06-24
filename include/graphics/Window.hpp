@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <string>
+
 namespace graphics {
 
 /* 
@@ -26,7 +28,7 @@ public:
    *  of any necessary initialization 
    *  steps.
    */
-  Window(int width, int height, const char* title);
+  Window(int width, int height, const std::string& title);
 
   /*
    * @brief Destroys the window 
