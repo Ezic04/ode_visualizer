@@ -62,6 +62,10 @@ public:
   /*
    * @brief Sets the object as 
    *  the currently used program.
+   *  By calling use on an object 
+   *  it replaces the currently 
+   *  used program. Only one program 
+   *  can be used at a given moment.
    */
   void use(void);
 
