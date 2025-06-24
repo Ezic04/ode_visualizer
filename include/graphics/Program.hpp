@@ -1,0 +1,146 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+namespace graphics {
+ 
+/*
+ * @brief GPU program class 
+ *  that consists of a vertex 
+ *  and a buffer shader.
+ */
+class Program {
+public:
+
+  /*
+   * @brief Creates a program object
+   *  from vertex and fragmet shader
+   *  files. 
+   * 
+   * @param vertex_shader_path Path to 
+   *  a vertex shader file. 
+   * @param fragment_shader_path Path to 
+   *  a fragment shader file. 
+   * 
+   * @throw std::runtime_error In case of 
+   *  an error during execution of any of
+   *  the necessary initialization steps.
+   */
+  Program(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
+
+  /*
+   * @brief Destroys the GPU program 
+   *  by freeing the created shaders. 
+   */
+  ~Program(void);
+
+  /*
+   * @brief Returns the uniform 
+   *  projection value.
+   * 
+   * @return Uniform projection value.
+   */
+  [[nodiscard]] inline unsigned int getProjectionLocation(void) { return m_uniform_projection; }
+
+  /*
+   * @brief Returns the uniform 
+   *  model value.
+   * 
+   * @return Uniform model value.
+   */
+  [[nodiscard]] inline unsigned int getModelLocation(void) { return m_uniform_model; }
+
+  /*
+   * @brief Returns the uniform 
+   *  view value.
+   * 
+   * @return Uniform view value.
+   */
+  [[nodiscard]] inline unsigned int getViewLocation(void) { return m_uniform_view; }
+
+  /*
+   * @brief Sets the object as 
+   *  the currently used program.
+   */
+  void use(void);
+
+private:
+
+  /*
+   * @brief Loads the contents 
+   *  of a shader file to a 
+   *  vector of chars.
+   * 
+   * @param shader_path Path to 
+   *  the shader file to be loaded.
+   * 
+   * @return std::vector<char> vector 
+   *  containing the entire shader file.
+   * 
+   * @throw std::runtime_error If the file
+   *  cannot be read.
+   */
+  std::vector<char> loadShader(const std::string& shader_path);
+
+  /*
+   * @brief Compiles a shader.
+   *
+   * @param code Pointer to the 
+   *  char array containing the
+   *  shader's source code.
+   * @param code_length Length 
+   *  of the array containing the 
+   *  shader's source code. 
+   * @param type Type of the shader. 
+   *  Value should be taken from the 
+   *  predefined types in the generated 
+   *  OpenGL header.
+   * 
+   * @throw std::runtime_error If the 
+   *  shader fails to compile.
+   */
+  void compileShader(const char* code, const int& code_length, const unsigned int& type);
+
+  /*
+   * @brief Links the created 
+   *  program.
+   * 
+   * @throw std::runtime_error If 
+   *  the program fails to link.
+   */
+  void linkProgram(void);
+
+  /*
+   * @brief Validates the created 
+   *  program.
+   * 
+   * @throw std::runtime_error If 
+   *  the program fails to validate.
+   */
+  void validateProgram(void);
+
+  /* 
+   * @brief Loads the program's 
+   *  uniform values.
+   */
+  void loadUniforms(void);
+
+  /*
+   * @brief Frees the program 
+   *  from the GPU memory and 
+   *  resets the uniform values 
+   *  to 0.
+   */
+  void clear(void);
+
+  unsigned int m_id;
+  unsigned int m_uniform_projection;
+  unsigned int m_uniform_model;
+  unsigned int m_uniform_view;
+
+}; 
+
+} 
+
+
