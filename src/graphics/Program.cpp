@@ -62,7 +62,7 @@ std::vector<char> loadShader(const std::string& shader_path) {
   std::vector<char> shader_code(shader_file_size);
   if (!shader_file.read(shader_code.data(), shader_file_size)) {
     shader_file.close();
-    std::string error_msg = "Failed read the contents of a shader file: " + shader_path;
+    std::string error_msg = "Failed to read the contents of a shader file: " + shader_path;
     throw std::runtime_error(error_msg);
   }
 
