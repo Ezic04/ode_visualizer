@@ -22,6 +22,13 @@ public:
    */
   Window(int width, int height, const char* title);
 
+  /*
+   * @brief Destroys the window 
+   *  instance by closing GLFW 
+   *  and the OpenGL context.
+   */
+  ~Window(void);
+
 private:
 
   void* m_window; //GLFWwindow* undercover

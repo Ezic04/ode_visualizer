@@ -4,8 +4,10 @@
 
 int main() {
 
+  graphics::Window* w;
+
   try {
-    graphics::Window w(1280, 720, "Demo Window");
+    w = new graphics::Window(1280, 720, "Demo Window");
   } catch (std::runtime_error& error) {
     std::cout << error.what();
   }
