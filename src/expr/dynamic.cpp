@@ -5,7 +5,13 @@
 #include <stdexcept>
 #include <utility>
 
+#include "expr/uility.hpp"
+
 using namespace expr::dynamic;
+
+double IntPow::eval(const std::unordered_map<std::string, double> &vars) const {
+  return intPow(m_base->eval(vars), m_exponent);
+}
 
 double UnaryOp::eval(const std::unordered_map<std::string, double> &vars) const {
   double val = m_operand->eval(vars);
@@ -20,6 +26,7 @@ double UnaryOp::eval(const std::unordered_map<std::string, double> &vars) const 
   case UnaryOpType::kExp: return std::exp(val);
   case UnaryOpType::kLog: return std::log(val);
   }
+  assertm(false, "Unknown UnaryOpType");
   std::unreachable();
 }
 
@@ -34,5 +41,6 @@ double BinaryOp::eval(const std::unordered_map<std::string, double> &vars) const
     if (std::abs(r_val) < kEps) { throw std::domain_error("Division by near-zero"); }
     return l_val / r_val;
   }
+  assertm(false, "Unknown BinaryOpType");
   std::unreachable();
 }

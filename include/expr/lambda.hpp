@@ -50,6 +50,7 @@ inline ExprPtr makeUnary(UnaryOpType op, ExprPtr arg) {
     case UnaryOpType::Exp: return std::exp(x);
     case UnaryOpType::Log: return std::log(x);
     }
+    assertm(false, "Unknown UnaryOpType");
     std::unreachable();
   }});
 }

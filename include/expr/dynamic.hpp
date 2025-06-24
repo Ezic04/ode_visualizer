@@ -2,9 +2,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-#include "expr/uility.hpp"
-
 namespace expr::dynamic {
 
 /**
@@ -55,9 +52,7 @@ struct Var : Expr {
  */
 struct IntPow : Expr {
   IntPow(ExprPtr base, int exponent) : m_base(std::move(base)), m_exponent(exponent) {}
-  double eval(const std::unordered_map<std::string, double> &vars) const override {
-    return intPow(m_base->eval(vars), m_exponent);
-  }
+  double eval(const std::unordered_map<std::string, double> &vars) const override;
 
   ExprPtr m_base; ///< base expression
   int m_exponent; ///< integer exponent
