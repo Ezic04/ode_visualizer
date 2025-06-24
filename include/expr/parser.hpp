@@ -1,6 +1,5 @@
 #pragma once
 #include <stdexcept>
-#include <string_view>
 
 #include "expr/dynamic.hpp"
 
@@ -19,6 +18,6 @@ public:
  * @param str_expr the string expression to parse
  * @return a shared pointer to the root of the expression tree
  */
-ExprPtr parseExpr(std::string_view str_expr);
+ExprPtr parseExpr(const std::string &str_expr);
 
 } // namespace expr::dynamic

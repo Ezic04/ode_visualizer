@@ -2,8 +2,8 @@
 
 #include <cctype>
 #include <cmath>
-#include <memory>
 #include <string>
+#include <string_view>
 
 using namespace expr::dynamic;
 
@@ -148,7 +148,8 @@ ExprPtr parse_add(std::string_view &s) {
 
 namespace expr::dynamic {
 
-ExprPtr parseExpr(std::string_view s) {
+ExprPtr parseExpr(const std::string &str) {
+  std::string_view s(str);
   ExprPtr expr = parse_add(s);
   skip_whitespace(s);
   if (!s.empty()) { throw ParserException("unexpected input at end: '" + std::string(s) + "'"); }
