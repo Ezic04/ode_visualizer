@@ -1,12 +1,18 @@
-#cmake
-build*/
-
-#clanged
-.cache/
-
-#vscode
+# config
 .vscode/
 .vs/
 
-#build
-build.bat
+# build directories
+build/
+build-debug/
+build-release/
+
+# cache
+.cache/
+__pycache__/
+
+# scripts
+scripts/
+*.bat
+*.sh
+*.ps1
