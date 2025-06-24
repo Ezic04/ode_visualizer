@@ -24,8 +24,8 @@ Program::Program(
     throw std::runtime_error(error_msg);
   }
 
-  auto vertex_code = this->loadShader(vertex_shader_path);
-  auto fragment_code = this->loadShader(fragment_shader_path);
+  std::vector<char> vertex_code = this->loadShader(vertex_shader_path);
+  std::vector<char> fragment_code = this->loadShader(fragment_shader_path);
 
   this->compileShader(vertex_code.data(), vertex_code.size(), GL_VERTEX_SHADER);
   this->compileShader(fragment_code.data(), fragment_code.size(), GL_FRAGMENT_SHADER);
@@ -45,7 +45,7 @@ void Program::use(void) {
   glUseProgram(m_id);
 }
 
-std::vector<char> loadShader(const std::string& shader_path) {
+std::vector<char> Program::loadShader(const std::string& shader_path) {
   std::ifstream shader_file(
     shader_path, 
     std::ios::in | std::ios::binary | std::ios::ate
@@ -95,6 +95,7 @@ void Program::compileShader(
 void Program::linkProgram(void) {
   GLint link_result = 0;
   GLchar error_log[1024] = { 0 };
+  glLinkProgram(m_id);
   glGetProgramiv(m_id, GL_LINK_STATUS, &link_result);
   if (!link_result) {
     glGetProgramInfoLog(m_id, 1024, nullptr, error_log);

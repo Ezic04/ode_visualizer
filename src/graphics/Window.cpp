@@ -26,7 +26,7 @@ Window::Window(int width, int height, const char* title) : m_is_initialized(fals
     glfwTerminate();
     throw std::runtime_error("Failed to initialize a GLFW window instance.");
   }
-  glfwGetFramebufferSize(static_cast<GLFWwindow*>(m_window), &width, &height);
+  //glfwGetFramebufferSize(static_cast<GLFWwindow*>(m_window), &width, &height);
   glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_window));
   glfwSetErrorCallback([](int error, const char* desc) { 
     std::cout << "GLFW error: " << error << " " << desc; 
@@ -37,8 +37,8 @@ Window::Window(int width, int height, const char* title) : m_is_initialized(fals
     throw std::runtime_error("Failed to initialize OpenGL context");
   }
 
-  glEnable(GL_DEPTH_TEST); // enable depth buffer
-  glViewport(0, 0, width, height);
+  //glEnable(GL_DEPTH_TEST); // enable depth buffer
+  //glViewport(0, 0, width, height);
 
   m_is_initialized = true;
 
@@ -57,6 +57,7 @@ bool Window::shouldClose(void) {
 
 void Window::clear(void) {
   assert(m_is_initialized);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
