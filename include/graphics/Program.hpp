@@ -37,27 +37,27 @@ public:
 
   /*
    * @brief Returns the uniform 
-   *  projection value.
-   * 
-   * @return Uniform projection value.
-   */
-  [[nodiscard]] inline unsigned int getProjectionLocation(void) { return m_uniform_projection; }
-
-  /*
-   * @brief Returns the uniform 
-   *  model value.
+   *  model matrix ID.
    * 
    * @return Uniform model value.
    */
-  [[nodiscard]] inline unsigned int getModelLocation(void) { return m_uniform_model; }
+  [[nodiscard]] inline unsigned int getUniformModelID(void) const { return m_uniform_model_id; }
+  
+  /*
+   * @brief Returns the uniform 
+   *  projection matrix ID.
+   * 
+   * @return Uniform projection value.
+   */
+  [[nodiscard]] inline unsigned int getUniformProjectionID(void) const { return m_uniform_projection_id; }
 
   /*
    * @brief Returns the uniform 
-   *  view value.
+   *  view matrix ID.
    * 
    * @return Uniform view value.
    */
-  [[nodiscard]] inline unsigned int getViewLocation(void) { return m_uniform_view; }
+  [[nodiscard]] inline unsigned int getUniformViewID(void) const { return m_uniform_view_id; }
 
   /*
    * @brief Sets the object as 
@@ -125,23 +125,33 @@ private:
   void validateProgram(void);
 
   /* 
-   * @brief Loads the program's 
-   *  uniform values.
+   * @brief Allocates memory for
+   *  the uniform translation matrices
+   *  on the GPu and assigns received
+   *  IDs to the corresponding member 
+   *  variables.
    */
   void loadUniforms(void);
 
   /*
    * @brief Frees the program 
    *  from the GPU memory and 
-   *  resets the uniform values 
+   *  resets the uniform variables 
    *  to 0.
    */
   void clear(void);
 
-  unsigned int m_id;
-  unsigned int m_uniform_projection;
-  unsigned int m_uniform_model;
-  unsigned int m_uniform_view;
+  /* 
+   * IDs of transformation matrices 
+   * stored in the GPU memory. They're 
+   * used by the vertex shader and can 
+   * be accessed by their IDs.
+   */
+  unsigned int m_uniform_model_id;       ///< Model matrix ID
+  unsigned int m_uniform_projection_id;  ///< Projection matrix ID
+  unsigned int m_uniform_view_id;        ///< View matrix ID
+
+  unsigned int m_id; ///< ID of the program in GPU memory
 
 }; 
 

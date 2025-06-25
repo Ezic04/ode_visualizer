@@ -3,6 +3,7 @@ add_library(
   STATIC
   Window.cpp
   Program.cpp
+  Mesh.cpp
 )
 
 target_link_libraries(

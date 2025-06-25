@@ -17,10 +17,14 @@ target_link_libraries(
   PRIVATE 
   Expr
   Graphics
+  GLAD
+  glm::glm
 )
 
 target_include_directories(
   ${PROJECT_NAME}
   PRIVATE
   ${INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}
+  ${GLM_SOURCE_DIR}
 )

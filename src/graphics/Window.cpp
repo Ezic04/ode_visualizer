@@ -1,9 +1,9 @@
 #include "graphics/Window.hpp"
 
 #include <iostream>
+#include <stdexcept>
 #include <cassert>
 
-#include <stdexcept>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -15,18 +15,17 @@ Window::Window(int width, int height, const std::string& title) : m_is_initializ
     throw std::runtime_error("Failed to initialise GLFW");
   }
 
-  glfwWindowHint(GLFW_SAMPLES, 4);  // 4x antialiasing
+  glfwWindowHint(GLFW_SAMPLES, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // for macOS
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!m_window) {
     glfwTerminate();
     throw std::runtime_error("Failed to initialize a GLFW window instance.");
   }
-  //glfwGetFramebufferSize(static_cast<GLFWwindow*>(m_window), &width, &height);
   glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_window));
   glfwSetErrorCallback([](int error, const char* desc) { 
     std::cout << "GLFW error: " << error << " " << desc; 
@@ -37,15 +36,12 @@ Window::Window(int width, int height, const std::string& title) : m_is_initializ
     throw std::runtime_error("Failed to initialize OpenGL context");
   }
 
-  //glEnable(GL_DEPTH_TEST); // enable depth buffer
-  //glViewport(0, 0, width, height);
-
   m_is_initialized = true;
-
+  
 }
 
 Window::~Window(void) {
-  if(!m_is_initialized) { return; } //nothing to do here
+  if(!m_is_initialized) { return; }
   glfwDestroyWindow(static_cast<GLFWwindow*>(m_window));
   glfwTerminate();
 }
@@ -58,7 +54,7 @@ bool Window::shouldClose(void) {
 void Window::clear(void) {
   assert(m_is_initialized);
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::swapBuffers(void) {
