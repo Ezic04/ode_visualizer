@@ -9,16 +9,18 @@
 #include "expr/dynamic.hpp"
 #include "expr/lambda.hpp"
 #include "expr/stack.hpp"
+#include "utility/utility.hpp"
 
 namespace d = expr::dynamic;
 namespace l = expr::lambda;
 namespace s = expr::stack;
 
+namespace tests {
+
 void benchmark_exprs() {
   constexpr int N = 1'000'000;
 
-  std::vector<double> lvars = {3.14};
-  std::unordered_map<std::string, double> vvars = {{"x", 3.14}};
+  std::vector<FloatType> vars = {3.14};
 
   // ----------- SMALL ----------- (x+1)*sin(2x)
   l::ExprPtr le = l::make_binary(
@@ -26,7 +28,7 @@ void benchmark_exprs() {
       l::makeUnary(l::UnaryOpType::Sin,
                    l::make_binary(l::BinaryOpType::Mul, l::makeConst(2.0), l::make_var(0))));
 
-  d::ExprPtr dx = std::make_shared<d::Var>("x");
+  d::ExprPtr dx = std::make_shared<d::Var>(0);
   d::ExprPtr done = std::make_shared<d::Const>(1.0);
   d::ExprPtr dtwo = std::make_shared<d::Const>(2.0);
   d::ExprPtr dx_plus_1 = std::make_shared<d::BinaryOp>(d::BinaryOpType::kAdd, dx, done);
@@ -35,10 +37,10 @@ void benchmark_exprs() {
   d::ExprPtr dexpr = std::make_shared<d::BinaryOp>(d::BinaryOpType::kMul, dx_plus_1, dsin_2x);
 
   s::Program sprog = {s::Node(s::Op::Var, (size_t)0),
-                      s::Node(s::Op::Const, 1.0),
+                      s::Node(s::Op::Const, FloatType(1.0)),
                       s::Node(s::Op::Add),
-                      s::Node(s::Op::Const, 2.0),
-                      s::Node(s::Op::Var, (size_t)0),
+                      s::Node(s::Op::Const, FloatType(2.0)),
+                      s::Node(s::Op::Var, size_t(0)),
                       s::Node(s::Op::Mul),
                       s::Node(s::Op::Sin),
                       s::Node(s::Op::Mul)};
@@ -60,9 +62,9 @@ void benchmark_exprs() {
 
   s::Program smed = {
       s::Node(s::Op::Var, (size_t)0), // x
-      s::Node(s::Op::Const, 1.0),
+      s::Node(s::Op::Const, FloatType(1.0)),
       s::Node(s::Op::Add), // x+1
-      s::Node(s::Op::Const, 2.0),
+      s::Node(s::Op::Const, FloatType(2.0)),
       s::Node(s::Op::Var, (size_t)0),
       s::Node(s::Op::Mul), // 2x
       s::Node(s::Op::Sin), // sin(2x)
@@ -71,28 +73,28 @@ void benchmark_exprs() {
       s::Node(s::Op::Exp), // exp(x)
       s::Node(s::Op::Mul), // (...) * exp(x)
       s::Node(s::Op::Var, (size_t)0),
-      s::Node(s::Op::Const, 1.0),
+      s::Node(s::Op::Const, FloatType(1.0)),
       s::Node(s::Op::Add),               // x+1
       s::Node(s::Op::Log),               // log(x+1)
-      s::Node(s::Op::PowInt, (size_t)2), // (...)^2
+      s::Node(s::Op::PowInt, size_t(2)), // (...)^2
       s::Node(s::Op::Add)                // final +
   };
 
   auto run_lambda = [&](auto &expr) {
-    volatile double sum = 0.0;
-    for (int i = 0; i < N; ++i) sum += expr->eval(lvars);
+    volatile FloatType sum = 0.0;
+    for (int i = 0; i < N; ++i) sum += expr->eval(vars);
     return sum;
   };
 
   auto run_virtual = [&](auto &expr) {
-    volatile double sum = 0.0;
-    for (int i = 0; i < N; ++i) sum += expr->eval(vvars);
+    volatile FloatType sum = 0.0;
+    for (int i = 0; i < N; ++i) sum += expr->eval(vars);
     return sum;
   };
 
   auto run_stack = [&](const s::Program &p) {
-    volatile double sum = 0.0;
-    for (int i = 0; i < N; ++i) sum += s::eval(p, lvars);
+    volatile FloatType sum = 0.0;
+    for (int i = 0; i < N; ++i) sum += s::eval(p, vars);
     return sum;
   };
 
@@ -100,7 +102,7 @@ void benchmark_exprs() {
     auto start = std::chrono::high_resolution_clock::now();
     fn();
     auto end = std::chrono::high_resolution_clock::now();
-    std::cout << label << " " << std::chrono::duration<double>(end - start).count() << "s\n";
+    std::cout << label << " " << std::chrono::duration<FloatType>(end - start).count() << "s\n";
   };
 
   bench("[lambda/small]", [&] { run_lambda(le); });
@@ -112,13 +114,14 @@ void benchmark_exprs() {
   bench("[stack/med]", [&] { run_stack(smed); });
 }
 
-inline void test_variable_lookup_perf() {
+void variable_lookup_perf() {
   constexpr int N = 1'000'000;
-  const std::vector<double> lvars = {3.14};
-  const std::unordered_map<std::string, double> vvars = {{"x", 3.14}};
+  const std::vector<FloatType> lvars = {3.14, 3.14, 3.14, 3.14};
+  const std::unordered_map<std::string, FloatType> vvars = {
+      {"x", 3.14}, {"y", 3.14}, {"z", 3.14}, {"t", 3.14}};
 
-  volatile double sum_vec = 0.0;
-  volatile double sum_map = 0.0;
+  volatile FloatType sum_vec = 0.0;
+  volatile FloatType sum_map = 0.0;
 
   // Vector access
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -130,10 +133,12 @@ inline void test_variable_lookup_perf() {
   for (int i = 0; i < N; ++i) sum_map += vvars.at("x");
   auto t4 = std::chrono::high_resolution_clock::now();
 
-  std::chrono::duration<double> dvec = t2 - t1;
-  std::chrono::duration<double> dmap = t4 - t3;
+  std::chrono::duration<FloatType> dvec = t2 - t1;
+  std::chrono::duration<FloatType> dmap = t4 - t3;
 
   std::cout << "Vector access time: " << dvec.count() << " s\n";
   std::cout << "Map access time:    " << dmap.count() << " s\n";
   std::cout << "Ratio (map / vec):  " << (dmap / dvec) << "\n";
 }
+
+} // namespace tests

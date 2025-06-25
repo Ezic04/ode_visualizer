@@ -1,5 +1,7 @@
 add_subdirectory(expr)
 add_subdirectory(graphics)
+add_subdirectory(solver)
+
 set(TEST_SRC tests/eval_test.cpp)
 
 add_executable(${PROJECT_NAME} ${TEST_SRC} main.cpp)
@@ -17,6 +19,7 @@ target_link_libraries(
   PRIVATE 
   Expr
   Graphics
+  Solver
 )
 
 target_include_directories(

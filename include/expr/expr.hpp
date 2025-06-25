@@ -15,6 +15,8 @@ using IntPow = dynamic::IntPow;
 using UnaryOp = dynamic::UnaryOp;
 using BinaryOp = dynamic::BinaryOp;
 
+using VaribleMap = dynamic::VariableMap;
 using ParserException = dynamic::ParserException;
 using dynamic::parseExpr;
+
 } // namespace expr

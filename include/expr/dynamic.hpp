@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
-#include <string>
-#include <unordered_map>
+#include <vector>
+
+#include "utility/utility.hpp"
+
 namespace expr::dynamic {
 
 /**
@@ -13,7 +15,7 @@ struct Expr {
    * @param vars map of variable names to values
    * @return evaluated result
    */
-  virtual double eval(const std::unordered_map<std::string, double> &vars) const = 0;
+  virtual FloatType eval(const std::vector<FloatType> &vars) const = 0;
   virtual ~Expr() = default;
 };
 
@@ -23,28 +25,26 @@ enum class UnaryOpType { kNeg, kSqrt, kCbrt, kSin, kCos, kExp, kLog };
 /// Supported binary operations
 enum class BinaryOpType { kAdd, kSub, kMul, kDiv };
 /// Global epsilon used for numerical comparisons
-static constexpr double kEps = 1e-12;
+static constexpr FloatType kEps = 1e-12;
 
 /**
  * Constant node.
  */
 struct Const : Expr {
-  explicit Const(double value) : m_value(value) {}
-  inline double eval(const std::unordered_map<std::string, double> &vars) const override {
-    return m_value;
-  }
-  const double m_value; ///< constant value
+  explicit Const(FloatType value) : m_value(value) {}
+  inline FloatType eval(const std::vector<FloatType> &vars) const override { return m_value; }
+  const FloatType m_value; ///< constant value
 };
 
 /**
  * Variable node.
  */
 struct Var : Expr {
-  explicit Var(std::string identifier) : m_identifier(std::move(identifier)) {}
-  inline double eval(const std::unordered_map<std::string, double> &vars) const override {
-    return vars.at(m_identifier);
+  explicit Var(size_t idx) : m_idx(idx) {}
+  inline FloatType eval(const std::vector<FloatType> &vars) const override {
+    return vars.at(m_idx);
   }
-  std::string m_identifier; ///< variable identifier
+  size_t m_idx; ///< variable index
 };
 
 /**
@@ -52,7 +52,7 @@ struct Var : Expr {
  */
 struct IntPow : Expr {
   IntPow(ExprPtr base, int exponent) : m_base(std::move(base)), m_exponent(exponent) {}
-  double eval(const std::unordered_map<std::string, double> &vars) const override;
+  FloatType eval(const std::vector<FloatType> &vars) const override;
 
   ExprPtr m_base; ///< base expression
   int m_exponent; ///< integer exponent
@@ -63,7 +63,7 @@ struct IntPow : Expr {
  */
 struct UnaryOp : Expr {
   explicit UnaryOp(UnaryOpType op, ExprPtr expr) : m_operator(op), m_operand(std::move(expr)) {}
-  double eval(const std::unordered_map<std::string, double> &vars) const override;
+  FloatType eval(const std::vector<FloatType> &vars) const override;
 
   UnaryOpType m_operator; ///< operator type
   ExprPtr m_operand;      ///< operand
@@ -75,10 +75,11 @@ struct UnaryOp : Expr {
 struct BinaryOp : Expr {
   explicit BinaryOp(BinaryOpType op, ExprPtr left, ExprPtr right)
       : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
-  double eval(const std::unordered_map<std::string, double> &vars) const override;
+  FloatType eval(const std::vector<FloatType> &vars) const override;
 
   BinaryOpType m_operator; ///< operator type
   ExprPtr m_left;          ///< left operand
   ExprPtr m_right;         ///< right operand
 };
+
 } // namespace expr::dynamic

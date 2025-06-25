@@ -7,14 +7,14 @@
 
 #include "expr/uility.hpp"
 
-using namespace expr::dynamic;
+namespace expr::dynamic {
 
-double IntPow::eval(const std::unordered_map<std::string, double> &vars) const {
+FloatType IntPow::eval(const std::vector<FloatType> &vars) const {
   return intPow(m_base->eval(vars), m_exponent);
 }
 
-double UnaryOp::eval(const std::unordered_map<std::string, double> &vars) const {
-  double val = m_operand->eval(vars);
+FloatType UnaryOp::eval(const std::vector<FloatType> &vars) const {
+  FloatType val = m_operand->eval(vars);
   switch (m_operator) {
   case UnaryOpType::kNeg: return -val;
   case UnaryOpType::kSqrt:
@@ -30,9 +30,9 @@ double UnaryOp::eval(const std::unordered_map<std::string, double> &vars) const 
   std::unreachable();
 }
 
-double BinaryOp::eval(const std::unordered_map<std::string, double> &vars) const {
-  double l_val = m_left->eval(vars);
-  double r_val = m_right->eval(vars);
+FloatType BinaryOp::eval(const std::vector<FloatType> &vars) const {
+  FloatType l_val = m_left->eval(vars);
+  FloatType r_val = m_right->eval(vars);
   switch (m_operator) {
   case BinaryOpType::kAdd: return l_val + r_val;
   case BinaryOpType::kSub: return l_val - r_val;
@@ -44,3 +44,5 @@ double BinaryOp::eval(const std::unordered_map<std::string, double> &vars) const
   assertm(false, "Unknown BinaryOpType");
   std::unreachable();
 }
+
+} // namespace expr::dynamic

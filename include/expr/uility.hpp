@@ -1,15 +1,15 @@
 #pragma once
-#include <cassert>
 
-#define assertm(exp, msg) assert((void(msg), exp))
+#include "utility/utility.hpp"
 
+namespace expr {
 /**
  * Computes x raised to integer power n.
  * @param x base
  * @param n exponent
  * @return x^n
  */
-inline double intPow(double x, int n) {
+inline FloatType intPow(double x, int n) {
   if (n == 0) { return 1.0; }
   if (n < 0) { return 1.0 / intPow(x, -n); }
   double result = 1.0;
@@ -20,3 +20,5 @@ inline double intPow(double x, int n) {
   }
   return result;
 }
+
+} // namespace expr
