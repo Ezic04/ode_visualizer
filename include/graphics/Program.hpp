@@ -60,14 +60,24 @@ public:
   [[nodiscard]] inline unsigned int getUniformViewID(void) const { return m_uniform_view_id; }
 
   /*
-   * @brief Sets the object as 
+   * @brief Binds the object as 
    *  the currently used program.
-   *  By calling use on an object 
-   *  it replaces the currently 
-   *  used program. Only one program 
-   *  can be used at a given moment.
+   *  The method performs a check
+   *  to see if any other program 
+   *  is currently being used. If 
+   *  yes then the binding is aborted.
    */
-  void use(void);
+  void bind(void);
+
+  /*
+   * @brief Unbinds the object and
+   *  stops it from being used during 
+   *  rendering. The method performs 
+   *  a check if the object is currently 
+   *  bound. If not the the unbinding
+   *  is aborted.
+   */
+  void unbind(void);
 
 private:
 

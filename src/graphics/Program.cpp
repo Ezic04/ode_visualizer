@@ -42,9 +42,20 @@ Program::~Program(void) {
   this->clear();
 }
 
-void Program::use(void) {
+void Program::bind(void) {
   assert(m_id);
+  GLint current_program = 0;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_program);
+  if (current_program) { return; } // another program is already used 
   glUseProgram(m_id);
+}
+
+void Program::unbind(void) {
+  assert(m_id);
+  GLint current_program = 0;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_program);
+  if (current_program != m_id) { return; } // the object is not currently used
+  glUseProgram(0);
 }
 
 std::vector<char> Program::loadShader(const std::string& shader_path) {
