@@ -63,9 +63,8 @@ public:
   Mesh(const std::string& filepath, Program& program);
 
   /*
-   * @brief Destroys the mesh object
-   *  by freeing the memory allocated 
-   *  on the GPU.
+   * @brief Destroys the mesh 
+   *  object.
    */
   ~Mesh(void);
 
@@ -79,23 +78,129 @@ public:
    */
   void assignProgram(Program& program) { m_program = &program; }
 
+  /*
+   * @brief Scales the mesh 
+   *  relatively to its current
+   *  scale.
+   * 
+   * @param x Scaling factor in 
+   *  the x axis.
+   * @param y Scaling factor in
+   *  the y axis.
+   * @param z Scaling factor in 
+   *  the z axis.
+   */
+  void scale(float x, float y, float z);
+
+  /*
+   * @brief Translates the mesh
+   *  relatively to its current
+   *  translation.
+   * 
+   * @param x Translation in the
+   *  x axis.
+   * @param y Translation in the 
+   *  y axis.
+   * @param z Translation in the
+   *  z axis.
+   */
+  void translate(float x, float y, float z);
+
+  /*
+   * @brief Rotates the mesh
+   *  relatively to its current
+   *  rotation.
+   * 
+   * @param x Rotation in the 
+   *  x axis (degrees).
+   * @param y Rotation in the 
+   *  y axis (degrees).
+   * @param z Rotation in the
+   *  z axis (degrees).
+   */
+  void rotate(float x, float y, float z);
+   
+  /*
+   * @brief Sets the scale of 
+   *  the mesh.
+   * 
+   * @param x Scaling factor in 
+   *  the x axis.
+   * @param y Scaling factor in
+   *  the y axis.
+   * @param z Scaling factor in 
+   *  the z axis.
+   */
+  void setScale(float x, float y, float z);
+  
+  /*
+   * @brief Sets the translation
+   *  of the mesh.
+   * 
+   * @param x Translation in the
+   *  x axis.
+   * @param y Translation in the 
+   *  y axis.
+   * @param z Translation in the
+   *  z axis.
+   */
+  void setTranslation(float x, float y, float z);
+  
+  /*
+   * @brief Sets the rotation of 
+   *  the mesh.
+   * 
+   * @param x Rotation in the 
+   *  x axis (degrees).
+   * @param y Rotation in the 
+   *  y axis (degrees).
+   * @param z Rotation in the
+   *  z axis (degrees).
+   */
+  void setRotation(float x, float y, float z);
+
   void render(void);
 
 private:
 
-  /*
-   * @brief Frees the mesh
-   *  from the GPU memory and
-   *  resets the member variables
-   *  to 0.
-   */
-  void clear(void);
+  void calculateModelMatrix(void);
 
+  /*
+   * @brief Private enum type 
+   *  for indexing internal array 
+   *  of transformation matrices 
+   */
+  enum Transforms {
+    SCALE,
+    ROTATION,
+    TRANSLATION
+  };
+
+  static constexpr uint8_t k_transform_count = 3;
+
+  /*
+   * Array of glm::vec3 representing 
+   * the applied model transforms.
+   */
+  void* m_transforms;
+
+  /*
+   * Pointer to a glm::mat4 object
+   * representing combined model 
+   * transforms.
+   */
+  void* m_model_matrix;
+
+  /*
+   * Handles to vertex data
+   * stored in the GPU memory.
+   */
   unsigned int m_VAO;
   unsigned int m_VBO;
-  unsigned int m_IBO;  
+  unsigned int m_IBO;
+  
+  Program* m_program; ///< GPU program to use during rendering
   size_t m_index_count;
-  Program* m_program;
 
 };
   

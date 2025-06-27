@@ -17,10 +17,15 @@ Mesh::Mesh(
 ) : m_VAO(0),
     m_VBO(0),
     m_IBO(0),
-    m_index_count(0),
+    m_transforms(new glm::vec3[k_transform_count]),
+    m_model_matrix(new glm::mat4(1.0f)),
+    m_index_count(indices.size()),
     m_program(&program)
 {
-  m_index_count = indices.size();
+  glm::vec3* transforms = static_cast<glm::vec3*>(m_transforms);
+  transforms[ROTATION] = glm::vec3(0.0f, 0.0f, 0.0f);
+  transforms[TRANSLATION] = glm::vec3(0.0f, 0.0f, 0.0f);
+  transforms[SCALE] = glm::vec3(1.0f, 1.0f, 1.0f);
 
   glGenVertexArrays(1, &m_VAO);
   glBindVertexArray(m_VAO);
@@ -45,37 +50,66 @@ Mesh::Mesh(
 Mesh::Mesh(
   const std::string& filepath,
   Program& program
-) : m_VAO(0),
-    m_VBO(0),
-    m_IBO(0),
-    m_index_count(0),
-    m_program(&program)
-{
+) {
   //load_file
   //Mesh::Mesh(vertices, indices);
 }
 
 Mesh::~Mesh(void) {
-  this->clear();
+  if (m_VAO != 0) { glDeleteVertexArrays(1, &m_VAO); }
+  if (m_VBO != 0) { glDeleteBuffers(1, &m_VBO); }
+  if (m_IBO != 0) { glDeleteBuffers(1, &m_IBO); }
+  delete(static_cast<glm::mat4*>(m_model_matrix));
+}
+
+void Mesh::scale(float x, float y, float z) {
+  glm::mat4 scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
+  glm::vec3& scale = static_cast<glm::vec3*>(m_transforms)[SCALE];
+  scale = glm::vec3(scale_matrix * glm::vec4(scale, 1.0f));
+  this->calculateModelMatrix();
+}
+
+void Mesh::translate(float x, float y, float z) {
+  static_cast<glm::vec3*>(m_transforms)[TRANSLATION] += glm::vec3(x, y, z);
+  this->calculateModelMatrix();
+}
+
+void Mesh::rotate(float x, float y, float z) {
+  static_cast<glm::vec3*>(m_transforms)[ROTATION] += glm::vec3(x, y, z);
+  this->calculateModelMatrix();
+}
+
+void Mesh::setScale(float x, float y, float z) {
+  static_cast<glm::vec3*>(m_transforms)[SCALE] = glm::vec3(x, y, z);
+  this->calculateModelMatrix();
+}
+
+void Mesh::setTranslation(float x, float y, float z) {
+  static_cast<glm::vec3*>(m_transforms)[TRANSLATION] = glm::vec3(x, y, z);
+  this->calculateModelMatrix();
+}
+
+void Mesh::setRotation(float x, float y, float z) {
+  static_cast<glm::vec3*>(m_transforms)[ROTATION] = glm::vec3(x, y, z);
+  this->calculateModelMatrix();
 }
 
 void Mesh::render(void) {
 
   assert(m_index_count != 0);
 
-    //delete this from here
+  /* delete this from here */
     glm::mat4 projection = glm::perspective(45.0f, 800 / (float)600, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(
-      glm::vec3(4,3,3),
+      glm::vec3(5,0,0),
       glm::vec3(0,0,0),
       glm::vec3(0,1,0)
     );
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f)); 
+  /* delete this from here */
 
-  m_program->bind();
+  if (!m_program->bind()) { return; }
 
-  glUniformMatrix4fv(m_program->getUniformModelID(), 1, GL_FALSE, glm::value_ptr(model));
+  glUniformMatrix4fv(m_program->getUniformModelID(), 1, GL_FALSE, glm::value_ptr(*static_cast<glm::mat4*>(m_model_matrix)));
   glUniformMatrix4fv(m_program->getUniformProjectionID(), 1, GL_FALSE, glm::value_ptr(projection));
   glUniformMatrix4fv(m_program->getUniformViewID(), 1, GL_FALSE, glm::value_ptr(view));
 
@@ -88,9 +122,17 @@ void Mesh::render(void) {
   m_program->unbind();
 }
 
-void Mesh::clear(void) {
-  if (m_VAO != 0) { glDeleteVertexArrays(1, &m_VAO); }
-  if (m_VBO != 0) { glDeleteBuffers(1, &m_VBO); }
-  if (m_IBO != 0) { glDeleteBuffers(1, &m_IBO); }
-  m_VAO = 0; m_VBO = 0; m_IBO = 0; m_index_count = 0;
+void Mesh::calculateModelMatrix(void) {
+  const glm::vec3& translation = static_cast<glm::vec3*>(m_transforms)[TRANSLATION];
+  const glm::vec3& rotation    = static_cast<glm::vec3*>(m_transforms)[ROTATION];
+  const glm::vec3& scale       = static_cast<glm::vec3*>(m_transforms)[SCALE];
+
+  glm::mat4 model_matrix(1.0f);
+  model_matrix = glm::translate(model_matrix, translation);
+  model_matrix = glm::rotate(model_matrix, glm::radians(rotation.x) ,glm::vec3(1.0f, 0.0f, 0.0f));
+  model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y) ,glm::vec3(0.0f, 1.0f, 0.0f));
+  model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z) ,glm::vec3(0.0f, 0.0f, 1.0f));
+  model_matrix = glm::scale(model_matrix, scale);
+
+  *static_cast<glm::mat4*>(m_model_matrix) = model_matrix;
 }

@@ -36,6 +36,8 @@ Window::Window(int width, int height, const std::string& title) : m_is_initializ
     throw std::runtime_error("Failed to initialize OpenGL context");
   }
 
+  glEnable(GL_DEPTH_TEST);
+
   m_is_initialized = true;
   
 }

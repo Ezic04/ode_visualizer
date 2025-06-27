@@ -66,8 +66,12 @@ public:
    *  to see if any other program 
    *  is currently being used. If 
    *  yes then the binding is aborted.
+   * 
+   * @return bool True if current program 
+   *  is bound, regardless of if it 
+   *  was bound before the method call.
    */
-  void bind(void);
+  bool bind(void);
 
   /*
    * @brief Unbinds the object and
@@ -76,8 +80,11 @@ public:
    *  a check if the object is currently 
    *  bound. If not the the unbinding
    *  is aborted.
+   * 
+   * @return bool True if the current 
+   *  program was unbound successfuly.
    */
-  void unbind(void);
+  bool unbind(void);
 
 private:
 
