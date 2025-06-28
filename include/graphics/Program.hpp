@@ -71,7 +71,7 @@ public:
    *  is bound, regardless of if it 
    *  was bound before the method call.
    */
-  bool bind(void);
+  bool bind(void) const;
 
   /*
    * @brief Unbinds the object and
@@ -84,7 +84,7 @@ public:
    * @return bool True if the current 
    *  program was unbound successfuly.
    */
-  bool unbind(void);
+  bool unbind(void) const;
 
 private:
 

@@ -1,9 +1,11 @@
 add_library(
   Graphics
   STATIC
+  Vec3.cpp
+  Mesh.cpp
+  Camera.cpp
   Window.cpp
   Program.cpp
-  Mesh.cpp
 )
 
 target_link_libraries(

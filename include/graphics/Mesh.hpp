@@ -70,14 +70,23 @@ public:
   ~Mesh(void);
 
   /*
-   * @brief Assigns a GPU program 
-   *  that will be used to render
-   *  the mesh.
+   * @brief Sets the GPU program 
+   *  used by the mesh object.
    * 
    * @param program Program to be 
    *  assigned.
    */
-  void assignProgram(Program& program) { m_program = &program; }
+  void setProgram(Program& program) { m_program = &program; }
+
+  /*
+   * @brief Returns a pointer to
+   *  the GPU program used by the 
+   *  mesh object.
+   * 
+   * @return Pointer to the GPU program
+   *  used by the mesh object.
+   */
+  const Program* const getProgram(void) const { return m_program; }
 
   /*
    * @brief Scales the mesh 
@@ -145,10 +154,10 @@ public:
   void setRotation(const Vec3& r);
 
   /*
-   * @brief Returns the current scale
-   *  of the mesh.
+   * @brief Returns the current 
+   *  scale of the mesh.
    * 
-   * @return Vec3 Current scale of 
+   * @return Current scale of 
    *  the mesh.
    */
   Vec3 getScale(void) const;
@@ -157,7 +166,7 @@ public:
    * @brief Returns the current 
    *  translation of the mesh.
    * 
-   * @return Vec3 Current tranlation
+   * @return Current tranlation
    *  of the mesh.
    */
   Vec3 getTranslation(void) const;
@@ -171,7 +180,54 @@ public:
    */
   Vec3 getRotation(void) const;
 
-  void render(void);
+  /*
+   * @brief Returns a pointer 
+   *  to the calculated model
+   *  matrix containing all 
+   *  of the applied transformations.
+   * 
+   * @return Pointer to the 
+   *  model matrix (glm::mat4*).
+   */
+  const void* const getModelMatrix(void) const { return m_model_matrix; }
+  
+  /*
+   * @brief Returns the ID of 
+   *  the Vertex Array Object 
+   *  stored in the GPU memory.
+   * 
+   * @return VAO ID.
+   */
+  unsigned int getVAO(void) const { return m_VAO; }
+
+  /*
+   * @brief Returns the ID of
+   *  the Vertex Buffer Object
+   *  stored in the GPU memory.
+   * 
+   * @return VBO ID.
+   */
+  unsigned int getVBO(void) const { return m_VBO; }
+
+  /*
+   * @brief Returns the ID of
+   *  the Indices Buffer Object
+   *  (Element Array Buffer) stored
+   *  in the GPU memory.
+   * 
+   * @return IBO ID.
+   */
+  unsigned int getIBO(void) const { return m_IBO; }
+
+  /*
+   * @brief Returns the index 
+   *  count of the mesh object.
+   * 
+   * @return Index count of the
+   *  mesh object.
+   */
+  size_t getIndexCount(void) const { return m_index_count; }
+
 
 private:
 
@@ -217,4 +273,3 @@ private:
 };
   
 }
-

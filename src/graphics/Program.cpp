@@ -42,7 +42,7 @@ Program::~Program(void) {
   this->clear();
 }
 
-bool Program::bind(void) {
+bool Program::bind(void) const {
   assert(m_id);
   GLint current_program = 0;
   glGetIntegerv(GL_CURRENT_PROGRAM, &current_program);
@@ -51,7 +51,7 @@ bool Program::bind(void) {
   return true;
 }
 
-bool Program::unbind(void) {
+bool Program::unbind(void) const {
   assert(m_id);
   GLint current_program = 0;
   glGetIntegerv(GL_CURRENT_PROGRAM, &current_program);

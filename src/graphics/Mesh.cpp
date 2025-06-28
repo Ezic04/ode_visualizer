@@ -108,34 +108,6 @@ Vec3 Mesh::getRotation(void) const {
   return Vec3(current_rotation.x, current_rotation.y, current_rotation.z);
 }
 
-void Mesh::render(void) {
-
-  assert(m_index_count != 0);
-
-  /* delete this from here */
-    glm::mat4 projection = glm::perspective(45.0f, 800 / (float)600, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(
-      glm::vec3(5,0,0),
-      glm::vec3(0,0,0),
-      glm::vec3(0,1,0)
-    );
-  /* delete this from here */
-
-  if (!m_program->bind()) { return; }
-
-  glUniformMatrix4fv(m_program->getUniformModelID(), 1, GL_FALSE, glm::value_ptr(*static_cast<glm::mat4*>(m_model_matrix)));
-  glUniformMatrix4fv(m_program->getUniformProjectionID(), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniformMatrix4fv(m_program->getUniformViewID(), 1, GL_FALSE, glm::value_ptr(view));
-
-  glBindVertexArray(m_VAO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-  glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, nullptr);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-
-  m_program->unbind();
-}
-
 void Mesh::calculateModelMatrix(void) {
   const glm::vec3& position = static_cast<glm::vec3*>(m_transforms)[POSITION];
   const glm::vec3& rotation = static_cast<glm::vec3*>(m_transforms)[ROTATION];
