@@ -65,9 +65,16 @@ public:
    */
   void pollEvents(void);
 
+  const bool* const getKeyState(void) { return m_key_state;}
+
 private:
 
+  void createCallbacks(void);
+  void handleMouseEvent(double x_pos, double y_pos);
+  void handleKeyboardEvent(int key, int action);
+
   void* m_window; //GLFWwindow* undercover
+  bool m_key_state[1024];
   bool m_is_initialized;
 
 };

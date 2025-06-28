@@ -37,6 +37,12 @@ int main() {
     window.clear();
     window.pollEvents();
 
+    const bool* const key_state = window.getKeyState();
+    if(key_state[87]) { camera.translate({0.001f, 0.0f, 0.0f}); }
+    if(key_state[83]) { camera.translate({-0.001f, 0.0f, 0.0f}); }
+    if(key_state[68]) { camera.translate({0.0f, 0.0f, 0.001f}); }
+    if(key_state[65]) { camera.translate({0.0f, 0.0f, -0.001f}); }
+
     camera.render(mesh);
     mesh.rotate({0.005f, 0.005f, 0.005f});
 
