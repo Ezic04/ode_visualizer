@@ -36,28 +36,13 @@ public:
   ~Program(void);
 
   /*
-   * @brief Returns the uniform 
-   *  model matrix ID.
+   * @brief Returns the uniform
+   *  MVP matrix ID.
    * 
-   * @return Uniform model value.
+   * @return Uniform MVP matrix
+   *  ID
    */
-  [[nodiscard]] inline unsigned int getUniformModelID(void) const { return m_uniform_model_id; }
-  
-  /*
-   * @brief Returns the uniform 
-   *  projection matrix ID.
-   * 
-   * @return Uniform projection value.
-   */
-  [[nodiscard]] inline unsigned int getUniformProjectionID(void) const { return m_uniform_projection_id; }
-
-  /*
-   * @brief Returns the uniform 
-   *  view matrix ID.
-   * 
-   * @return Uniform view value.
-   */
-  [[nodiscard]] inline unsigned int getUniformViewID(void) const { return m_uniform_view_id; }
+  [[nodiscard]] inline unsigned int getUniformMVPID(void) const { return m_MVP_matrix_id; }
 
   /*
    * @brief Binds the object as 
@@ -141,15 +126,6 @@ private:
    */
   void validateProgram(void);
 
-  /* 
-   * @brief Allocates memory for
-   *  the uniform translation matrices
-   *  on the GPu and assigns received
-   *  IDs to the corresponding member 
-   *  variables.
-   */
-  void loadUniforms(void);
-
   /*
    * @brief Frees the program 
    *  from the GPU memory and 
@@ -159,15 +135,12 @@ private:
   void clear(void);
 
   /* 
-   * IDs of transformation matrices 
-   * stored in the GPU memory. They're 
-   * used by the vertex shader and can 
-   * be accessed by their IDs.
+   * ID of a summary transformation 
+   * matrix consisting of model, view
+   * and projection matrices stored in 
+   * the GPU memory.
    */
-  unsigned int m_uniform_model_id;       ///< Model matrix ID
-  unsigned int m_uniform_projection_id;  ///< Projection matrix ID
-  unsigned int m_uniform_view_id;        ///< View matrix ID
-
+  unsigned int m_MVP_matrix_id;
   unsigned int m_id; ///< ID of the program in GPU memory
 
 }; 

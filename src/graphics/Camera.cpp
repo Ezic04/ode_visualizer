@@ -49,9 +49,8 @@ void Camera::render(const Mesh& mesh) {
   const Program* const program = mesh.getProgram();
   if (!program->bind()) { return; }
 
-  glUniformMatrix4fv(program->getUniformModelID(), 1, GL_FALSE, glm::value_ptr(*static_cast<const glm::mat4* const>(mesh.getModelMatrix())));
-  glUniformMatrix4fv(program->getUniformProjectionID(), 1, GL_FALSE, glm::value_ptr(static_cast<glm::mat4*>(m_matrices)[PROJECTION]));
-  glUniformMatrix4fv(program->getUniformViewID(), 1, GL_FALSE, glm::value_ptr(static_cast<glm::mat4*>(m_matrices)[VIEW]));
+  glm::mat4 MVP = static_cast<glm::mat4*>(m_matrices)[CAMERA] * *static_cast<const glm::mat4* const>(mesh.getModelMatrix());
+  glUniformMatrix4fv(program->getUniformMVPID(), 1, GL_FALSE, glm::value_ptr(MVP));
 
   glBindVertexArray(mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
@@ -88,5 +87,6 @@ void Camera::updateProjectionMatrix(void) {
 }
 
 void Camera::updateCameraMatrix(void) {
-
+  glm::mat4* matrices = static_cast<glm::mat4*>(m_matrices);
+  matrices[CAMERA] = matrices[PROJECTION] * matrices[VIEW];
 }

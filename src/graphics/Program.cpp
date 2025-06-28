@@ -13,9 +13,7 @@ Program::Program(
   const std::string& vertex_shader_path, 
   const std::string& fragment_shader_path
 ) : m_id(0),
-    m_uniform_projection_id(0),
-    m_uniform_model_id(0),
-    m_uniform_view_id(0)
+    m_MVP_matrix_id(0)
 {
   m_id = glCreateProgram();
   if (!m_id) {
@@ -35,7 +33,7 @@ Program::Program(
   this->linkProgram();
   this->validateProgram();
 
-  this->loadUniforms();
+  m_MVP_matrix_id = glGetUniformLocation(m_id, "MVP");
 }
 
 Program::~Program(void) {
@@ -133,16 +131,8 @@ void Program::validateProgram(void) {
   }
 }
 
-void Program::loadUniforms(void) {
-  m_uniform_projection_id = glGetUniformLocation(m_id, "projection");
-  m_uniform_model_id = glGetUniformLocation(m_id, "model");
-  m_uniform_view_id = glGetUniformLocation(m_id, "view"); 
-}
-
 void Program::clear(void) {
   if (m_id) { glDeleteProgram(m_id); }
   m_id = 0;
-  m_uniform_projection_id = 0;
-  m_uniform_model_id = 0;
-  m_uniform_view_id = 0;
+  m_MVP_matrix_id = 0;
 }

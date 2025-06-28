@@ -27,13 +27,18 @@ int main() {
   graphics::Window window(800, 600, "Test Window");
   graphics::Program program(vert_path, frag_path);
   graphics::Mesh mesh(vertices, indices, program);
-  graphics::Camera camera({.position = {-5.0f, 0.0f, 0.0f}});
+  graphics::Camera camera(graphics::Camera::Parameters{
+    .position = {-5.0f, 0.0f, 0.0f},
+    .screen_width   = 800, 
+    .screen_height  = 600
+  });
 
   while(!window.shouldClose()) {
     window.clear();
     window.pollEvents();
 
     camera.render(mesh);
+    mesh.rotate({0.005f, 0.005f, 0.005f});
 
     window.swapBuffers();
   }
