@@ -4,31 +4,31 @@
 
 using namespace graphics;
 
-Vec3 Vec3::operator+=(const Vec3& vector) {
-	*this = *this + vector;
+Vec3 Vec3::operator+=(const Vec3& v) {
+	*this = *this + v;
 	return *this;
 }
 
-Vec3 Vec3::operator-=(const Vec3& vector) {
-	*this = *this - vector;
+Vec3 Vec3::operator-=(const Vec3& v) {
+	*this = *this - v;
 	return *this;
 }
 
-Vec3 Vec3::operator*=(const float& scalar) {
-	*this = *this * scalar;
+Vec3 Vec3::operator*=(float s) {
+	*this = *this * s;
 	return *this;
 }
 
-Vec3 Vec3::operator/=(const float& scalar) {
-	*this = *this / scalar;
+Vec3 Vec3::operator/=(float s) {
+	*this = *this / s;
 	return *this;
 }
 
-float Vec3::lengthSquared(const Vec3& vector) {
+float Vec3::lengthSquared(const Vec3& v) {
 	return (
-		vector.x() * vector.x() +
-		vector.y() * vector.y() +
-		vector.z() * vector.z()
+		v.x * v.x +
+		v.y * v.y +
+		v.z * v.z
 	);
 }
 
@@ -41,13 +41,13 @@ Vec3 Vec3::normalize(const Vec3& vector) {
 }
 
 float Vec3::dotProduct(const Vec3& v1, const Vec3& v2) {
-	return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
-Vec3 operator+(const Vec3& v1, const Vec3& v2) { return Vec3(v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()); }
-Vec3 operator-(const Vec3& v1, const Vec3& v2) { return Vec3(v1.x() - v2.x(), v1.y() - v2.y(), v1.z() - v2.z()); }
-Vec3 operator*(const Vec3& v, const float& scalar) { return Vec3(v.x() * scalar, v.y() * scalar, v.z() * scalar); }
-Vec3 operator/(const Vec3& v, const float& scalar) { return Vec3(v.x() / scalar, v.y() / scalar, v.z() / scalar); }
-bool operator==(const Vec3& v1, const Vec3& v2) { return (fabsf(v1.x() - v1.x()) < 0.0001 && fabsf(v1.y() - v2.y()) < 0.0001 && fabsf(v1.z() - v2.z()) < 0.0001); }
-bool operator!=(const Vec3& v1, const Vec3& v2) { return (fabsf(v1.x() - v1.x()) > 0.0001 || fabsf(v1.y() - v2.y()) > 0.0001 || fabsf(v1.z() - v2.z()) > 0.0001); }
+Vec3 operator+(const Vec3& v1, const Vec3& v2) { return Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z); }
+Vec3 operator-(const Vec3& v1, const Vec3& v2) { return Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z); }
+Vec3 operator*(const Vec3& v, float s) { return Vec3(v.x * s, v.y * s, v.z * s); }
+Vec3 operator/(const Vec3& v, float s) { return Vec3(v.x / s, v.y / s, v.z / s); }
+bool operator==(const Vec3& v1, const Vec3& v2) { return (fabsf(v1.x - v1.x) < 0.0001 && fabsf(v1.y - v2.y) < 0.0001 && fabsf(v1.z - v2.z) < 0.0001); }
+bool operator!=(const Vec3& v1, const Vec3& v2) { return (fabsf(v1.x - v1.x) > 0.0001 || fabsf(v1.y - v2.y) > 0.0001 || fabsf(v1.z - v2.z) > 0.0001); }
 
