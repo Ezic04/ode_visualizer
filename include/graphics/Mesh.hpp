@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "graphics/Vec3.hpp"
 #include "graphics/Program.hpp"
 
 namespace graphics {
@@ -83,81 +84,92 @@ public:
    *  relatively to its current
    *  scale.
    * 
-   * @param x Scaling factor in 
-   *  the x axis.
-   * @param y Scaling factor in
-   *  the y axis.
-   * @param z Scaling factor in 
-   *  the z axis.
+   * @param s Vector in which each 
+   *  coordinate represents the scaling 
+   *  along the corresponding axis.
    */
-  void scale(float x, float y, float z);
+  void scale(const Vec3& s);
 
   /*
    * @brief Translates the mesh
    *  relatively to its current
    *  translation.
    * 
-   * @param x Translation in the
-   *  x axis.
-   * @param y Translation in the 
-   *  y axis.
-   * @param z Translation in the
-   *  z axis.
+   * @param t Vector in which each
+   *  coordinate represents the translation 
+   *  along the corresponding axis
    */
-  void translate(float x, float y, float z);
+  void translate(const Vec3& t);
 
   /*
    * @brief Rotates the mesh
    *  relatively to its current
    *  rotation.
    * 
-   * @param x Rotation in the 
-   *  x axis (degrees).
-   * @param y Rotation in the 
-   *  y axis (degrees).
-   * @param z Rotation in the
-   *  z axis (degrees).
+   * @param r Vector in which each
+   *  coordinate represents the 
+   *  rotation along the corresponding
+   *  axis (in degrees).
    */
-  void rotate(float x, float y, float z);
+  void rotate(const Vec3& r);
    
   /*
    * @brief Sets the scale of 
    *  the mesh.
    * 
-   * @param x Scaling factor in 
-   *  the x axis.
-   * @param y Scaling factor in
-   *  the y axis.
-   * @param z Scaling factor in 
-   *  the z axis.
+   * @param s Vector in which each 
+   *  coordinate represents the scaling 
+   *  along the corresponding axis.
    */
-  void setScale(float x, float y, float z);
+  void setScale(const Vec3& s);
   
   /*
    * @brief Sets the translation
    *  of the mesh.
    * 
-   * @param x Translation in the
-   *  x axis.
-   * @param y Translation in the 
-   *  y axis.
-   * @param z Translation in the
-   *  z axis.
+   * @param t Vector in which each
+   *  coordinate represents the translation 
+   *  along the corresponding axis
    */
-  void setTranslation(float x, float y, float z);
+  void setTranslation(const Vec3& t);
   
   /*
    * @brief Sets the rotation of 
    *  the mesh.
    * 
-   * @param x Rotation in the 
-   *  x axis (degrees).
-   * @param y Rotation in the 
-   *  y axis (degrees).
-   * @param z Rotation in the
-   *  z axis (degrees).
+   * @param r Vector in which each
+   *  coordinate represents the 
+   *  rotation along the corresponding
+   *  axis (in degrees).
    */
-  void setRotation(float x, float y, float z);
+  void setRotation(const Vec3& r);
+
+  /*
+   * @brief Returns the current scale
+   *  of the mesh.
+   * 
+   * @return Vec3 Current scale of 
+   *  the mesh.
+   */
+  Vec3 getScale(void) const;
+
+  /*
+   * @brief Returns the current 
+   *  translation of the mesh.
+   * 
+   * @return Vec3 Current tranlation
+   *  of the mesh.
+   */
+  Vec3 getTranslation(void) const;
+
+  /*
+   * @brief Returns the current 
+   *  rotation of the mesh.
+   * 
+   * @return Current rotation of 
+   *  the mesh.
+   */
+  Vec3 getRotation(void) const;
 
   void render(void);
 
@@ -167,13 +179,13 @@ private:
 
   /*
    * @brief Private enum type 
-   *  for indexing internal array 
-   *  of transformation matrices 
+   *  for indexing into the internal 
+   *  array of transformation matrices.
    */
   enum Transforms {
     SCALE,
     ROTATION,
-    TRANSLATION
+    POSITION 
   };
 
   static constexpr uint8_t k_transform_count = 3;

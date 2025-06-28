@@ -24,7 +24,7 @@ Mesh::Mesh(
 {
   glm::vec3* transforms = static_cast<glm::vec3*>(m_transforms);
   transforms[ROTATION] = glm::vec3(0.0f, 0.0f, 0.0f);
-  transforms[TRANSLATION] = glm::vec3(0.0f, 0.0f, 0.0f);
+  transforms[POSITION] = glm::vec3(0.0f, 0.0f, 0.0f);
   transforms[SCALE] = glm::vec3(1.0f, 1.0f, 1.0f);
 
   glGenVertexArrays(1, &m_VAO);
@@ -62,36 +62,50 @@ Mesh::~Mesh(void) {
   delete(static_cast<glm::mat4*>(m_model_matrix));
 }
 
-void Mesh::scale(float x, float y, float z) {
-  glm::mat4 scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
-  glm::vec3& scale = static_cast<glm::vec3*>(m_transforms)[SCALE];
-  scale = glm::vec3(scale_matrix * glm::vec4(scale, 1.0f));
+void Mesh::scale(const Vec3& s) {
+  glm::vec3& current_scale = static_cast<glm::vec3*>(m_transforms)[SCALE];
+  current_scale = glm::vec3(current_scale.x * s.x, current_scale.y * s.y, current_scale.z * s.z);
   this->calculateModelMatrix();
 }
 
-void Mesh::translate(float x, float y, float z) {
-  static_cast<glm::vec3*>(m_transforms)[TRANSLATION] += glm::vec3(x, y, z);
+void Mesh::translate(const Vec3& t) {
+  static_cast<glm::vec3*>(m_transforms)[POSITION] += glm::vec3(t.x, t.y, t.z);
   this->calculateModelMatrix();
 }
 
-void Mesh::rotate(float x, float y, float z) {
-  static_cast<glm::vec3*>(m_transforms)[ROTATION] += glm::vec3(x, y, z);
+void Mesh::rotate(const Vec3& r) {
+  static_cast<glm::vec3*>(m_transforms)[ROTATION] += glm::vec3(r.x, r.y, r.z);
   this->calculateModelMatrix();
 }
 
-void Mesh::setScale(float x, float y, float z) {
-  static_cast<glm::vec3*>(m_transforms)[SCALE] = glm::vec3(x, y, z);
+void Mesh::setScale(const Vec3& s) {
+  static_cast<glm::vec3*>(m_transforms)[SCALE] = glm::vec3(s.x, s.y, s.z);
   this->calculateModelMatrix();
 }
 
-void Mesh::setTranslation(float x, float y, float z) {
-  static_cast<glm::vec3*>(m_transforms)[TRANSLATION] = glm::vec3(x, y, z);
+void Mesh::setTranslation(const Vec3& t) {
+  static_cast<glm::vec3*>(m_transforms)[POSITION] = glm::vec3(t.x, t.y, t.z);
   this->calculateModelMatrix();
 }
 
-void Mesh::setRotation(float x, float y, float z) {
-  static_cast<glm::vec3*>(m_transforms)[ROTATION] = glm::vec3(x, y, z);
+void Mesh::setRotation(const Vec3& r) {
+  static_cast<glm::vec3*>(m_transforms)[ROTATION] = glm::vec3(r.x, r.y, r.z);
   this->calculateModelMatrix();
+}
+
+Vec3 Mesh::getScale(void) const {
+  const glm::vec3& current_scale = static_cast<glm::vec3*>(m_transforms)[SCALE];
+  return Vec3(current_scale.x, current_scale.y, current_scale.z);
+}
+
+Vec3 Mesh::getTranslation(void) const {
+  const glm::vec3& current_translation = static_cast<glm::vec3*>(m_transforms)[POSITION];
+  return Vec3(current_translation.x, current_translation.y, current_translation.z);
+}
+
+Vec3 Mesh::getRotation(void) const {
+  const glm::vec3& current_rotation = static_cast<glm::vec3*>(m_transforms)[ROTATION];
+  return Vec3(current_rotation.x, current_rotation.y, current_rotation.z);
 }
 
 void Mesh::render(void) {
@@ -123,12 +137,12 @@ void Mesh::render(void) {
 }
 
 void Mesh::calculateModelMatrix(void) {
-  const glm::vec3& translation = static_cast<glm::vec3*>(m_transforms)[TRANSLATION];
-  const glm::vec3& rotation    = static_cast<glm::vec3*>(m_transforms)[ROTATION];
-  const glm::vec3& scale       = static_cast<glm::vec3*>(m_transforms)[SCALE];
+  const glm::vec3& position = static_cast<glm::vec3*>(m_transforms)[POSITION];
+  const glm::vec3& rotation = static_cast<glm::vec3*>(m_transforms)[ROTATION];
+  const glm::vec3& scale    = static_cast<glm::vec3*>(m_transforms)[SCALE];
 
   glm::mat4 model_matrix(1.0f);
-  model_matrix = glm::translate(model_matrix, translation);
+  model_matrix = glm::translate(model_matrix, position);
   model_matrix = glm::rotate(model_matrix, glm::radians(rotation.x) ,glm::vec3(1.0f, 0.0f, 0.0f));
   model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y) ,glm::vec3(0.0f, 1.0f, 0.0f));
   model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z) ,glm::vec3(0.0f, 0.0f, 1.0f));
