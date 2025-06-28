@@ -28,7 +28,7 @@ int main() {
   graphics::Program program(vert_path, frag_path);
   graphics::Mesh mesh(vertices, indices, program);
   graphics::Camera camera(graphics::Camera::Parameters{
-    .position = {-5.0f, 0.0f, 0.0f},
+    .position       = {-5.0f, 0.0f, 0.0f},
     .screen_width   = 800, 
     .screen_height  = 600
   });
