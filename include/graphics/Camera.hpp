@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <cstdint>
 
+#include "graphics/Vec3.hpp"
 #include "graphics/Mesh.hpp"
 
 namespace graphics {
@@ -10,20 +10,39 @@ namespace graphics {
 class Camera {
 public:
 
-  Camera();
+  struct Parameters {
+    Vec3 position = Vec3(0.0f, 0.0f, 0.0f);
+    Vec3 rotation = Vec3(0.0f, 0.0f, 0.0f);
+    float FOV = 45.0f;
+    uint16_t screen_width = 800;
+    uint16_t screen_height = 600;
+    float near_clip_plane = 0.1f;
+    float far_clip_plane = 100.0f;
+  };
+
+  Camera(const Camera::Parameters& params);
   ~Camera(void);
 
-  void move(float x, float y, float z);
-  void rotate(float x, float y, float z);
+  void translate(const Vec3& t);
+  void rotate(const Vec3& r);
 
-  void setPosition(float x, float y, float z);
-  void setRotation(float x, float y, float z);
+  void setCameraPrameters(const Camera::Parameters& params);
+  Camera::Parameters getCameraParameters(void) const { return m_params; }
 
   void render(const Mesh& mesh);
-  void render(const std::vector<Mesh>& scene);
-  void render(const std::vector<Mesh*>& scene);
 
 private:
+
+  void updateViewMatrix(void);
+  void updateProjectionMatrix(void);
+
+  /*
+   * @brief Updates the camera 
+   *  matrix based on the camera
+   *  parameters and applied camera
+   *  transforms.
+   */
+  void updateCameraMatrix(void);
 
   /*
    * @brief Private enum type
@@ -45,6 +64,8 @@ private:
    * V*P matrices.
    */
   void* m_matrices;
+
+  Camera::Parameters m_params;
 
 };
 

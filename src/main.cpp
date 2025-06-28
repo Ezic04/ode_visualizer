@@ -27,7 +27,7 @@ int main() {
   graphics::Window window(800, 600, "Test Window");
   graphics::Program program(vert_path, frag_path);
   graphics::Mesh mesh(vertices, indices, program);
-  graphics::Camera camera;
+  graphics::Camera camera({.position = {-5.0f, 0.0f, 0.0f}});
 
   while(!window.shouldClose()) {
     window.clear();

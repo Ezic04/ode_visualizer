@@ -59,6 +59,7 @@ Mesh::~Mesh(void) {
   if (m_VAO != 0) { glDeleteVertexArrays(1, &m_VAO); }
   if (m_VBO != 0) { glDeleteBuffers(1, &m_VBO); }
   if (m_IBO != 0) { glDeleteBuffers(1, &m_IBO); }
+  delete(static_cast<glm::vec3*>(m_transforms));
   delete(static_cast<glm::mat4*>(m_model_matrix));
 }
 

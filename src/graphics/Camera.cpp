@@ -10,50 +10,48 @@
 
 using namespace graphics;
 
+constexpr glm::vec3 k_world_up(0.0f, 1.0f, 0.0f);
+
 Camera::Camera(
-
-) : m_matrices(new glm::mat4[k_matrix_count]) 
+  const Camera::Parameters& params 
+) : m_matrices(new glm::mat4[k_matrix_count]),
+    m_params(params)
 {
-
+  this->updateViewMatrix();
+  this->updateProjectionMatrix();
+  this->updateCameraMatrix();
 }
 
 Camera::~Camera(void) {
   delete(static_cast<glm::mat4*>(m_matrices));
 }
 
-void Camera::move(float x, float y, float z) {
-
+void Camera::translate(const Vec3& t) {
+  m_params.position += t;
+  this->updateViewMatrix();
+  this->updateCameraMatrix();
 }
 
-void Camera::rotate(float x, float y, float z) {
-
+void Camera::rotate(const Vec3& r) {
+  m_params.rotation += r;
+  this->updateViewMatrix();
+  this->updateCameraMatrix();
 }
 
-void Camera::setPosition(float x, float y, float z) {
-
-}
-
-void Camera::setRotation(float x, float y, float z) {
-
+void Camera::setCameraPrameters(const Camera::Parameters& params) {
+  m_params = params;
+  this->updateViewMatrix();
+  this->updateProjectionMatrix();
+  this->updateCameraMatrix();
 }
 
 void Camera::render(const Mesh& mesh) {
-
-  /* delete this from here */
-    glm::mat4 projection = glm::perspective(45.0f, 800 / (float)600, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(
-      glm::vec3(5,0,0),
-      glm::vec3(0,0,0),
-      glm::vec3(0,1,0)
-    );
-  /* delete this from here */
-
   const Program* const program = mesh.getProgram();
   if (!program->bind()) { return; }
 
   glUniformMatrix4fv(program->getUniformModelID(), 1, GL_FALSE, glm::value_ptr(*static_cast<const glm::mat4* const>(mesh.getModelMatrix())));
-  glUniformMatrix4fv(program->getUniformProjectionID(), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniformMatrix4fv(program->getUniformViewID(), 1, GL_FALSE, glm::value_ptr(view));
+  glUniformMatrix4fv(program->getUniformProjectionID(), 1, GL_FALSE, glm::value_ptr(static_cast<glm::mat4*>(m_matrices)[PROJECTION]));
+  glUniformMatrix4fv(program->getUniformViewID(), 1, GL_FALSE, glm::value_ptr(static_cast<glm::mat4*>(m_matrices)[VIEW]));
 
   glBindVertexArray(mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
@@ -64,10 +62,31 @@ void Camera::render(const Mesh& mesh) {
   program->unbind();
 }
 
-void Camera::render(const std::vector<Mesh>& scene) {
+void Camera::updateViewMatrix(void) {
+  float pitch = glm::radians(m_params.rotation.x);
+  float yaw   = glm::radians(m_params.rotation.y);
 
+  glm::vec3 position  = glm::vec3(m_params.position.x, m_params.position.y, m_params.position.z);
+  glm::vec3 front     = glm::normalize(glm::vec3(cosf(yaw), sinf(pitch), sinf(yaw)));
+  glm::vec3 right     = glm::normalize(glm::cross(front, k_world_up));
+  glm::vec3 up        = glm::normalize(glm::cross(right, front));
+
+  static_cast<glm::mat4*>(m_matrices)[VIEW] = glm::lookAt(
+                                                position,
+                                                position + front,
+                                                up
+                                              );
 }
 
-void Camera::render(const std::vector<Mesh*>& scene) {
+void Camera::updateProjectionMatrix(void) {
+  static_cast<glm::mat4*>(m_matrices)[PROJECTION] = glm::perspective(
+                                                    m_params.FOV,
+                                                    m_params.screen_width / (float)m_params.screen_height,
+                                                    m_params.near_clip_plane,
+                                                    m_params.far_clip_plane
+                                                  ); 
+}
+
+void Camera::updateCameraMatrix(void) {
 
 }

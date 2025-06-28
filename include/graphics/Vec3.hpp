@@ -4,7 +4,7 @@
 
 namespace graphics {
 
-struct Vec3 {
+typedef struct Vec3 {
 	Vec3(void) : x(0.0f), y(0.0f), z(0.0f) {}
 	Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 	Vec3(const Vec3& v) : x(v.x), y(v.y), z(v.z) {}
@@ -23,7 +23,7 @@ struct Vec3 {
 	static float dotProduct(const Vec3& v1, const Vec3& v2);
 
 	float x, y, z;
-};
+} Vec3;
 
 Vec3 operator+(const Vec3& v1, const Vec3& v2);
 Vec3 operator-(const Vec3& v1, const Vec3& v2);

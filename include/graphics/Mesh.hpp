@@ -231,6 +231,11 @@ public:
 
 private:
 
+  /*
+   * @brief Updates the model
+   *  matrix based on the applied
+   *  mesh transforms.
+   */
   void calculateModelMatrix(void);
 
   /*
