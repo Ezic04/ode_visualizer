@@ -1,13 +1,19 @@
 #include <string>
 #include <vector>
 
+#include "IO/InputHandler.hpp"
+#include "IO/Window.hpp"
+
 #include "graphics/Mesh.hpp"
-#include "graphics/Window.hpp"
 #include "graphics/Camera.hpp"
 #include "graphics/Program.hpp"
 
-std::string vert_path = "C:/Users/Julek/Desktop/Szkoła/GitProjects/ode_visualizer/shader/shader.vert";
-std::string frag_path = "C:/Users/Julek/Desktop/Szkoła/GitProjects/ode_visualizer/shader/shader.frag";
+std::string shader_path = SHADER_PATH;
+
+std::string vert_path = shader_path + "/shader.vert";
+std::string frag_path = shader_path + "/shader.frag";
+
+
 
 std::vector<float> vertices = {
   -1.0f, -1.0f, 0.0f,
@@ -24,7 +30,8 @@ std::vector<unsigned int> indices = {
 };
 
 int main() {
-  graphics::Window window(800, 600, "Test Window");
+  IO::Window window(800, 600, "Test Window");
+  IO::InputHandler input_handler(&window);
   graphics::Program program(vert_path, frag_path);
   graphics::Mesh mesh(vertices, indices, program);
   graphics::Camera camera(graphics::Camera::Parameters{
@@ -33,15 +40,22 @@ int main() {
     .screen_height  = 600
   });
 
+  input_handler.attachKeyCallback(87, [&](void){ camera.moveLongitudinal(0.001f); });
+  input_handler.attachKeyCallback(83, [&](void){ camera.moveLongitudinal(-0.001f); });
+  input_handler.attachKeyCallback(68, [&](void){ camera.moveLateral(0.001f); });
+  input_handler.attachKeyCallback(65, [&](void){ camera.moveLateral(-0.001); });
+  input_handler.attachKeyCallback(32, [&](void){ camera.moveVertical(0.001); });
+  input_handler.attachKeyCallback(341, [&](void){ camera.moveVertical(-0.001); });
+  input_handler.attachMouseCallback([&](const IO::Window::MouseState& mouse_state) {
+    camera.tiltPitch(mouse_state.dy * 0.1);
+    camera.tiltYaw(mouse_state.dx * 0.1);
+  });
+
   while(!window.shouldClose()) {
     window.clear();
     window.pollEvents();
 
-    const bool* const key_state = window.getKeyState();
-    if(key_state[87]) { camera.translate({0.001f, 0.0f, 0.0f}); }
-    if(key_state[83]) { camera.translate({-0.001f, 0.0f, 0.0f}); }
-    if(key_state[68]) { camera.translate({0.0f, 0.0f, 0.001f}); }
-    if(key_state[65]) { camera.translate({0.0f, 0.0f, -0.001f}); }
+    input_handler.handleInputs();
 
     camera.render(mesh);
     mesh.rotate({0.005f, 0.005f, 0.005f});

@@ -1,18 +1,25 @@
-#include "graphics/Window.hpp"
+#include "IO/Window.hpp"
 
 #include <iostream>
 #include <stdexcept>
 
 #include <cassert>
+#include <cstring>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-using namespace graphics;
+using namespace IO;
 
-Window::Window(int width, int height, const std::string& title) : m_is_initialized(false) {
+Window::Window(
+  int width, 
+  int height, 
+  const std::string& title
+) : m_is_initialized(false),
+    m_mouse_first_moved(true)
+{
 
-  memset(m_key_state, 0, sizeof(bool) * 1024);
+  std::memset(m_key_state, 0, sizeof(bool) * 1024);
 
   if (!glfwInit()) {
     throw std::runtime_error("Failed to initialise GLFW");
@@ -72,6 +79,13 @@ void Window::pollEvents(void) {
   glfwPollEvents();
 }
 
+Window::MouseState Window::getMouseState(void) {
+  auto tmp = m_mouse_state; //glfw polls the mouse
+  m_mouse_state.dx = 0.0f;  //on mouse event callback
+  m_mouse_state.dy = 0.0f;  //so dx and dy can linger
+  return tmp;               //holding nonzero values
+}
+
 void Window::createCallbacks(void) {
   glfwSetKeyCallback(
     static_cast<GLFWwindow*>(m_window), 
@@ -93,7 +107,16 @@ void Window::createCallbacks(void) {
 }
 
 void Window::handleMouseEvent(double x_pos, double y_pos) {
+  if (m_mouse_first_moved) {
+    m_mouse_state.x_pos = x_pos;
+    m_mouse_state.y_pos = y_pos;
+    m_mouse_first_moved = false;
+  }
 
+  m_mouse_state.dx = x_pos - m_mouse_state.x_pos;
+  m_mouse_state.dy = m_mouse_state.y_pos - y_pos;
+  m_mouse_state.x_pos = x_pos;
+  m_mouse_state.y_pos = y_pos;
 }
 
 void Window::handleKeyboardEvent(int key, int action) {

@@ -1,26 +1,22 @@
 add_library(
-  Graphics
+  IO
   STATIC
-  Vec3.cpp
-  Mesh.cpp
-  Camera.cpp
-  Program.cpp
+  Window.cpp
+  InputHandler.cpp
 )
 
 target_link_libraries(
-  Graphics
+  IO 
   PRIVATE
   GLAD
   glfw
-  glm::glm
 )
 
 target_include_directories(
-  Graphics
+  IO
   PRIVATE
   ${INCLUDE_DIR}
   ${GLAD_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
-  ${GLM_SOURCE_DIR}
 )
 

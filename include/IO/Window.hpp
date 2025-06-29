@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace graphics {
+namespace IO {
 
 /* 
  * @brief Wrapper around 
@@ -12,6 +12,18 @@ namespace graphics {
  */ 
 class Window {
 public:
+
+  /*
+   * @brief Structure for storing 
+   *  and passing around mouse 
+   *  state data.
+   */
+  struct MouseState {
+    float x_pos = 0.0f;
+    float y_pos = 0.0f;
+    float dx    = 0.0f;
+    float dy    = 0.0f;
+  };
 
   /*
    * @brief Creates a new window 
@@ -65,7 +77,25 @@ public:
    */
   void pollEvents(void);
 
-  const bool* const getKeyState(void) { return m_key_state;}
+  /*
+   * @brief Returns the array
+   *  of bools representing the
+   *  state of each key.
+   * 
+   * @return Array of bools representing
+   *  current state of all the keys.
+   */
+  const bool* const getKeyState(void) { return m_key_state; }
+
+  /*
+   * @brief Returns mouse state
+   *  data containing current mouse
+   *  position and change in position 
+   *  since the last mouse poll.
+   * 
+   * @return Mouse state data.
+   */
+  MouseState getMouseState(void);
 
 private:
 
@@ -75,6 +105,8 @@ private:
 
   void* m_window; //GLFWwindow* undercover
   bool m_key_state[1024];
+  MouseState m_mouse_state;
+  bool m_mouse_first_moved;
   bool m_is_initialized;
 
 };
