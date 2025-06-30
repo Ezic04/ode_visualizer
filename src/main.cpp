@@ -7,6 +7,7 @@
 #include "utility/utility.hpp"
 
 constexpr FloatType step = 0.01;
+constexpr int spu = 1 / step;
 
 int main() {
   try {
@@ -18,14 +19,15 @@ int main() {
     std::cout << "x(0) = ";
     std::cin >> x;
     auto [expr, var_map] = expr::parseExpr(expr_str);
-    FloatType x_euler = x;
-    FloatType x_heun = x;
-    for (size_t i = 0; i <= 400; ++i) {
-      if (i % 100 == 0) {
-        std::println("t={}: x={}, x_euler={}, x_heun={}", t, std::exp(t), x_euler, x_heun);
+    FloatType x_euler, x_heun, x_rk4;
+    x_euler = x_heun = x_rk4 = x;
+    for (size_t i = 0; i <= spu * 10; ++i) {
+      if (i % spu == 0) {
+        std::println("t={}: x={}, x_euler={}, x_heun={}, x_rk4={}", t, std::exp(t), x_euler, x_heun, x_rk4);
       }
-      // x_euler = solver::euler(expr, x_euler, t, step, {{"x", x_euler}, {"t", t}});
-      // x_heun = solver::heun(expr, x_heun, t, step, {{"x", x_heun}, {"t", t}});
+      x_euler = solver::euler({expr}, {x_euler, t}, step).front();
+      x_heun = solver::heun({expr}, {x_heun, t}, step).front();
+      x_rk4 = solver::rk4({expr}, {x_rk4, t}, step).front();
       t += step;
     }
   } catch (std::exception &e) { std::cout << e.what() << '\n'; }

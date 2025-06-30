@@ -25,8 +25,7 @@ void benchmark_exprs() {
   // ----------- SMALL ----------- (x+1)*sin(2x)
   l::ExprPtr le = l::make_binary(
       l::BinaryOpType::Mul, l::make_binary(l::BinaryOpType::Add, l::make_var(0), l::makeConst(1.0)),
-      l::makeUnary(l::UnaryOpType::Sin,
-                   l::make_binary(l::BinaryOpType::Mul, l::makeConst(2.0), l::make_var(0))));
+      l::makeUnary(l::UnaryOpType::Sin, l::make_binary(l::BinaryOpType::Mul, l::makeConst(2.0), l::make_var(0))));
 
   d::ExprPtr dx = std::make_shared<d::Var>(0);
   d::ExprPtr done = std::make_shared<d::Const>(1.0);
@@ -47,11 +46,9 @@ void benchmark_exprs() {
 
   // ----------- MEDIUM ----------- (x+1)*sin(2x)*exp(x) + log(x+1)^2
   l::ExprPtr lmed = l::make_binary(
-      l::BinaryOpType::Add,
-      l::make_binary(l::BinaryOpType::Mul, le, l::makeUnary(l::UnaryOpType::Exp, l::make_var(0))),
+      l::BinaryOpType::Add, l::make_binary(l::BinaryOpType::Mul, le, l::makeUnary(l::UnaryOpType::Exp, l::make_var(0))),
       l::makeIntPow(
-          l::makeUnary(l::UnaryOpType::Log,
-                       l::make_binary(l::BinaryOpType::Add, l::make_var(0), l::makeConst(1.0))),
+          l::makeUnary(l::UnaryOpType::Log, l::make_binary(l::BinaryOpType::Add, l::make_var(0), l::makeConst(1.0))),
           2));
 
   d::ExprPtr dlog_x1 = std::make_shared<d::UnaryOp>(d::UnaryOpType::kLog, dx_plus_1);
@@ -117,8 +114,7 @@ void benchmark_exprs() {
 void variable_lookup_perf() {
   constexpr int N = 1'000'000;
   const std::vector<FloatType> lvars = {3.14, 3.14, 3.14, 3.14};
-  const std::unordered_map<std::string, FloatType> vvars = {
-      {"x", 3.14}, {"y", 3.14}, {"z", 3.14}, {"t", 3.14}};
+  const std::unordered_map<std::string, FloatType> vvars = {{"x", 3.14}, {"y", 3.14}, {"z", 3.14}, {"t", 3.14}};
 
   volatile FloatType sum_vec = 0.0;
   volatile FloatType sum_map = 0.0;

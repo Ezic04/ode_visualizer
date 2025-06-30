@@ -14,8 +14,9 @@ ExprPtr parse_add(std::string_view &s, VariableMap &var_map);
 
 UnaryOpType get_unary_op(std::string_view id) {
   static const std::unordered_map<std::string_view, UnaryOpType> kUnaryMap = {
-      {"sin", UnaryOpType::kSin},   {"cos", UnaryOpType::kCos}, {"sqrt", UnaryOpType::kSqrt},
-      {"cbrt", UnaryOpType::kCbrt}, {"exp", UnaryOpType::kExp}, {"ln", UnaryOpType::kLog}};
+      {"sin", UnaryOpType::kSin},   {"cos", UnaryOpType::kCos},   {"tan", UnaryOpType::kTan},
+      {"sqrt", UnaryOpType::kSqrt}, {"cbrt", UnaryOpType::kCbrt}, {"exp", UnaryOpType::kExp},
+      {"ln", UnaryOpType::kLog}};
   auto it = kUnaryMap.find(id);
   if (it == kUnaryMap.end()) { throw ParserException("unknown function: " + std::string(id)); }
   return it->second;
@@ -88,8 +89,7 @@ ExprPtr parse_pow(std::string_view &s, VariableMap &var_map) {
   skip_whitespace(s);
   if (!consume(s, '^')) return base;
   ExprPtr exp = parse_pow(s, var_map);
-  if (auto unary = dynamic_cast<UnaryOp *>(exp.get());
-      unary && unary->m_operator == UnaryOpType::kNeg) {
+  if (auto unary = dynamic_cast<UnaryOp *>(exp.get()); unary && unary->m_operator == UnaryOpType::kNeg) {
     if (auto c = dynamic_cast<Const *>(unary->m_operand.get())) {
       double val = -c->m_value;
       if (std::abs(val - std::round(val)) < kEps)
@@ -105,9 +105,7 @@ ExprPtr parse_pow(std::string_view &s, VariableMap &var_map) {
 
 ExprPtr parse_unary(std::string_view &s, VariableMap &var_map) {
   skip_whitespace(s);
-  if (consume(s, '-')) {
-    return std::make_shared<UnaryOp>(UnaryOpType::kNeg, parse_unary(s, var_map));
-  }
+  if (consume(s, '-')) { return std::make_shared<UnaryOp>(UnaryOpType::kNeg, parse_unary(s, var_map)); }
   return parse_pow(s, var_map);
 }
 

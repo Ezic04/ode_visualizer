@@ -3,4 +3,4 @@
 
 #define assertm(exp, msg) assert((void(msg), exp))
 
-using FloatType = float;
+using FloatType = double;

@@ -21,7 +21,7 @@ struct Expr {
 
 using ExprPtr = std::shared_ptr<Expr>;
 /// Supported unary operations
-enum class UnaryOpType { kNeg, kSqrt, kCbrt, kSin, kCos, kExp, kLog };
+enum class UnaryOpType { kNeg, kSqrt, kCbrt, kSin, kCos, kTan, kExp, kLog };
 /// Supported binary operations
 enum class BinaryOpType { kAdd, kSub, kMul, kDiv };
 /// Global epsilon used for numerical comparisons
@@ -41,9 +41,7 @@ struct Const : Expr {
  */
 struct Var : Expr {
   explicit Var(size_t idx) : m_idx(idx) {}
-  inline FloatType eval(const std::vector<FloatType> &vars) const override {
-    return vars.at(m_idx);
-  }
+  inline FloatType eval(const std::vector<FloatType> &vars) const override { return vars.at(m_idx); }
   size_t m_idx; ///< variable index
 };
 

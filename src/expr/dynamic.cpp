@@ -23,6 +23,7 @@ FloatType UnaryOp::eval(const std::vector<FloatType> &vars) const {
   case UnaryOpType::kCbrt: return std::cbrt(val);
   case UnaryOpType::kSin: return std::sin(val);
   case UnaryOpType::kCos: return std::cos(val);
+  case UnaryOpType::kTan: return std::tan(val);
   case UnaryOpType::kExp: return std::exp(val);
   case UnaryOpType::kLog: return std::log(val);
   }
