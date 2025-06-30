@@ -1,4 +1,5 @@
 add_subdirectory(expr)
+add_subdirectory(IO)
 add_subdirectory(graphics)
 set(TEST_SRC tests/eval_test.cpp)
 
@@ -17,10 +18,17 @@ target_link_libraries(
   PRIVATE 
   Expr
   Graphics
+  IO
 )
 
 target_include_directories(
   ${PROJECT_NAME}
   PRIVATE
   ${INCLUDE_DIR}
+)
+
+target_compile_definitions(
+  ${PROJECT_NAME}
+  PRIVATE
+  SHADER_PATH="${CMAKE_SOURCE_DIR}/shader"
 )
