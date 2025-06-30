@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <print>
+#include <string>
 
 #include "expr/expr.hpp"
 #include "solver/solver.hpp"
@@ -15,10 +16,13 @@ int main() {
     FloatType t = 0.0;
     std::string expr_str;
     std::cout << "x' = ";
-    std::cin >> expr_str;
+    std::getline(std::cin, expr_str);
     std::cout << "x(0) = ";
     std::cin >> x;
-    auto [expr, var_map] = expr::parseExpr(expr_str);
+    expr::VaribleMap vars;
+    vars.index_of("x");
+    vars.index_of("t");
+    expr::ExprPtr expr = expr::parseExpr(expr_str, vars);
     FloatType x_euler, x_heun, x_rk4;
     x_euler = x_heun = x_rk4 = x;
     for (size_t i = 0; i <= spu * 10; ++i) {

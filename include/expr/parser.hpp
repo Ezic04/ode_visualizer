@@ -1,7 +1,6 @@
 #pragma once
 #include <stdexcept>
 #include <unordered_map>
-#include <utility>
 
 #include "expr/dynamic.hpp"
 
@@ -29,8 +28,8 @@ public:
 /**
  * Parses a string expression into an expression tree.
  * @param str_expr the string expression to parse
- * @return a shared pointer to the root of the expression tree and VaribleMap
+ * @return a shared pointer to the root of the expression tree
  */
-std::pair<ExprPtr, VariableMap> parseExpr(const std::string &str_expr);
+ExprPtr parseExpr(const std::string &str_expr, const VariableMap &vars);
 
 } // namespace expr::dynamic

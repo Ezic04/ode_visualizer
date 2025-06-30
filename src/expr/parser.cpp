@@ -4,15 +4,14 @@
 #include <cmath>
 #include <string>
 #include <string_view>
-#include <utility>
 
 using namespace expr::dynamic;
 
 namespace {
 
-ExprPtr parse_add(std::string_view &s, VariableMap &var_map);
+ExprPtr parseAdd(std::string_view &s, const VariableMap &var_map);
 
-UnaryOpType get_unary_op(std::string_view id) {
+UnaryOpType getUnaryOp(std::string_view id) {
   static const std::unordered_map<std::string_view, UnaryOpType> kUnaryMap = {
       {"sin", UnaryOpType::kSin},   {"cos", UnaryOpType::kCos},   {"tan", UnaryOpType::kTan},
       {"sqrt", UnaryOpType::kSqrt}, {"cbrt", UnaryOpType::kCbrt}, {"exp", UnaryOpType::kExp},
@@ -22,7 +21,7 @@ UnaryOpType get_unary_op(std::string_view id) {
   return it->second;
 }
 
-void skip_whitespace(std::string_view &s) {
+void skipWhitespace(std::string_view &s) {
   while (!s.empty() && std::isspace(s.front())) { s.remove_prefix(1); }
 }
 
@@ -34,8 +33,8 @@ bool consume(std::string_view &s, char c) {
   return false;
 }
 
-bool consume_word(std::string_view &s, std::string_view w) {
-  skip_whitespace(s);
+bool consumeWord(std::string_view &s, std::string_view w) {
+  skipWhitespace(s);
   if (s.substr(0, w.size()) == w) {
     s.remove_prefix(w.size());
     return true;
@@ -43,8 +42,8 @@ bool consume_word(std::string_view &s, std::string_view w) {
   return false;
 }
 
-std::string parse_var_name(std::string_view &s, VariableMap &var_map) {
-  skip_whitespace(s);
+std::string parseVarName(std::string_view &s) {
+  skipWhitespace(s);
   size_t i = 0;
   while (i < s.size() && (std::isalpha(s[i]) || std::isdigit(s[i]) || s[i] == '_')) { ++i; }
   if (i == 0) { throw ParserException("expected varible name"); }
@@ -53,8 +52,8 @@ std::string parse_var_name(std::string_view &s, VariableMap &var_map) {
   return result;
 }
 
-ExprPtr parse_number(std::string_view &s) {
-  skip_whitespace(s);
+ExprPtr parseNumber(std::string_view &s) {
+  skipWhitespace(s);
   size_t i = 0;
   bool dot = false;
   while (i < s.size() && (std::isdigit(s[i]) || (s[i] == '.' && !dot))) {
@@ -67,28 +66,28 @@ ExprPtr parse_number(std::string_view &s) {
   return std::make_shared<Const>(value);
 }
 
-ExprPtr parse_atom(std::string_view &s, VariableMap &var_map) {
-  skip_whitespace(s);
+ExprPtr parseAtom(std::string_view &s, const VariableMap &var_map) {
+  skipWhitespace(s);
   if (consume(s, '(')) {
-    ExprPtr e = parse_add(s, var_map);
+    ExprPtr e = parseAdd(s, var_map);
     if (!consume(s, ')')) { throw ParserException("expected ')'"); }
     return e;
   }
-  if (std::isdigit(s.front()) || s.front() == '.') return parse_number(s);
-  std::string name = parse_var_name(s, var_map);
+  if (std::isdigit(s.front()) || s.front() == '.') return parseNumber(s);
+  std::string name = parseVarName(s);
   if (consume(s, '(')) {
-    ExprPtr arg = parse_add(s, var_map);
+    ExprPtr arg = parseAdd(s, var_map);
     if (!consume(s, ')')) { throw ParserException("expected ')' after function call"); }
-    return std::make_shared<UnaryOp>(get_unary_op(name), arg);
+    return std::make_shared<UnaryOp>(getUnaryOp(name), arg);
   }
-  return std::make_shared<Var>(var_map.index_of(name));
+  return std::make_shared<Var>(var_map.name_to_index.at(name));
 }
 
-ExprPtr parse_pow(std::string_view &s, VariableMap &var_map) {
-  ExprPtr base = parse_atom(s, var_map);
-  skip_whitespace(s);
+ExprPtr parsePow(std::string_view &s, const VariableMap &var_map) {
+  ExprPtr base = parseAtom(s, var_map);
+  skipWhitespace(s);
   if (!consume(s, '^')) return base;
-  ExprPtr exp = parse_pow(s, var_map);
+  ExprPtr exp = parsePow(s, var_map);
   if (auto unary = dynamic_cast<UnaryOp *>(exp.get()); unary && unary->m_operator == UnaryOpType::kNeg) {
     if (auto c = dynamic_cast<Const *>(unary->m_operand.get())) {
       double val = -c->m_value;
@@ -103,16 +102,16 @@ ExprPtr parse_pow(std::string_view &s, VariableMap &var_map) {
   throw ParserException("only integer exponents supported");
 }
 
-ExprPtr parse_unary(std::string_view &s, VariableMap &var_map) {
-  skip_whitespace(s);
-  if (consume(s, '-')) { return std::make_shared<UnaryOp>(UnaryOpType::kNeg, parse_unary(s, var_map)); }
-  return parse_pow(s, var_map);
+ExprPtr parseUnary(std::string_view &s, const VariableMap &var_map) {
+  skipWhitespace(s);
+  if (consume(s, '-')) { return std::make_shared<UnaryOp>(UnaryOpType::kNeg, parseUnary(s, var_map)); }
+  return parsePow(s, var_map);
 }
 
-ExprPtr parse_mul(std::string_view &s, VariableMap &var_map) {
-  ExprPtr lhs = parse_unary(s, var_map);
+ExprPtr parseMul(std::string_view &s, const VariableMap &var_map) {
+  ExprPtr lhs = parseUnary(s, var_map);
   while (true) {
-    skip_whitespace(s);
+    skipWhitespace(s);
     char op = s.empty() ? '\0' : s.front();
     BinaryOpType type;
 
@@ -122,15 +121,15 @@ ExprPtr parse_mul(std::string_view &s, VariableMap &var_map) {
     default: return lhs;
     }
     s.remove_prefix(1);
-    auto rhs = parse_unary(s, var_map);
+    auto rhs = parseUnary(s, var_map);
     lhs = std::make_shared<BinaryOp>(type, lhs, rhs);
   }
 }
 
-ExprPtr parse_add(std::string_view &s, VariableMap &var_map) {
-  ExprPtr lhs = parse_mul(s, var_map);
+ExprPtr parseAdd(std::string_view &s, const VariableMap &var_map) {
+  ExprPtr lhs = parseMul(s, var_map);
   while (true) {
-    skip_whitespace(s);
+    skipWhitespace(s);
     char op = s.empty() ? '\0' : s.front();
     BinaryOpType type;
 
@@ -140,7 +139,7 @@ ExprPtr parse_add(std::string_view &s, VariableMap &var_map) {
     default: return lhs;
     }
     s.remove_prefix(1);
-    auto rhs = parse_mul(s, var_map);
+    auto rhs = parseMul(s, var_map);
     lhs = std::make_shared<BinaryOp>(type, lhs, rhs);
   }
 }
@@ -149,14 +148,12 @@ ExprPtr parse_add(std::string_view &s, VariableMap &var_map) {
 
 namespace expr::dynamic {
 
-std::pair<ExprPtr, VariableMap> parseExpr(const std::string &str) {
-  // TODO: it should be created outside and parser only use it to label varibles
-  VariableMap var_map;
+ExprPtr parseExpr(const std::string &str, const VariableMap &vars) {
   std::string_view s(str);
-  ExprPtr expr = parse_add(s, var_map);
-  skip_whitespace(s);
+  ExprPtr expr = parseAdd(s, vars);
+  skipWhitespace(s);
   if (!s.empty()) { throw ParserException("unexpected input at end: '" + std::string(s) + "'"); }
-  return {expr, std::move(var_map)};
+  return expr;
 }
 
 } // namespace expr::dynamic
