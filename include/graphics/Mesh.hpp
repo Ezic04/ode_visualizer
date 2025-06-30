@@ -45,25 +45,6 @@ public:
   );
 
   /*
-   * @brief Creates a new mesh
-   *  object from an .obj file. 
-   *  The mesh data is allocated 
-   *  in the GPU memory.
-   * 
-   * @param filepath Path to the 
-   *  .obj file containing the 
-   *  mesh data. 
-   * @param program GPU program 
-   *  that will be used to render
-   *  the mesh.
-   * 
-   * @throw std::runtime_error In 
-   *  case of failure during mesh 
-   *  creation process.
-   */
-  Mesh(const std::string& filepath, Program& program);
-
-  /*
    * @brief Destroys the mesh 
    *  object.
    */

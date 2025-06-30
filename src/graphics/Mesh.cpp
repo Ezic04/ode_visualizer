@@ -48,14 +48,6 @@ Mesh::Mesh(
   glBindVertexArray(0);
 }
 
-Mesh::Mesh(
-  const std::string& filepath,
-  Program& program
-) {
-  //load_file
-  //Mesh::Mesh(vertices, indices);
-}
-
 Mesh::~Mesh(void) {
   if (m_VAO != 0) { glDeleteVertexArrays(1, &m_VAO); }
   if (m_VBO != 0) { glDeleteBuffers(1, &m_VBO); }
