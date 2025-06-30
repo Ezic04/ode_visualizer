@@ -99,9 +99,35 @@ public:
 
 private:
 
+  /*
+   * @brief Attaches internal 
+   *  private methods as callbacks 
+   *  for GLFW input events.
+   * 
+   * @see Window::handleMouseEvent
+   * @see Window::handleKeyEvent
+   */
   void createCallbacks(void);
+
+  /*
+   * @brief Handles the change in
+   *  mouse position by updating
+   *  internal mouse state.
+   * 
+   * @param x_pos Mouse's x position
+   * @param y_pos Mouse's y position
+   */
   void handleMouseEvent(double x_pos, double y_pos);
-  void handleKeyboardEvent(int key, int action);
+
+  /*
+   * @brief Handles the change in
+   *  key state by updating internal
+   *  key state buffer.
+   * 
+   * @param key Key related to the event
+   * @param action Event type (press/release)
+   */
+  void handleKeyEvent(int key, int action);
 
   void* m_window; //GLFWwindow* undercover
   bool m_key_state[1024];

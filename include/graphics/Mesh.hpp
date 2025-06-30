@@ -249,6 +249,7 @@ private:
     POSITION 
   };
 
+  /** Count of internal transform vectors */
   static constexpr uint8_t k_transform_count = 3;
 
   /*

@@ -91,7 +91,7 @@ void Window::createCallbacks(void) {
     static_cast<GLFWwindow*>(m_window), 
     [](GLFWwindow* glfw_window, int key, int code, int action, int mode) {
       Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
-      window->handleKeyboardEvent(key, action);
+      window->handleKeyEvent(key, action);
     }
   );
   glfwSetCursorPosCallback(
@@ -119,7 +119,7 @@ void Window::handleMouseEvent(double x_pos, double y_pos) {
   m_mouse_state.y_pos = y_pos;
 }
 
-void Window::handleKeyboardEvent(int key, int action) {
+void Window::handleKeyEvent(int key, int action) {
   if (key < 0 || key > 1024) { return; }
   switch (action) {
     case GLFW_PRESS:    m_key_state[key] = true;  break;
