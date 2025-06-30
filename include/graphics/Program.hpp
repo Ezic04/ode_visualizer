@@ -36,34 +36,40 @@ public:
   ~Program(void);
 
   /*
-   * @brief Returns the uniform 
-   *  projection value.
+   * @brief Returns the uniform
+   *  MVP matrix ID.
    * 
-   * @return Uniform projection value.
+   * @return Uniform MVP matrix
+   *  ID
    */
-  [[nodiscard]] inline unsigned int getProjectionLocation(void) { return m_uniform_projection; }
+  [[nodiscard]] inline unsigned int getUniformMVPID(void) const { return m_MVP_matrix_id; }
 
   /*
-   * @brief Returns the uniform 
-   *  model value.
-   * 
-   * @return Uniform model value.
-   */
-  [[nodiscard]] inline unsigned int getModelLocation(void) { return m_uniform_model; }
-
-  /*
-   * @brief Returns the uniform 
-   *  view value.
-   * 
-   * @return Uniform view value.
-   */
-  [[nodiscard]] inline unsigned int getViewLocation(void) { return m_uniform_view; }
-
-  /*
-   * @brief Sets the object as 
+   * @brief Binds the object as 
    *  the currently used program.
+   *  The method performs a check
+   *  to see if any other program 
+   *  is currently being used. If 
+   *  yes then the binding is aborted.
+   * 
+   * @return bool True if current program 
+   *  is bound, regardless of if it 
+   *  was bound before the method call.
    */
-  void use(void);
+  bool bind(void) const;
+
+  /*
+   * @brief Unbinds the object and
+   *  stops it from being used during 
+   *  rendering. The method performs 
+   *  a check if the object is currently 
+   *  bound. If not the the unbinding
+   *  is aborted.
+   * 
+   * @return bool True if the current 
+   *  program was unbound successfuly.
+   */
+  bool unbind(void) const;
 
 private:
 
@@ -120,24 +126,22 @@ private:
    */
   void validateProgram(void);
 
-  /* 
-   * @brief Loads the program's 
-   *  uniform values.
-   */
-  void loadUniforms(void);
-
   /*
    * @brief Frees the program 
    *  from the GPU memory and 
-   *  resets the uniform values 
+   *  resets the uniform variables 
    *  to 0.
    */
   void clear(void);
 
-  unsigned int m_id;
-  unsigned int m_uniform_projection;
-  unsigned int m_uniform_model;
-  unsigned int m_uniform_view;
+  /* 
+   * ID of a summary transformation 
+   * matrix consisting of model, view
+   * and projection matrices stored in 
+   * the GPU memory.
+   */
+  unsigned int m_MVP_matrix_id;
+  unsigned int m_id; ///< ID of the program in GPU memory
 
 }; 
 
