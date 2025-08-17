@@ -27,9 +27,3 @@ target_include_directories(
   PRIVATE
   ${INCLUDE_DIR}
 )
-
-target_compile_definitions(
-  ${PROJECT_NAME}
-  PRIVATE
-  SHADER_PATH="${CMAKE_SOURCE_DIR}/shader"
-)
