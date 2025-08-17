@@ -2,6 +2,7 @@ add_subdirectory(expr)
 add_subdirectory(IO)
 add_subdirectory(graphics)
 add_subdirectory(solver)
+add_subdirectory(simulation)
 
 set(TEST_SRC tests/eval_test.cpp)
 
@@ -18,10 +19,7 @@ endif()
 target_link_libraries(
   ${PROJECT_NAME} 
   PRIVATE 
-  Expr
-  Graphics
-  Solver
-  IO
+  Simulation
 )
 
 target_include_directories(

@@ -1,0 +1,29 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20
+  },
+  "configurePresets": [
+    {
+      "name": "build-release",
+      "generator": "Ninja",
+      "binaryDir": "build/build-release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "build-default",
+      "generator": "Ninja",
+      "binaryDir": "build/build-default",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ]
+}

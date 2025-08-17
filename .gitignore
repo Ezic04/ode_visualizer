@@ -2,10 +2,8 @@
 .vscode/
 .vs/
 
-# build directories
+#build dir
 build/
-build-debug/
-build-release/
 
 # cache
 .cache/
