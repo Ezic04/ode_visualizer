@@ -1,19 +1,24 @@
-// #include <cmath>
+#include <chrono>
 #include <iostream>
-// #include <print>
-// #include <string>
+#include <thread>
 
-// #include "expr/expr.hpp"
 #include "simulation/Simulation.hpp"
-// #include "solver/solver.hpp"
-#include "utility/utility.hpp"
-
-constexpr FloatType step = 0.01;
-constexpr int spu = 1 / step;
 
 int main() {
   try {
-    Simulation s({"x' = x", "y' = y", "z' = z"});
+    bool simulate = true;
+    simulation::Simulation sim({"x' = -y", "y' = x", "z' = 0"});
+    std::thread sim_thrs(&simulation::Simulation::run, &sim, &simulate);
+    sim.addEntity({
+        0,
+        -1,
+        0,
+    });
+    sim.start();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    sim.stop();
+    simulate = false;
+    sim_thrs.join();
   } catch (std::exception &e) { std::cout << e.what() << '\n'; }
   return 0;
 }
