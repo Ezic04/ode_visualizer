@@ -21,7 +21,7 @@ target_link_libraries(
 
 target_compile_definitions(
   Simulation
-  PRIVATE
+  PUBLIC
   VERT_PATH="${CMAKE_SOURCE_DIR}/shader/shader.vert"
   FRAG_PATH="${CMAKE_SOURCE_DIR}/shader/shader.frag"
 )
