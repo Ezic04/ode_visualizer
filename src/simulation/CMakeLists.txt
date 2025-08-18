@@ -22,7 +22,8 @@ target_link_libraries(
 target_compile_definitions(
   Simulation
   PRIVATE
-  SHADER_PATH="${CMAKE_SOURCE_DIR}/shader"
+  VERT_PATH="${CMAKE_SOURCE_DIR}/shader/shader.vert"
+  FRAG_PATH="${CMAKE_SOURCE_DIR}/shader/shader.frag"
 )
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
