@@ -3,8 +3,6 @@
 
 using namespace simulation;
 
-static constexpr unsigned char MAX_ENTITIES = 16;
-
 Simulation::Simulation(
   void
 ) : m_window(800, 600, "ODE Visualizer"),
