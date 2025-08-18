@@ -50,20 +50,6 @@ void Simulation::run(void) {
   }
 }
 
-static const std::vector<float> vertices = { // delete this
-  -1.0f, -1.0f, 0.0f,
-  0.0f, -1.0f, 1.0f,
-  1.0f, -1.0f, 0.0f,
-  0.0f, 1.0f, 0.0f
-};
-
-static const std::vector<unsigned int> indices = { // this too
-  0, 3, 1,
-  1, 3, 2,
-  2, 3, 0,
-  0, 1, 2
-};
-
 void Simulation::addEntity(const graphics::Vec3& position) {
   graphics::Mesh m = graphics::getDemoMesh(m_graphics_program);
   m.translate(position);
