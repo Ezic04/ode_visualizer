@@ -69,7 +69,6 @@ void Camera::moveVertical(float distance) {
   this->translate(up * distance);
 }
 
-
 void Camera::tiltPitch(float tilt) {
   float test_val = m_params.rotation.x + tilt;
   if (

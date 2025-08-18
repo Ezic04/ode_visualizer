@@ -37,7 +37,25 @@ public:
    * @throw std::runtime_error In case of
    *  failure during mesh creation process.
    */
-  Mesh(const std::vector<float> &vertices, const std::vector<unsigned int> &indices, Program &program);
+  Mesh(
+    const std::vector<float> &vertices, 
+    const std::vector<unsigned int> &indices, 
+    Program &program
+  );
+
+  // you're asking for problems, pal
+  Mesh(const Mesh& other) = delete;
+
+  /*
+   * @brief Moves ownership of allocated 
+   *  resources from one object to another.
+   *  After using the move constructor, the 
+   *  original object SHOULD NOT BE USED, as
+   *  it stops being a valid object (it's empty).
+   *  
+   * @param Mesh object to be moved.
+   */
+  Mesh(Mesh&& other);
 
   /*
    * @brief Destroys the mesh
@@ -52,7 +70,7 @@ public:
    * @param program Program to be
    *  assigned.
    */
-  void setProgram(Program &program) { m_program = &program; }
+  inline void setProgram(Program &program) { m_program = &program; }
 
   /*
    * @brief Returns a pointer to
@@ -62,7 +80,7 @@ public:
    * @return Pointer to the GPU program
    *  used by the mesh object.
    */
-  const Program *const getProgram(void) const { return m_program; }
+  inline const Program *const getProgram(void) const { return m_program; }
 
   /*
    * @brief Scales the mesh
@@ -165,7 +183,7 @@ public:
    * @return Pointer to the
    *  model matrix (glm::mat4*).
    */
-  const void *const getModelMatrix(void) const { return m_model_matrix; }
+  inline const void *const getModelMatrix(void) const { return m_model_matrix; }
 
   /*
    * @brief Returns the ID of
@@ -174,7 +192,7 @@ public:
    *
    * @return VAO ID.
    */
-  unsigned int getVAO(void) const { return m_VAO; }
+  inline unsigned int getVAO(void) const { return m_VAO; }
 
   /*
    * @brief Returns the ID of
@@ -183,7 +201,7 @@ public:
    *
    * @return VBO ID.
    */
-  unsigned int getVBO(void) const { return m_VBO; }
+  inline unsigned int getVBO(void) const { return m_VBO; }
 
   /*
    * @brief Returns the ID of
@@ -193,7 +211,7 @@ public:
    *
    * @return IBO ID.
    */
-  unsigned int getIBO(void) const { return m_IBO; }
+  inline unsigned int getIBO(void) const { return m_IBO; }
 
   /*
    * @brief Returns the index
@@ -202,7 +220,7 @@ public:
    * @return Index count of the
    *  mesh object.
    */
-  size_t getIndexCount(void) const { return m_index_count; }
+  inline size_t getIndexCount(void) const { return m_index_count; }
 
 private:
   /*
@@ -247,4 +265,6 @@ private:
   size_t m_index_count;
 };
 
-} // namespace graphics
+Mesh getDemoMesh(Program &shader);
+
+}

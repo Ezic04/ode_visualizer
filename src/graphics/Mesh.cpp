@@ -1,4 +1,5 @@
 #include "graphics/Mesh.hpp"
+#include "graphics/Program.hpp"
 
 #include <cassert>
 #include <vector>
@@ -11,9 +12,18 @@
 
 using namespace graphics;
 
-Mesh::Mesh(const std::vector<float> &vertices, const std::vector<unsigned int> &indices, Program &program)
-    : m_VAO(0), m_VBO(0), m_IBO(0), m_transforms(new glm::vec3[k_transform_count]), m_model_matrix(new glm::mat4(1.0f)),
-      m_index_count(indices.size()), m_program(&program) {
+Mesh::Mesh(
+  const std::vector<float> &vertices, 
+  const std::vector<unsigned int> &indices, 
+  Program &program
+) : m_VAO(0), 
+    m_VBO(0), 
+    m_IBO(0), 
+    m_transforms(new glm::vec3[k_transform_count]), 
+    m_model_matrix(new glm::mat4(1.0f)),
+    m_index_count(indices.size()), 
+    m_program(&program)
+{
   glm::vec3 *transforms = static_cast<glm::vec3 *>(m_transforms);
   transforms[ROTATION] = glm::vec3(0.0f, 0.0f, 0.0f);
   transforms[POSITION] = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -37,6 +47,26 @@ Mesh::Mesh(const std::vector<float> &vertices, const std::vector<unsigned int> &
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   glBindVertexArray(0);
+}
+
+Mesh::Mesh(
+  Mesh&& other
+) : m_VAO(other.m_VAO), 
+    m_VBO(other.m_VBO), 
+    m_IBO(other.m_IBO), 
+    m_transforms(other.m_transforms), 
+    m_model_matrix(other.m_model_matrix),
+    m_index_count(other.m_index_count), 
+    m_program(other.m_program)
+{
+  // STEEEEALL, STEAL EVERYTHING
+  other.m_VAO = 0;
+  other.m_VBO = 0;
+  other.m_IBO = 0;
+  other.m_transforms = nullptr;
+  other.m_model_matrix = nullptr;
+  other.m_index_count = 0;
+  other.m_program = nullptr;
 }
 
 Mesh::~Mesh(void) {
@@ -106,4 +136,12 @@ void Mesh::calculateModelMatrix(void) {
   model_matrix = glm::scale(model_matrix, scale);
 
   *static_cast<glm::mat4 *>(m_model_matrix) = model_matrix;
+}
+
+Mesh graphics::getDemoMesh(Program &shader) {
+  return std::move(Mesh(
+    { -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f },
+    { 0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2 },
+    shader
+  )); 
 }
