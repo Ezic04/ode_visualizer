@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(ode_visualizer)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
+set(CMAKE_PREFIX_PATH ${QT_DIR}lib/cmake)
 
 # build GLAD
 set(GLAD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/glad)
@@ -22,3 +23,4 @@ add_subdirectory(${GLM_SOURCE_DIR})
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(src)
+
