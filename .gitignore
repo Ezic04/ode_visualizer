@@ -13,4 +13,6 @@ __pycache__/
 scripts/
 *.bat
 *.sh
-*.ps1
+
+# cmake
+*.cmake
