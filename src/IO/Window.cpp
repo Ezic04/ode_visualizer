@@ -1,29 +1,21 @@
 #include "IO/Window.hpp"
 
+#include <cassert>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 
-#include <cassert>
-#include <cstring>
-
 #include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 
 using namespace IO;
 
-Window::Window(
-  int width, 
-  int height, 
-  const std::string& title
-) : m_is_initialized(false),
-    m_mouse_first_moved(true)
-{
+Window::Window(int width, int height, const std::string &title) : m_is_initialized(false), m_mouse_first_moved(true) {
 
   std::memset(m_key_state, 0, sizeof(bool) * 1024);
 
-  if (!glfwInit()) {
-    throw std::runtime_error("Failed to initialise GLFW");
-  }
+  if (!glfwInit()) { throw std::runtime_error("Failed to initialise GLFW"); }
 
   glfwWindowHint(GLFW_SAMPLES, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -36,9 +28,10 @@ Window::Window(
     glfwTerminate();
     throw std::runtime_error("Failed to initialize a GLFW window instance.");
   }
-  glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_window));
-  glfwSetInputMode(static_cast<GLFWwindow*>(m_window), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  glfwSetWindowUserPointer(static_cast<GLFWwindow*>(m_window), this);
+  glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_window));
+  glfwSwapInterval(0);
+  glfwSetInputMode(static_cast<GLFWwindow *>(m_window), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetWindowUserPointer(static_cast<GLFWwindow *>(m_window), this);
   this->createCallbacks();
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -49,18 +42,17 @@ Window::Window(
   glEnable(GL_DEPTH_TEST);
 
   m_is_initialized = true;
-  
 }
 
 Window::~Window(void) {
-  if(!m_is_initialized) { return; }
-  glfwDestroyWindow(static_cast<GLFWwindow*>(m_window));
+  if (!m_is_initialized) { return; }
+  glfwDestroyWindow(static_cast<GLFWwindow *>(m_window));
   glfwTerminate();
 }
 
 bool Window::shouldClose(void) {
   assert(m_is_initialized);
-  return glfwWindowShouldClose(static_cast<GLFWwindow*>(m_window)) != 0;
+  return glfwWindowShouldClose(static_cast<GLFWwindow *>(m_window)) != 0;
 }
 
 void Window::clear(void) {
@@ -71,7 +63,7 @@ void Window::clear(void) {
 
 void Window::swapBuffers(void) {
   assert(m_is_initialized);
-  glfwSwapBuffers(static_cast<GLFWwindow*>(m_window));
+  glfwSwapBuffers(static_cast<GLFWwindow *>(m_window));
 }
 
 void Window::pollEvents(void) {
@@ -80,30 +72,24 @@ void Window::pollEvents(void) {
 }
 
 Window::MouseState Window::getMouseState(void) {
-  auto tmp = m_mouse_state; //glfw polls the mouse
-  m_mouse_state.dx = 0.0f;  //on mouse event callback
-  m_mouse_state.dy = 0.0f;  //so dx and dy can linger
-  return tmp;               //holding nonzero values
+  auto tmp = m_mouse_state; // glfw polls the mouse
+  m_mouse_state.dx = 0.0f;  // on mouse event callback
+  m_mouse_state.dy = 0.0f;  // so dx and dy can linger
+  return tmp;               // holding nonzero values
 }
 
 void Window::createCallbacks(void) {
-  glfwSetKeyCallback(
-    static_cast<GLFWwindow*>(m_window), 
-    [](GLFWwindow* glfw_window, int key, int code, int action, int mode) {
-      Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
-      window->handleKeyEvent(key, action);
-    }
-  );
-  glfwSetCursorPosCallback(
-    static_cast<GLFWwindow*>(m_window), 
-    [](GLFWwindow* glfw_window, double x_pos, double y_pos) {
-      Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
-      window->handleMouseEvent(x_pos, y_pos);
-    }
-  );
-  glfwSetErrorCallback([](int error, const char* desc) { 
-    std::cout << "GLFW error: " << error << " " << desc; 
-  }); 
+  glfwSetKeyCallback(static_cast<GLFWwindow *>(m_window),
+                     [](GLFWwindow *glfw_window, int key, int code, int action, int mode) {
+                       Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+                       window->handleKeyEvent(key, action);
+                     });
+  glfwSetCursorPosCallback(static_cast<GLFWwindow *>(m_window),
+                           [](GLFWwindow *glfw_window, double x_pos, double y_pos) {
+                             Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+                             window->handleMouseEvent(x_pos, y_pos);
+                           });
+  glfwSetErrorCallback([](int error, const char *desc) { std::cout << "GLFW error: " << error << " " << desc; });
 }
 
 void Window::handleMouseEvent(double x_pos, double y_pos) {
@@ -122,8 +108,8 @@ void Window::handleMouseEvent(double x_pos, double y_pos) {
 void Window::handleKeyEvent(int key, int action) {
   if (key < 0 || key > 1024) { return; }
   switch (action) {
-    case GLFW_PRESS:    m_key_state[key] = true;  break;
-    case GLFW_RELEASE:  m_key_state[key] = false; break;
-    default: break;
+  case GLFW_PRESS: m_key_state[key] = true; break;
+  case GLFW_RELEASE: m_key_state[key] = false; break;
+  default: break;
   }
 }
