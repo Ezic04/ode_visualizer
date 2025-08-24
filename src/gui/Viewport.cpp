@@ -1,12 +1,17 @@
 #include "gui/Viewport.hpp"
+#include "gui/Camera.hpp"
+
+#include <qmatrix4x4.h>
+#include <qwindowdefs.h>
 #include <stdexcept>
 
 /* DELETE THIS */
 static const char vert_source[] = "#version 330                                   \n"
                                   "layout (location = 0) in vec3 pos;             \n"
                                   "out vec4 vColour;                              \n"
+                                  "uniform mat4 MVP;                              \n"
                                   "void main() {                                  \n"
-                                  "  gl_Position = vec4(pos, 1.0);                \n"
+                                  "  gl_Position = MVP * vec4(pos, 1.0);          \n"
                                   "	 vColour = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);\n"
                                   "}                                              \n";
 
@@ -37,9 +42,11 @@ Viewport::Viewport(
 ) : QOpenGLWindow(
       QOpenGLWindow::UpdateBehavior::NoPartialUpdate,
       parent
-    ) 
+    )
 {
-  // init here
+  m_camera.screen_width = width();
+  m_camera.screen_height = height();
+  m_camera.position = {0.0f, 0.0f, -4.0f};
 }
 
 Viewport::~Viewport(void) {
@@ -63,11 +70,19 @@ void Viewport::initializeGL(void) {
   m_program->link();
   m_program->bind();
 
+  m_MVP_uniform = m_program->uniformLocation("MVP");
+
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Viewport::resizeGL(int w, int h) {
-
+  m_camera.screen_width = w;
+  m_camera.screen_height = h;
 }
+
+static unsigned int frame_count = 0;
+
+#include <iostream>
 
 void Viewport::paintGL(void) {
   const qreal retinaScale = devicePixelRatio();
@@ -80,11 +95,22 @@ void Viewport::paintGL(void) {
 
   m_program->bind();
 
+  QMatrix4x4 model;
+  model.rotate(frame_count, 0.5f, 0.0f, 0.0f);
+
+  std::cout << frame_count << "\n";
+
+  QMatrix4x4 MVP_matrix = getCameraMatrix(m_camera) * model;
+
+  m_program->setUniformValue(m_MVP_uniform, MVP_matrix);
+
   glBindVertexArray(m_mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
   glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, nullptr);
 
   m_program->release();
+
+  ++frame_count;
 
   requestUpdate();
 }

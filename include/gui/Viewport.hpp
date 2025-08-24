@@ -5,6 +5,7 @@
 #include <QOpenGLShaderProgram>
 
 #include "gui/Mesh.hpp"
+#include "gui/Camera.hpp"
 
 class Viewport : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core {
   Q_OBJECT
@@ -22,5 +23,8 @@ protected:
 private:
 
   QOpenGLShaderProgram* m_program = nullptr;
+  Camera m_camera;
   Mesh m_mesh;
+  GLint m_MVP_uniform;
+
 };
