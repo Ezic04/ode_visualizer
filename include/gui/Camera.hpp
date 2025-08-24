@@ -1,16 +1,66 @@
 #pragma once
 
+#include <cstdint>
+
+#include <QVector2D>
 #include <QVector3D>
 #include <QMatrix4x4>
+#include <qquaternion.h>
+#include <qvectornd.h>
 
-struct Camera {
-  QVector3D position = QVector3D(0.0f, 0.0f, 0.0f);
-  QVector3D rotation = QVector3D(0.0f, 0.0f, 0.0f);
-  float FOV = 45.0f;
-  float near_clip_plane = 0.1f;
-  float far_clip_plane = 100.0f;
-  uint16_t screen_width = 800;
-  uint16_t screen_height = 600;
+class Camera {
+public:
+
+  Camera(void);
+
+  void zoom(const float zoom);
+  void move(const QVector2D& offset);
+  void orbit(const QVector2D& offset);
+  void resetTransform(void);
+
+
+  inline void setFOV(const float FOV) { m_FOV = FOV; }
+  inline void setNearClipDistance(const float distance) { m_near_clip_distance = distance; }
+  inline void setFarClipDistance(const float distance) { m_far_clip_distance = distance; }
+
+  inline void setScreenWidth(const float width) { m_screen_width = width; }
+  inline void setScreenHeight(const float height) { m_screen_height = height; }
+
+
+
+  QMatrix4x4 getCameraMatrix(void) const;
+
+  inline QVector3D getPosition(void) const { return m_position; }
+  inline QVector3D getFocusPoint(void) const { return m_focus_point; }
+
+  inline float getFOV(void) const { return m_FOV; }
+  inline float getNearClipDistance(void) const { return m_near_clip_distance; }
+  inline float getFarClipDistance(void) const { return m_far_clip_distance; }
+
+  inline uint16_t getScreenWidth(void) const { return m_screen_width; }
+  inline uint16_t getScreenHeight(void) const { return m_screen_height; }
+
+private:
+
+  void recalculateVectors(void);
+  void recalculatePosition(void);
+
+  QVector3D m_position;
+  QQuaternion m_rotation;
+
+  QVector3D m_front;
+  QVector3D m_right;
+  QVector3D m_up;
+
+  QVector3D m_focus_point;
+
+  float m_focus_point_distance;
+  
+  float m_FOV = 45.0f;
+  float m_near_clip_distance = 0.1f;
+  float m_far_clip_distance = 100.0f;
+
+  uint16_t m_screen_width = 800;
+  uint16_t m_screen_height = 600;
+
 };
-
-QMatrix4x4 getCameraMatrix(const Camera& camera);

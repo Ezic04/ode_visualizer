@@ -1,5 +1,8 @@
 #pragma once
 
+#include <QMouseEvent>
+#include <QWheelEvent>
+
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions_4_5_Core>
 #include <QOpenGLShaderProgram>
@@ -20,11 +23,18 @@ protected:
   virtual void resizeGL(int w, int h) override;
   virtual void paintGL(void) override;
 
+  virtual void mousePressEvent(QMouseEvent* event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+  virtual void mouseMoveEvent(QMouseEvent* event) override;
+  virtual void wheelEvent(QWheelEvent* event) override;
+
 private:
 
   QOpenGLShaderProgram* m_program = nullptr;
   Camera m_camera;
   Mesh m_mesh;
   GLint m_MVP_uniform;
+
+  QPoint m_last_mouse_position;
 
 };

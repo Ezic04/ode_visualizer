@@ -1,8 +1,9 @@
 #include "gui/Viewport.hpp"
 #include "gui/Camera.hpp"
 
-#include <qmatrix4x4.h>
-#include <qwindowdefs.h>
+#include <qnamespace.h>
+#include <qopenglwindow.h>
+#include <qvectornd.h>
 #include <stdexcept>
 
 /* DELETE THIS */
@@ -44,9 +45,8 @@ Viewport::Viewport(
       parent
     )
 {
-  m_camera.screen_width = width();
-  m_camera.screen_height = height();
-  m_camera.position = {0.0f, 0.0f, -4.0f};
+  m_camera.setScreenWidth(width());
+  m_camera.setScreenHeight(height());
 }
 
 Viewport::~Viewport(void) {
@@ -76,8 +76,8 @@ void Viewport::initializeGL(void) {
 }
 
 void Viewport::resizeGL(int w, int h) {
-  m_camera.screen_width = w;
-  m_camera.screen_height = h;
+  m_camera.setScreenWidth(w);
+  m_camera.setScreenHeight(h);
 }
 
 static unsigned int frame_count = 0;
@@ -95,7 +95,7 @@ void Viewport::paintGL(void) {
 
   QMatrix4x4 model;
   model.rotate(frame_count, 0.5f, 0.0f, 0.0f);
-  QMatrix4x4 MVP_matrix = getCameraMatrix(m_camera) * model;
+  QMatrix4x4 MVP_matrix = m_camera.getCameraMatrix() * model;
 
   m_program->setUniformValue(m_MVP_uniform, MVP_matrix);
 
@@ -105,7 +105,51 @@ void Viewport::paintGL(void) {
 
   m_program->release();
 
-  ++frame_count;
+  // ++frame_count;
 
   requestUpdate();
+}
+
+void Viewport::mousePressEvent(QMouseEvent* event) {
+  Qt::MouseButtons button_flags = event->buttons();
+
+  if (button_flags & Qt::MiddleButton
+    || button_flags & Qt::RightButton
+  ) { m_last_mouse_position = event->pos(); }
+};
+
+void Viewport::mouseDoubleClickEvent(QMouseEvent* event) {
+  if (event->buttons() & Qt::RightButton) {
+    m_camera.resetTransform();
+  }
+}
+
+void Viewport::mouseMoveEvent(QMouseEvent* event) {
+  Qt::MouseButtons button_flags = event->buttons();
+
+  if (button_flags & Qt::MiddleButton) {
+    QPoint pos_delta = event->pos() - m_last_mouse_position;
+    m_last_mouse_position = event->pos();
+    m_camera.move(QVector2D(
+      pos_delta.x() / 100.0f, 
+      pos_delta.y() / 100.0f
+    ));
+  }
+
+  if (button_flags & Qt::RightButton) {
+    QPoint pos_delta = event->pos() - m_last_mouse_position;
+    m_last_mouse_position = event->pos();
+    m_camera.orbit(QVector2D(
+      pos_delta.x() / 10.0f, 
+      pos_delta.y() / 10.0f
+    ));
+  }
+
+}
+
+void Viewport::wheelEvent(QWheelEvent* event) {
+  QPoint degrees = event->angleDelta();
+  if (!degrees.isNull()) {
+    m_camera.zoom(degrees.y() / 100.0f);
+  }
 }
