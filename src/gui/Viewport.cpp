@@ -82,8 +82,6 @@ void Viewport::resizeGL(int w, int h) {
 
 static unsigned int frame_count = 0;
 
-#include <iostream>
-
 void Viewport::paintGL(void) {
   const qreal retinaScale = devicePixelRatio();
   glViewport(0, 0, width() * retinaScale, height() * retinaScale);
@@ -97,9 +95,6 @@ void Viewport::paintGL(void) {
 
   QMatrix4x4 model;
   model.rotate(frame_count, 0.5f, 0.0f, 0.0f);
-
-  std::cout << frame_count << "\n";
-
   QMatrix4x4 MVP_matrix = getCameraMatrix(m_camera) * model;
 
   m_program->setUniformValue(m_MVP_uniform, MVP_matrix);
