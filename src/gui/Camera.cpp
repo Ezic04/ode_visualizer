@@ -1,9 +1,6 @@
 #include "gui/Camera.hpp"
 
 #include <QtMath>
-#include <qmatrix4x4.h>
-#include <qquaternion.h>
-#include <qvectornd.h>
 
 static const QVector3D k_world_up(0.0f, 1.0f, 0.0f);
 static const QVector3D k_world_origin(0.0f, 0.0f, 0.0f);
@@ -24,7 +21,6 @@ void Camera::move(const QVector2D& offset) {
 }
 
 void Camera::orbit(const QVector2D& offset) {
-
   QQuaternion yaw = QQuaternion::fromAxisAndAngle(0.0f, -1.0f, 0.0f, offset.x());
   QQuaternion pitch = QQuaternion::fromAxisAndAngle(-1.0f, 0.0f, 0.0f, offset.y());
 

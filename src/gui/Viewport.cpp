@@ -1,9 +1,6 @@
 #include "gui/Viewport.hpp"
 #include "gui/Camera.hpp"
 
-#include <qnamespace.h>
-#include <qopenglwindow.h>
-#include <qvectornd.h>
 #include <stdexcept>
 
 /* DELETE THIS */
@@ -80,8 +77,6 @@ void Viewport::resizeGL(int w, int h) {
   m_camera.setScreenHeight(h);
 }
 
-static unsigned int frame_count = 0;
-
 void Viewport::paintGL(void) {
   const qreal retinaScale = devicePixelRatio();
   glViewport(0, 0, width() * retinaScale, height() * retinaScale);
@@ -93,9 +88,7 @@ void Viewport::paintGL(void) {
 
   m_program->bind();
 
-  QMatrix4x4 model;
-  model.rotate(frame_count, 0.5f, 0.0f, 0.0f);
-  QMatrix4x4 MVP_matrix = m_camera.getCameraMatrix() * model;
+  QMatrix4x4 MVP_matrix = m_camera.getCameraMatrix();
 
   m_program->setUniformValue(m_MVP_uniform, MVP_matrix);
 
@@ -104,8 +97,6 @@ void Viewport::paintGL(void) {
   glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, nullptr);
 
   m_program->release();
-
-  // ++frame_count;
 
   requestUpdate();
 }
