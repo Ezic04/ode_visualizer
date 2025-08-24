@@ -3,7 +3,8 @@
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions_4_5_Core>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
+
+#include "gui/Mesh.hpp"
 
 class Viewport : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core {
   Q_OBJECT
@@ -20,9 +21,6 @@ protected:
 
 private:
 
-  GLint m_matrixUniform = 0;
-  QOpenGLBuffer m_vbo;
-  QOpenGLShaderProgram *m_program = nullptr;
-  int m_frame = 0;
-
+  QOpenGLShaderProgram* m_program = nullptr;
+  Mesh m_mesh;
 };
