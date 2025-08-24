@@ -1,21 +1,21 @@
 #include "gui/Viewport.hpp"
-
-#include <QScreen>
+#include <stdexcept>
 
 /* DELETE THIS */
-static const char vertexShaderSource[]= "attribute highp vec4 posAttr;\n"
-                                        "attribute lowp vec4 colAttr;\n"
-                                        "varying lowp vec4 col;\n"
-                                        "uniform highp mat4 matrix;\n"
-                                        "void main() {\n"
-                                        "   col = colAttr;\n"
-                                        "   gl_Position = matrix * posAttr;\n"
-                                        "}\n";
+static const char vert_source[] = "#version 330                                   \n"
+                                  "layout (location = 0) in vec3 pos;             \n"
+                                  "out vec4 vColour;                              \n"
+                                  "void main() {                                  \n"
+                                  "  gl_Position = vec4(pos, 1.0);                \n"
+                                  "	 vColour = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);\n"
+                                  "}                                              \n";
 
-static const char fragmentShaderSource[]= "varying lowp vec4 col;\n"
-                                          "void main() {\n"
-                                          "   gl_FragColor = col;\n"
-                                          "}\n";
+static const char frag_source[] = "#version 330           \n"
+                                  "in vec4 vColour;       \n"
+                                  "out vec4 colour;       \n"
+                                  "void main() {          \n"
+                                  "    colour = vColour;  \n"
+                                  "}                      \n";
 
 std::vector<float> vertices = {
   -1.0f, -1.0f, 0.0f,
@@ -49,31 +49,20 @@ Viewport::~Viewport(void) {
 }
 
 void Viewport::initializeGL(void) {
-  this->initializeOpenGLFunctions();
 
-  static const GLfloat vertices_colors[] = {+0.0f, +0.707f, 1.0f,  0.0f,    0.0f, -0.5f, -0.500f, 0.0f,
-                                            1.0f,  0.0f,    +0.5f, -0.500f, 0.0f, 0.0f,  1.0f};
+  // make the program shit the bed
+  if (!this->initializeOpenGLFunctions()) { 
+    throw std::runtime_error("Failed to initialize viewport's OpenGL context.");
+  }
 
-  m_vbo.create();
-  m_vbo.bind();
-  m_vbo.allocate(vertices_colors, sizeof(vertices_colors));
+  m_mesh.initializeGL(vertices, indices);
 
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), nullptr);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), reinterpret_cast<void *>(2 * sizeof(GLfloat)));
-
-  m_program = new QOpenGLShaderProgram(this);
-  m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
-  m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
-  m_program->bindAttributeLocation("posAttr", 0);
-  m_program->bindAttributeLocation("colAttr", 1);
+  m_program = new QOpenGLShaderProgram;
+  m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vert_source);
+  m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, frag_source);
   m_program->link();
   m_program->bind();
 
-  m_matrixUniform = m_program->uniformLocation("matrix");
-  Q_ASSERT(m_matrixUniform != -1);
 }
 
 void Viewport::resizeGL(int w, int h) {
@@ -84,28 +73,18 @@ void Viewport::paintGL(void) {
   const qreal retinaScale = devicePixelRatio();
   glViewport(0, 0, width() * retinaScale, height() * retinaScale);
 
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT 
+    | GL_DEPTH_BUFFER_BIT 
+    | GL_STENCIL_BUFFER_BIT
+  );
 
   m_program->bind();
 
-  QMatrix4x4 matrix;
-  matrix.perspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-  matrix.translate(0, 0, -2);
-  matrix.rotate(100.0f * m_frame / screen()->refreshRate(), 0, 1, 0);
-
-  m_program->setUniformValue(m_matrixUniform, matrix);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+  glBindVertexArray(m_mesh.getVAO());
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
+  glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, nullptr);
 
   m_program->release();
-
-  ++m_frame;
 
   requestUpdate();
 }
