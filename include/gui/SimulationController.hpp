@@ -3,11 +3,11 @@
 #include "simulation/Simulation.hpp"
 #include <Qobject>
 
-class SimulationControler : public QObject {
+class SimulationController : public QObject {
   Q_OBJECT
 
 public:
-  SimulationControler();
+  SimulationController();
   void run();
 
 signals:
