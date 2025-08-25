@@ -1,12 +1,12 @@
 #include "gui/MainWindow.hpp"
 
-#include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QWidget>
 
 #include "gui/Viewport.hpp"
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   auto viewport = QWidget::createWindowContainer(new Viewport);
   auto test_btn = new QPushButton("Test Button");
 
@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow(void) {
-  
-  // free resources
 
+  // free resources
 }
