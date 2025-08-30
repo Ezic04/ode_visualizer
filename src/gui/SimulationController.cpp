@@ -1,16 +1,23 @@
 #include "gui/SimulationController.hpp"
 
+#include "backend/parser.hpp"
 #include <vector>
 
-#include "solver/parser.hpp"
+using namespace simulation;
 
 SimulationController::SimulationController() {
-  auto [system, var_names] = solver::parseSystem({"x' = y", "y' = -x", "z' = 0"});
-  sim.setSystem(system, var_names);
-  sim.addEntity({1.0f, 0.0f, 0.0f});
+  auto [system, var_names] = parser::parseSystem("x' = y\ny' = -x\nz' = 0");
+  simulation.setEquationsSystem(system, var_names);
+  simulation.addEntity({1.0f, 0.0f, 0.0f});
 }
 
-void SimulationController::nextPos() {
-  sim.nextStep();
-  emit newPositions(sim.getPositions());
+void SimulationController::updateSimulation() {
+  simulation.update();
+  const std::vector<FloatType> &positions = simulation.getPositions()[0];
+  emit simulationUpdated({{positions[0], positions[1], positions[2]}});
+}
+
+void SimulationController::updateEquations(const std::string &equations) {
+  auto [system, var_names] = parser::parseSystem(equations);
+  simulation.setEquationsSystem(system, var_names);
 }

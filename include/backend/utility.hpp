@@ -1,6 +1,9 @@
 #pragma once
+#include <cassert>
 
-#include "utility/utility.hpp"
+#define assertm(exp, msg) assert((void(msg), exp))
+
+using FloatType = double;
 
 namespace expr {
 /**

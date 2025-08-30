@@ -1,10 +1,9 @@
 #pragma once
-#include <memory>
 #include <vector>
 
-#include "utility/utility.hpp"
+#include "backend/utility.hpp"
 
-namespace expr::dynamic {
+namespace expr {
 
 /**
  * Abstract base class for all expression nodes.
@@ -19,7 +18,7 @@ struct Expr {
   virtual ~Expr() = default;
 };
 
-using ExprPtr = std::shared_ptr<Expr>;
+using ExprPtr = Expr *;
 /// Supported unary operations
 enum class UnaryOpType { kNeg, kSqrt, kCbrt, kSin, kCos, kTan, kExp, kLog };
 /// Supported binary operations
@@ -50,6 +49,7 @@ struct Var : Expr {
  */
 struct IntPow : Expr {
   IntPow(ExprPtr base, int exponent) : m_base(std::move(base)), m_exponent(exponent) {}
+  ~IntPow() { delete m_base; }
   FloatType eval(const std::vector<FloatType> &vars) const override;
 
   ExprPtr m_base; ///< base expression
@@ -61,6 +61,7 @@ struct IntPow : Expr {
  */
 struct UnaryOp : Expr {
   explicit UnaryOp(UnaryOpType op, ExprPtr expr) : m_operator(op), m_operand(std::move(expr)) {}
+  ~UnaryOp() { delete m_operand; }
   FloatType eval(const std::vector<FloatType> &vars) const override;
 
   UnaryOpType m_operator; ///< operator type
@@ -73,6 +74,7 @@ struct UnaryOp : Expr {
 struct BinaryOp : Expr {
   explicit BinaryOp(BinaryOpType op, ExprPtr left, ExprPtr right)
       : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
+  ~BinaryOp() { delete m_left, delete m_right; }
   FloatType eval(const std::vector<FloatType> &vars) const override;
 
   BinaryOpType m_operator; ///< operator type
@@ -80,4 +82,4 @@ struct BinaryOp : Expr {
   ExprPtr m_right;         ///< right operand
 };
 
-} // namespace expr::dynamic
+} // namespace expr

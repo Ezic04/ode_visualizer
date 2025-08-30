@@ -1,13 +1,13 @@
-#include "expr/dynamic.hpp"
+#include "backend/expr.hpp"
 
 #include <cmath>
 #include <cstdlib>
 #include <stdexcept>
 #include <utility>
 
-#include "expr/uility.hpp"
+// #include "backend/uility.hpp"
 
-namespace expr::dynamic {
+namespace expr {
 
 FloatType IntPow::eval(const std::vector<FloatType> &vars) const {
   return intPow(m_base->eval(vars), m_exponent);
@@ -46,4 +46,4 @@ FloatType BinaryOp::eval(const std::vector<FloatType> &vars) const {
   std::unreachable();
 }
 
-} // namespace expr::dynamic
+} // namespace expr

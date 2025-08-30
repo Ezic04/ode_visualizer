@@ -7,12 +7,9 @@
 class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
-
-  MainWindow(QWidget* parent = nullptr);
+  MainWindow(QWidget *parent = nullptr);
   ~MainWindow(void);
 
 private:
-
-  SimulationController m_simulation_controller;
-
+  SimulationController *m_simulation_controller;
 };
