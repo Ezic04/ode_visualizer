@@ -3,8 +3,7 @@
 #include <QVector2D>
 #include <QVector3D>
 #include <QMatrix4x4>
-#include <qquaternion.h>
-#include <qvectornd.h>
+#include <QQuaternion>
 
 class Camera {
 public:
@@ -16,12 +15,10 @@ public:
   void orbit(const QVector2D& offset);
   void resetTransform(void);
 
-
   inline void setFOV(const float FOV) { m_FOV = FOV; }
   inline void setNearClipDistance(const float distance) { m_near_clip_distance = distance; }
   inline void setFarClipDistance(const float distance) { m_far_clip_distance = distance; }
   inline void setAspectRatio(const float ratio) { m_aspect_ratio = ratio; }
-
 
   QMatrix4x4 getCameraMatrix(void) const;
 
