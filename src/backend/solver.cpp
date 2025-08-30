@@ -1,11 +1,13 @@
-#include "solver/solver.hpp"
+#include "backend/solver.hpp"
 
-#include "utility/utility.hpp"
+#include "backend/utility.hpp"
 #include <vector>
+
+using namespace expr;
 
 namespace solver {
 
-std::vector<FloatType> euler(const System &system, const std::vector<FloatType> &vars, FloatType step) {
+std::vector<FloatType> euler(const std::vector<ExprPtr> &system, const std::vector<FloatType> &vars, FloatType step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
@@ -15,7 +17,7 @@ std::vector<FloatType> euler(const System &system, const std::vector<FloatType> 
   return std::move(new_state);
 }
 
-std::vector<FloatType> heun(const System &system, const std::vector<FloatType> &vars, FloatType step) {
+std::vector<FloatType> heun(const std::vector<ExprPtr> &system, const std::vector<FloatType> &vars, FloatType step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
@@ -36,7 +38,7 @@ std::vector<FloatType> heun(const System &system, const std::vector<FloatType> &
   return std::move(new_state);
 }
 
-std::vector<FloatType> rk4(const System &system, const std::vector<FloatType> &vars, FloatType step) {
+std::vector<FloatType> rk4(const std::vector<ExprPtr> &system, const std::vector<FloatType> &vars, FloatType step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");

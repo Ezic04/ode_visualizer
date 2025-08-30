@@ -1,13 +1,21 @@
-#include "expr/parser.hpp"
+#include "backend/parser.hpp"
 
 #include <cctype>
 #include <cmath>
+#include <exception>
+#include <ranges>
 #include <string>
 #include <string_view>
 
-using namespace expr::dynamic;
+#include "backend/expr.hpp"
+#include "backend/parser.hpp"
 
-namespace {
+#include <iostream>
+#include <vector>
+
+using namespace expr;
+
+namespace parser {
 
 ExprPtr parseAdd(std::string_view &s, const VariableMap &var_map);
 
@@ -63,7 +71,7 @@ ExprPtr parseNumber(std::string_view &s) {
   if (i == 0) throw ParserException("expected number");
   double value = std::stod(std::string(s.substr(0, i)));
   s.remove_prefix(i);
-  return std::make_shared<Const>(value);
+  return new Const(value);
 }
 
 ExprPtr parseAtom(std::string_view &s, const VariableMap &var_map) {
@@ -78,9 +86,9 @@ ExprPtr parseAtom(std::string_view &s, const VariableMap &var_map) {
   if (consume(s, '(')) {
     ExprPtr arg = parseAdd(s, var_map);
     if (!consume(s, ')')) { throw ParserException("expected ')' after function call"); }
-    return std::make_shared<UnaryOp>(getUnaryOp(name), arg);
+    return new UnaryOp(getUnaryOp(name), arg);
   }
-  return std::make_shared<Var>(var_map.name_to_index.at(name));
+  return new Var(var_map.name_to_index.at(name));
 }
 
 ExprPtr parsePow(std::string_view &s, const VariableMap &var_map) {
@@ -88,23 +96,22 @@ ExprPtr parsePow(std::string_view &s, const VariableMap &var_map) {
   skipWhitespace(s);
   if (!consume(s, '^')) return base;
   ExprPtr exp = parsePow(s, var_map);
-  if (auto unary = dynamic_cast<UnaryOp *>(exp.get()); unary && unary->m_operator == UnaryOpType::kNeg) {
-    if (auto c = dynamic_cast<Const *>(unary->m_operand.get())) {
+  if (auto unary = dynamic_cast<UnaryOp *>(exp); unary && unary->m_operator == UnaryOpType::kNeg) {
+    if (auto c = dynamic_cast<Const *>(unary->m_operand)) {
       double val = -c->m_value;
-      if (std::abs(val - std::round(val)) < kEps)
-        return std::make_shared<IntPow>(base, static_cast<int>(std::round(val)));
+      if (std::abs(val - std::round(val)) < kEps) return new IntPow(base, static_cast<int>(std::round(val)));
     }
   }
-  if (auto c = dynamic_cast<Const *>(exp.get())) {
+  if (auto c = dynamic_cast<Const *>(exp)) {
     if (std::abs(c->m_value - std::round(c->m_value)) < kEps)
-      return std::make_shared<IntPow>(base, static_cast<int>(std::round(c->m_value)));
+      return new IntPow(base, static_cast<int>(std::round(c->m_value)));
   }
   throw ParserException("only integer exponents supported");
 }
 
 ExprPtr parseUnary(std::string_view &s, const VariableMap &var_map) {
   skipWhitespace(s);
-  if (consume(s, '-')) { return std::make_shared<UnaryOp>(UnaryOpType::kNeg, parseUnary(s, var_map)); }
+  if (consume(s, '-')) { return new UnaryOp(UnaryOpType::kNeg, parseUnary(s, var_map)); }
   return parsePow(s, var_map);
 }
 
@@ -122,7 +129,7 @@ ExprPtr parseMul(std::string_view &s, const VariableMap &var_map) {
     }
     s.remove_prefix(1);
     auto rhs = parseUnary(s, var_map);
-    lhs = std::make_shared<BinaryOp>(type, lhs, rhs);
+    lhs = new BinaryOp(type, lhs, rhs);
   }
 }
 
@@ -140,13 +147,9 @@ ExprPtr parseAdd(std::string_view &s, const VariableMap &var_map) {
     }
     s.remove_prefix(1);
     auto rhs = parseMul(s, var_map);
-    lhs = std::make_shared<BinaryOp>(type, lhs, rhs);
+    lhs = new BinaryOp(type, lhs, rhs);
   }
 }
-
-} // namespace
-
-namespace expr::dynamic {
 
 ExprPtr parseExpr(const std::string &str, const VariableMap &vars) {
   std::string_view s(str);
@@ -156,4 +159,51 @@ ExprPtr parseExpr(const std::string &str, const VariableMap &vars) {
   return expr;
 }
 
-} // namespace expr::dynamic
+std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string &equations,
+                                                               std::string free_variable) {
+  std::vector<expr::ExprPtr> system;
+  VariableMap var_names;
+  std::vector<std::string> exprs;
+  for (auto line_range : equations | std::views::split('\n')) {
+    std::string line(line_range.begin(), line_range.end());
+
+    auto not_space = [](unsigned char c) { return !std::isspace(c); };
+    auto begin_it = std::find_if(line.begin(), line.end(), not_space);
+    auto end_it = std::find_if(line.rbegin(), line.rend(), not_space).base();
+
+    if (begin_it >= end_it) continue;
+    std::string trimmed(begin_it, end_it);
+
+    auto eq_pos = trimmed.find('=');
+    if (eq_pos == std::string::npos) { throw ParserException("equation must contain '='"); }
+
+    std::string lhs = trimmed.substr(0, eq_pos);
+    std::string rhs = trimmed.substr(eq_pos + 1);
+
+    auto strip = [&](std::string s) {
+      auto b = std::find_if(s.begin(), s.end(), not_space);
+      auto e = std::find_if(s.rbegin(), s.rend(), not_space).base();
+      return (b >= e) ? std::string{} : std::string(b, e);
+    };
+
+    lhs = strip(lhs);
+    rhs = strip(rhs);
+
+    if (lhs.empty() || rhs.empty()) throw ParserException("equation malformed");
+    if (lhs.back() != '\'') throw ParserException("lhs must be derivative of variable");
+    lhs.pop_back();
+
+    var_names.index_of(lhs);
+    exprs.emplace_back(rhs);
+  }
+  var_names.index_of(free_variable);
+
+  for (const auto &expr : exprs) {
+    try {
+      system.emplace_back(parseExpr(expr, var_names));
+    } catch (std::exception &e) { std::cout << e.what() << '\n'; }
+  }
+  return {system, var_names};
+}
+
+} // namespace parser

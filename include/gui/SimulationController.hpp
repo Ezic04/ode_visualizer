@@ -1,26 +1,22 @@
 #pragma once
 
-#include "simulation/Simulation.hpp"
+#include "backend/Simulation.hpp"
 #include <Qobject>
+#include <array>
 
 class SimulationController : public QObject {
   Q_OBJECT
 public:
-
   SimulationController();
   void run();
 
 signals:
-
-  void newPositions(std::vector<std::vector<FloatType>> positions);
+  void simulationUpdated(const std::vector<std::array<FloatType, 3>> &positions);
 
 public slots:
-
-  void nextPos();
-  void setEquations(std::string equations) {};
+  void updateEquations(const std::string &equations);
+  void updateSimulation();
 
 private:
-
-  Simulation sim;
-
+  simulation::Simulation simulation;
 };

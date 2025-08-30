@@ -1,19 +1,25 @@
 #include "gui/MainWindow.hpp"
 
-#include <QWidget>
-#include <QPushButton>
 #include <QHBoxLayout>
+#include <QPushButton>
+#include <QWidget>
 
-#include "gui/Viewport.hpp"
 #include "gui/ControlPanel.hpp"
+#include "gui/SimulationController.hpp"
+#include "gui/Viewport.hpp"
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-  auto viewport = QWidget::createWindowContainer(new Viewport);
-  auto control_panel = new ControlPanel();
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_simulation_controller(new SimulationController) {
+  auto viewport = new Viewport;
+  connect(m_simulation_controller, &SimulationController::simulationUpdated, viewport, &Viewport::renderFrame);
+  connect(viewport, &Viewport::frameFinished, m_simulation_controller, &SimulationController::updateSimulation);
+
+  auto control_panel = new ControlPanel;
+  connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller,
+          &SimulationController::updateEquations);
 
   auto layout = new QHBoxLayout();
   layout->addWidget(control_panel);
-  layout->addWidget(viewport);
+  layout->addWidget(QWidget::createWindowContainer(viewport));
 
   auto central = new QWidget(this);
   central->setLayout(layout);
@@ -25,7 +31,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow(void) {
-  
-  // free resources
 
+  // free resources
 }

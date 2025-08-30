@@ -2,9 +2,9 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include "expr/dynamic.hpp"
+#include "backend/expr.hpp"
 
-namespace expr::dynamic {
+namespace parser {
 
 struct VariableMap {
   std::unordered_map<std::string, size_t> name_to_index;
@@ -30,6 +30,9 @@ public:
  * @param str_expr the string expression to parse
  * @return a shared pointer to the root of the expression tree
  */
-ExprPtr parseExpr(const std::string &str_expr, const VariableMap &vars);
+expr::ExprPtr parseExpr(const std::string &str_expr, const VariableMap &vars);
 
-} // namespace expr::dynamic
+std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string &equations,
+                                                               std::string free_varible = "t");
+
+} // namespace parser
