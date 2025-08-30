@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <QMouseEvent>
 #include <QWheelEvent>
 
@@ -28,7 +30,19 @@ protected:
   virtual void mouseMoveEvent(QMouseEvent* event) override;
   virtual void wheelEvent(QWheelEvent* event) override;
 
+public slots:
+
+  // idk what vector it should be, int as a placeholder
+  void onStateUpdate(const std::vector<int>& state);
+
+signals:
+
+  void frameFinished(void);
+
 private:
+
+  void updateGLViewport(void);
+  QVector4D getVieportSize(void);
 
   QOpenGLShaderProgram* m_program = nullptr;
   Camera m_camera;
