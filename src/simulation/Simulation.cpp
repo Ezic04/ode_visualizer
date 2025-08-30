@@ -1,29 +1,21 @@
 #include "simulation/Simulation.hpp"
 
-using namespace simulation;
-
-Simulation::Simulation(
-  solver::System system, 
-  expr::VariableMap var_names
-) : m_system(system), 
-    m_var_names(var_names), 
-    m_time(0)
-{
-
-  //initialize
-  
+void Simulation::setSystem(solver::System system, expr::VariableMap var_names) {
+  m_system = system;
+  m_var_names = var_names;
+  m_time = 0;
 }
 
-Simulation::~Simulation(void) {
-
-  // free resources
-
+void Simulation::addEntity(const std::vector<double> &position) {
+  m_positions.emplace_back(position);
 }
 
-void Simulation::run(void) {
+void Simulation::nextStep(void) {
+  for (auto &pos : m_positions) { pos = solver::rk4(m_system, {pos[0], pos[1], pos[2], m_time}, step); }
+}
 
-  // main logic
-
+std::vector<std::vector<FloatType>> Simulation::getPositions() {
+  return m_positions;
 }
 
 // void Simulation::addEntity(const graphics::Vec3 &position) {
