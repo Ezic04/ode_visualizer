@@ -1,6 +1,7 @@
 #include "gui/Viewport.hpp"
-#include "gui/Camera.hpp"
 
+#include <qvectornd.h>
+#include <qwindowdefs.h>
 #include <stdexcept>
 
 /* DELETE THIS */
@@ -42,13 +43,16 @@ Viewport::Viewport(
       parent
     )
 {
-  m_camera.setScreenWidth(width());
-  m_camera.setScreenHeight(height());
+
+  // init here
+
 }
 
 Viewport::~Viewport(void) {
 
   // free resources
+  
+  delete(m_program);
 
 }
 
@@ -73,18 +77,22 @@ void Viewport::initializeGL(void) {
 }
 
 void Viewport::resizeGL(int w, int h) {
-  m_camera.setScreenWidth(w);
-  m_camera.setScreenHeight(h);
+
 }
 
 void Viewport::paintGL(void) {
-  const qreal retinaScale = devicePixelRatio();
-  glViewport(0, 0, width() * retinaScale, height() * retinaScale);
-
+  QVector4D vieport_size = getVieportSize();
+  glViewport(
+    GLint(vieport_size.x()),
+    GLint(vieport_size.y()), 
+    GLint(vieport_size.z()), 
+    GLint(vieport_size.w())
+  );
   glClear(GL_COLOR_BUFFER_BIT 
     | GL_DEPTH_BUFFER_BIT 
     | GL_STENCIL_BUFFER_BIT
   );
+
 
   m_program->bind();
 
@@ -98,7 +106,9 @@ void Viewport::paintGL(void) {
 
   m_program->release();
 
-  requestUpdate();
+  this->requestUpdate();
+
+  // emit frameFinished();
 }
 
 void Viewport::mousePressEvent(QMouseEvent* event) {
@@ -142,5 +152,37 @@ void Viewport::wheelEvent(QWheelEvent* event) {
   QPoint degrees = event->angleDelta();
   if (!degrees.isNull()) {
     m_camera.zoom(degrees.y() / 100.0f);
+  }
+}
+
+void Viewport::onStateUpdate(const std::vector<int>& state) {
+
+  // update state here
+
+  requestUpdate();
+}
+
+QVector4D Viewport::getVieportSize(void) {
+  const qreal retinaScale = devicePixelRatio();
+  
+  float target_aspect_ratio = m_camera.getAspectRatio();
+  float window_aspect_ratio = this->width() / (float)this->height();
+
+  if (window_aspect_ratio > target_aspect_ratio) { // window is wider
+    int target_height = this->width() / target_aspect_ratio;
+    return QVector4D(
+      0,
+      (this->height() - target_height) / 2.0f,
+      this->width() * retinaScale,
+      target_height * retinaScale
+    );
+  } else { // window is taller
+    int target_width = this->height() * target_aspect_ratio;
+    return QVector4D(
+      (this->width() - target_width) / 2.0f,
+      0,
+      target_width * retinaScale,
+      this->height() * retinaScale
+    );
   }
 }

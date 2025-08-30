@@ -44,8 +44,8 @@ QMatrix4x4 Camera::getCameraMatrix(void) const {
 
   QMatrix4x4 projection;
   projection.perspective(
-    m_FOV, 
-    m_screen_width / (float)m_screen_height, 
+    m_FOV,
+    m_aspect_ratio,
     m_near_clip_distance,
     m_far_clip_distance
   );

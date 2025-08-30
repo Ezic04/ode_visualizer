@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #include <QVector2D>
 #include <QVector3D>
 #include <QMatrix4x4>
@@ -22,10 +20,7 @@ public:
   inline void setFOV(const float FOV) { m_FOV = FOV; }
   inline void setNearClipDistance(const float distance) { m_near_clip_distance = distance; }
   inline void setFarClipDistance(const float distance) { m_far_clip_distance = distance; }
-
-  inline void setScreenWidth(const float width) { m_screen_width = width; }
-  inline void setScreenHeight(const float height) { m_screen_height = height; }
-
+  inline void setAspectRatio(const float ratio) { m_aspect_ratio = ratio; }
 
 
   QMatrix4x4 getCameraMatrix(void) const;
@@ -36,9 +31,7 @@ public:
   inline float getFOV(void) const { return m_FOV; }
   inline float getNearClipDistance(void) const { return m_near_clip_distance; }
   inline float getFarClipDistance(void) const { return m_far_clip_distance; }
-
-  inline uint16_t getScreenWidth(void) const { return m_screen_width; }
-  inline uint16_t getScreenHeight(void) const { return m_screen_height; }
+  inline float getAspectRatio(void) const { return m_aspect_ratio; }
 
 private:
 
@@ -60,7 +53,6 @@ private:
   float m_near_clip_distance = 0.1f;
   float m_far_clip_distance = 100.0f;
 
-  uint16_t m_screen_width = 800;
-  uint16_t m_screen_height = 600;
+  float m_aspect_ratio = 16.0f / 9.0f;
 
 };
