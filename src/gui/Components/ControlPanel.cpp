@@ -1,4 +1,4 @@
-#include "gui/ControlPanel.hpp"
+#include "gui/Components/ControlPanel.hpp"
 
 #include <QString>
 #include <QVBoxLayout>

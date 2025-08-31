@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include "gui/MainWindow.hpp"
+#include "gui/Components/MainWindow.hpp"
 
 class App : public QApplication{
 public:

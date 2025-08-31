@@ -1,10 +1,6 @@
-#include "gui/Viewport.hpp"
+#include "gui/Components/Viewport.hpp"
 
-#include <array>
-#include <qvectornd.h>
-#include <qwindowdefs.h>
 #include <stdexcept>
-#include <vector>
 
 /* DELETE THIS */
 static const char vert_source[] = "#version 330                                   \n"
