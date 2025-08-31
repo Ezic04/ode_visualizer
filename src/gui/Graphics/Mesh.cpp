@@ -7,7 +7,7 @@ Mesh::Mesh(Mesh&& other) {
 
   other.m_VAO = 0;
   other.m_IBO = 0;
-  other.m_VBO = 0;  
+  other.m_VBO = 0;
 }
 
 Mesh::~Mesh(void) {
@@ -20,7 +20,7 @@ bool Mesh::initializeGL(
   const std::vector<float>& vertices,
   const std::vector<unsigned int>& indices 
 ) {
-  if (!this->initializeOpenGLFunctions()) { return false; } 
+  if (!this->initializeOpenGLFunctions()) { return false; }
 
   glGenVertexArrays(1, &m_VAO);
   glBindVertexArray(m_VAO);
@@ -28,18 +28,18 @@ bool Mesh::initializeGL(
   glGenBuffers(1, &m_IBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
   glBufferData(
-    GL_ELEMENT_ARRAY_BUFFER, 
-    sizeof(unsigned int) * indices.size(), 
-    indices.data(), 
+    GL_ELEMENT_ARRAY_BUFFER,
+    sizeof(unsigned int) * indices.size(),
+    indices.data(),
     GL_STATIC_DRAW
   );
 
   glGenBuffers(1, &m_VBO);
   glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
   glBufferData(
-    GL_ARRAY_BUFFER, 
-    sizeof(float) * vertices.size(), 
-    vertices.data(), 
+    GL_ARRAY_BUFFER,
+    sizeof(float) * vertices.size(),
+    vertices.data(),
     GL_STATIC_DRAW
   );
 
