@@ -9,8 +9,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 find_package(Qt6 REQUIRED COMPONENTS
   Widgets
@@ -30,12 +30,12 @@ target_sources(backend PRIVATE
 
 
 
-file(GLOB GUI_INC CMAKE_CONFIGURE_DEPENDS 
+file(GLOB GUI_INC CMAKE_CONFIGURE_DEPENDS
   ${INCLUDE_DIR}/gui/App/*.hpp
   ${INCLUDE_DIR}/gui/Components/*.hpp
   ${INCLUDE_DIR}/gui/Graphics/*.hpp
 )
-file(GLOB GUI_SRC CMAKE_CONFIGURE_DEPENDS 
+file(GLOB GUI_SRC CMAKE_CONFIGURE_DEPENDS
   ${SOURCE_DIR}/gui/App/*.cpp
   ${SOURCE_DIR}/gui/Components/*.cpp
   ${SOURCE_DIR}/gui/Graphics/*.cpp

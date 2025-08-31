@@ -2,7 +2,6 @@
 
 #include <cctype>
 #include <cmath>
-#include <exception>
 #include <ranges>
 #include <string>
 #include <string_view>
@@ -10,7 +9,6 @@
 #include "backend/expr.hpp"
 #include "backend/parser.hpp"
 
-#include <iostream>
 #include <vector>
 
 using namespace expr;
@@ -189,8 +187,8 @@ std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string
     lhs = strip(lhs);
     rhs = strip(rhs);
 
-    if (lhs.empty() || rhs.empty()) throw ParserException("equation malformed");
-    if (lhs.back() != '\'') throw ParserException("lhs must be derivative of variable");
+    if (lhs.empty() || rhs.empty()) { throw ParserException("equation malformed"); }
+    if (lhs.back() != '\'') { throw ParserException("lhs must be derivative of variable"); }
     lhs.pop_back();
 
     var_names.index_of(lhs);
@@ -198,11 +196,7 @@ std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string
   }
   var_names.index_of(free_variable);
 
-  for (const auto &expr : exprs) {
-    try {
-      system.emplace_back(parseExpr(expr, var_names));
-    } catch (std::exception &e) { std::cout << e.what() << '\n'; }
-  }
+  for (const auto &expr : exprs) { system.emplace_back(parseExpr(expr, var_names)); }
   return {system, var_names};
 }
 

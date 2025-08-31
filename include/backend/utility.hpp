@@ -3,8 +3,6 @@
 
 #define assertm(exp, msg) assert((void(msg), exp))
 
-using FloatType = double;
-
 namespace expr {
 /**
  * Computes x raised to integer power n.
@@ -12,7 +10,7 @@ namespace expr {
  * @param n exponent
  * @return x^n
  */
-inline FloatType intPow(double x, int n) {
+inline float intPow(double x, int n) {
   if (n == 0) { return 1.0; }
   if (n < 0) { return 1.0 / intPow(x, -n); }
   double result = 1.0;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <qvectornd.h>
 #include <vector>
 
@@ -11,7 +10,6 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLWindow>
 
-#include "backend/utility.hpp"
 #include "gui/Graphics/Camera.hpp"
 #include "gui/Graphics/Mesh.hpp"
 
@@ -33,7 +31,7 @@ protected:
 
 public slots:
 
-  void renderFrame(const std::vector<std::array<FloatType, 3>> &positions);
+  void renderFrame(const std::vector<std::array<float, 3>> &positions);
 
 signals:
 
@@ -45,7 +43,7 @@ private:
 
   QPoint m_last_mouse_position;
   QOpenGLShaderProgram *m_program = nullptr;
-  
+
   Mesh m_mesh;
   Camera m_camera;
 

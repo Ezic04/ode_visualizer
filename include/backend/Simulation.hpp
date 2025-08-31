@@ -1,27 +1,28 @@
 #pragma once
 
+#include <array>
+#include <chrono>
 #include <vector>
 
 #include "backend/parser.hpp"
-#include "backend/utility.hpp"
-
-constexpr FloatType step = 0.01;
 
 namespace simulation {
 
 class Simulation {
 public:
   Simulation() = default;
-  void setEquationsSystem(std::vector<expr::ExprPtr> system, parser::VariableMap var_names);
+  void setEquationsSystem(const std::vector<expr::ExprPtr> &system, parser::VariableMap var_names);
   void update();
-  void addEntity(const std::vector<FloatType> &position);
-  const std::vector<std::vector<FloatType>> &getPositions();
+  void addEntity(const std::array<float, 3> &position);
+  const std::vector<std::array<float, 3>> &getPositions();
 
 private:
+  std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<float>> m_prev_time =
+      std::chrono::steady_clock::now();
   std::vector<expr::ExprPtr> m_equations_system;
   parser::VariableMap m_var_names;
-  std::vector<std::vector<FloatType>> m_positions;
-  FloatType m_time;
+  std::vector<std::array<float, 3>> m_positions;
+  float m_time = 0.0;
 };
 
 } // namespace simulation

@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "backend/utility.hpp"
-
 namespace expr {
 
 /**
@@ -14,7 +12,7 @@ struct Expr {
    * @param vars map of variable names to values
    * @return evaluated result
    */
-  virtual FloatType eval(const std::vector<FloatType> &vars) const = 0;
+  virtual float eval(const std::vector<float> &vars) const = 0;
   virtual ~Expr() = default;
 };
 
@@ -24,15 +22,15 @@ enum class UnaryOpType { kNeg, kSqrt, kCbrt, kSin, kCos, kTan, kExp, kLog };
 /// Supported binary operations
 enum class BinaryOpType { kAdd, kSub, kMul, kDiv };
 /// Global epsilon used for numerical comparisons
-static constexpr FloatType kEps = 1e-12;
+static constexpr float kEps = 1e-12;
 
 /**
  * Constant node.
  */
 struct Const : Expr {
-  explicit Const(FloatType value) : m_value(value) {}
-  inline FloatType eval(const std::vector<FloatType> &vars) const override { return m_value; }
-  const FloatType m_value; ///< constant value
+  explicit Const(float value) : m_value(value) {}
+  inline float eval(const std::vector<float> &vars) const override { return m_value; }
+  const float m_value; ///< constant value
 };
 
 /**
@@ -40,7 +38,7 @@ struct Const : Expr {
  */
 struct Var : Expr {
   explicit Var(size_t idx) : m_idx(idx) {}
-  inline FloatType eval(const std::vector<FloatType> &vars) const override { return vars.at(m_idx); }
+  inline float eval(const std::vector<float> &vars) const override { return vars.at(m_idx); }
   size_t m_idx; ///< variable index
 };
 
@@ -50,7 +48,7 @@ struct Var : Expr {
 struct IntPow : Expr {
   IntPow(ExprPtr base, int exponent) : m_base(std::move(base)), m_exponent(exponent) {}
   ~IntPow() { delete m_base; }
-  FloatType eval(const std::vector<FloatType> &vars) const override;
+  float eval(const std::vector<float> &vars) const override;
 
   ExprPtr m_base; ///< base expression
   int m_exponent; ///< integer exponent
@@ -62,7 +60,7 @@ struct IntPow : Expr {
 struct UnaryOp : Expr {
   explicit UnaryOp(UnaryOpType op, ExprPtr expr) : m_operator(op), m_operand(std::move(expr)) {}
   ~UnaryOp() { delete m_operand; }
-  FloatType eval(const std::vector<FloatType> &vars) const override;
+  float eval(const std::vector<float> &vars) const override;
 
   UnaryOpType m_operator; ///< operator type
   ExprPtr m_operand;      ///< operand
@@ -75,7 +73,7 @@ struct BinaryOp : Expr {
   explicit BinaryOp(BinaryOpType op, ExprPtr left, ExprPtr right)
       : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
   ~BinaryOp() { delete m_left, delete m_right; }
-  FloatType eval(const std::vector<FloatType> &vars) const override;
+  float eval(const std::vector<float> &vars) const override;
 
   BinaryOpType m_operator; ///< operator type
   ExprPtr m_left;          ///< left operand

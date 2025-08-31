@@ -1,19 +1,20 @@
 #include "gui/Components/Viewport.hpp"
 
+#include <array>
 #include <stdexcept>
+#include <vector>
 
 /* DELETE THIS */
 
 std::vector<float> vertices = {-1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 std::vector<unsigned int> indices = {0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2};
-std::vector<float> instances = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f};
+std::vector<std::array<float, 3>> instances = {};
 
 /* DELETE THIS */
 
 Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
 
   // init here
-
 }
 
 Viewport::~Viewport(void) {
@@ -26,10 +27,8 @@ void Viewport::initializeGL(void) {
   }
 
   m_program = new QOpenGLShaderProgram;
-  if (!m_program) { 
-    throw std::runtime_error("Failed to initialize Viewport's GPU program"); 
-  }
-  
+  if (!m_program) { throw std::runtime_error("Failed to initialize Viewport's GPU program"); }
+
   m_mesh.initializeGL(vertices, indices, instances);
 
   std::string shader_path = SHADER_PATH;
@@ -60,13 +59,7 @@ void Viewport::paintGL(void) {
 
   glBindVertexArray(m_mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
-  glDrawElementsInstanced(
-    GL_TRIANGLES, 
-    m_mesh.getIndexCount(), 
-    GL_UNSIGNED_INT, 
-    0, 
-    m_mesh.getInstanceCount()
-  );
+  glDrawElementsInstanced(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh.getInstanceCount());
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
@@ -106,15 +99,8 @@ void Viewport::wheelEvent(QWheelEvent *event) {
   if (!degrees.isNull()) { m_camera.zoom(degrees.y() / 100.0f); }
 }
 
-void Viewport::renderFrame(const std::vector<std::array<FloatType, 3>> &positions) {
-  std::vector<float> new_instances;
-  for(const auto array : positions) {
-    new_instances.push_back(array[0]);
-    new_instances.push_back(array[1]);
-    new_instances.push_back(array[2]);
-  }
-
-  m_mesh.updateInstances(new_instances);
+void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
+  m_mesh.updateInstances(positions);
   requestUpdate();
 }
 
@@ -126,19 +112,11 @@ QVector4D Viewport::getVieportSize(void) {
 
   if (window_aspect_ratio > target_aspect_ratio) { // window is wider
     int target_height = this->width() / target_aspect_ratio;
-    return QVector4D(
-      0, 
-      (this->height() - target_height) / 2.0f, 
-      this->width() * retinaScale,
-      target_height * retinaScale
-    );
+    return QVector4D(0, (this->height() - target_height) / 2.0f, this->width() * retinaScale,
+                     target_height * retinaScale);
   } else { // window is taller
     int target_width = this->height() * target_aspect_ratio;
-    return QVector4D(
-      (this->width() - target_width) / 2.0f, 
-      0, 
-      target_width * retinaScale,
-      this->height() * retinaScale
-    );
+    return QVector4D((this->width() - target_width) / 2.0f, 0, target_width * retinaScale,
+                     this->height() * retinaScale);
   }
 }
