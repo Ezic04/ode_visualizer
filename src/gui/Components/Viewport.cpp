@@ -6,6 +6,7 @@
 
 std::vector<float> vertices = {-1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 std::vector<unsigned int> indices = {0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2};
+std::vector<float> instances = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f};
 
 /* DELETE THIS */
 
@@ -20,7 +21,6 @@ Viewport::~Viewport(void) {
 }
 
 void Viewport::initializeGL(void) {
-
   if (!this->initializeOpenGLFunctions()) {
     throw std::runtime_error("Failed to initialize viewport's OpenGL context.");
   }
@@ -30,7 +30,7 @@ void Viewport::initializeGL(void) {
     throw std::runtime_error("Failed to initialize Viewport's GPU program"); 
   }
   
-  m_mesh.initializeGL(vertices, indices);
+  m_mesh.initializeGL(vertices, indices, instances);
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
@@ -41,7 +41,8 @@ void Viewport::initializeGL(void) {
   m_program->link();
   m_program->bind();
 
-  m_MVP_uniform = m_program->uniformLocation("MVP");
+  m_model_uniform = m_program->uniformLocation("model_matrix");
+  m_camera_uniform = m_program->uniformLocation("camera_matrix");
 
   glEnable(GL_DEPTH_TEST);
 }
@@ -54,19 +55,21 @@ void Viewport::paintGL(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   m_program->bind();
-
-  QMatrix4x4 MVP_matrix = m_camera.getCameraMatrix();
-
-  QMatrix4x4 model_matrix;
-  model_matrix.translate(m_position.x(), m_position.y(), m_position.z());
-  MVP_matrix *= model_matrix;
-
-  m_program->setUniformValue(m_MVP_uniform, MVP_matrix);
+  m_program->setUniformValue(m_model_uniform, QMatrix4x4());
+  m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
 
   glBindVertexArray(m_mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
-  glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, nullptr);
+  glDrawElementsInstanced(
+    GL_TRIANGLES, 
+    m_mesh.getIndexCount(), 
+    GL_UNSIGNED_INT, 
+    0, 
+    m_mesh.getInstanceCount()
+  );
 
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
   m_program->release();
 
   emit frameFinished();
@@ -104,7 +107,14 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<FloatType, 3>> &positions) {
-  m_position = {float(positions[0][0]), float(positions[0][1]), float(positions[0][2])};
+  std::vector<float> new_instances;
+  for(const auto array : positions) {
+    new_instances.push_back(array[0]);
+    new_instances.push_back(array[1]);
+    new_instances.push_back(array[2]);
+  }
+
+  m_mesh.updateInstances(new_instances);
   requestUpdate();
 }
 
@@ -116,11 +126,19 @@ QVector4D Viewport::getVieportSize(void) {
 
   if (window_aspect_ratio > target_aspect_ratio) { // window is wider
     int target_height = this->width() / target_aspect_ratio;
-    return QVector4D(0, (this->height() - target_height) / 2.0f, this->width() * retinaScale,
-                     target_height * retinaScale);
+    return QVector4D(
+      0, 
+      (this->height() - target_height) / 2.0f, 
+      this->width() * retinaScale,
+      target_height * retinaScale
+    );
   } else { // window is taller
     int target_width = this->height() * target_aspect_ratio;
-    return QVector4D((this->width() - target_width) / 2.0f, 0, target_width * retinaScale,
-                     this->height() * retinaScale);
+    return QVector4D(
+      (this->width() - target_width) / 2.0f, 
+      0, 
+      target_width * retinaScale,
+      this->height() * retinaScale
+    );
   }
 }

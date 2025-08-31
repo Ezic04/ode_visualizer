@@ -43,11 +43,12 @@ private:
   void updateGLViewport(void);
   QVector4D getVieportSize(void);
 
-  QOpenGLShaderProgram *m_program = nullptr;
-  Camera m_camera;
-  Mesh m_mesh;
-  GLint m_MVP_uniform;
-  QVector3D m_position;
-
   QPoint m_last_mouse_position;
+  QOpenGLShaderProgram *m_program = nullptr;
+  
+  Mesh m_mesh;
+  Camera m_camera;
+
+  GLint m_model_uniform;
+  GLint m_camera_uniform;
 };
