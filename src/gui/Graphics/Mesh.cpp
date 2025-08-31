@@ -1,4 +1,4 @@
-#include "gui/Mesh.hpp"
+#include "gui/Graphics/Mesh.hpp"
 
 Mesh::Mesh(Mesh&& other) {
   m_VAO = other.m_VAO;

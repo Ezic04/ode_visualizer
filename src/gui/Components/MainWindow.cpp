@@ -1,12 +1,12 @@
-#include "gui/MainWindow.hpp"
+#include "gui/Components/MainWindow.hpp"
 
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>
 
-#include "gui/ControlPanel.hpp"
-#include "gui/SimulationController.hpp"
-#include "gui/Viewport.hpp"
+#include "gui/Components/Viewport.hpp"
+#include "gui/Components/ControlPanel.hpp"
+#include "gui/Components/SimulationController.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_simulation_controller(new SimulationController) {
   auto viewport = new Viewport;

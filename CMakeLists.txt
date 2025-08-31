@@ -30,8 +30,16 @@ target_sources(backend PRIVATE
 
 
 
-file(GLOB GUI_INC CMAKE_CONFIGURE_DEPENDS ${INCLUDE_DIR}/gui/*.hpp)
-file(GLOB GUI_SRC CMAKE_CONFIGURE_DEPENDS ${SOURCE_DIR}/gui/*.cpp)
+file(GLOB GUI_INC CMAKE_CONFIGURE_DEPENDS 
+  ${INCLUDE_DIR}/gui/App/*.hpp
+  ${INCLUDE_DIR}/gui/Components/*.hpp
+  ${INCLUDE_DIR}/gui/Graphics/*.hpp
+)
+file(GLOB GUI_SRC CMAKE_CONFIGURE_DEPENDS 
+  ${SOURCE_DIR}/gui/App/*.cpp
+  ${SOURCE_DIR}/gui/Components/*.cpp
+  ${SOURCE_DIR}/gui/Graphics/*.cpp
+)
 set(GUI_LIB
   Qt6::Widgets
   Qt6::OpenGLWidgets

@@ -1,7 +1,4 @@
-#include "gui/SimulationController.hpp"
-
-#include "backend/parser.hpp"
-#include <vector>
+#include "gui/Components/SimulationController.hpp"
 
 using namespace simulation;
 

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "backend/Simulation.hpp"
-#include <Qobject>
 #include <array>
+
+#include <Qobject>
+
+#include "backend/Simulation.hpp"
 
 class SimulationController : public QObject {
   Q_OBJECT

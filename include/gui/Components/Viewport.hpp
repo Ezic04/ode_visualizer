@@ -12,8 +12,8 @@
 #include <QOpenGLWindow>
 
 #include "backend/utility.hpp"
-#include "gui/Camera.hpp"
-#include "gui/Mesh.hpp"
+#include "gui/Graphics/Camera.hpp"
+#include "gui/Graphics/Mesh.hpp"
 
 class Viewport : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core {
   Q_OBJECT
