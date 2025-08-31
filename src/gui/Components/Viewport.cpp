@@ -3,25 +3,10 @@
 #include <stdexcept>
 
 /* DELETE THIS */
-static const char vert_source[] = "#version 330                                   \n"
-                                  "layout (location = 0) in vec3 pos;             \n"
-                                  "out vec4 vColour;                              \n"
-                                  "uniform mat4 MVP;                              \n"
-                                  "void main() {                                  \n"
-                                  "  gl_Position = MVP * vec4(pos, 1.0);          \n"
-                                  "	 vColour = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);\n"
-                                  "}                                              \n";
-
-static const char frag_source[] = "#version 330           \n"
-                                  "in vec4 vColour;       \n"
-                                  "out vec4 colour;       \n"
-                                  "void main() {          \n"
-                                  "    colour = vColour;  \n"
-                                  "}                      \n";
 
 std::vector<float> vertices = {-1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-
 std::vector<unsigned int> indices = {0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2};
+
 /* DELETE THIS */
 
 Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
@@ -47,8 +32,12 @@ void Viewport::initializeGL(void) {
   
   m_mesh.initializeGL(vertices, indices);
 
-  m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vert_source);
-  m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, frag_source);
+  std::string shader_path = SHADER_PATH;
+  std::string vert_path = shader_path + "/shader.vert";
+  std::string frag_path = shader_path + "/shader.frag";
+
+  m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, vert_path.c_str());
+  m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, frag_path.c_str());
   m_program->link();
   m_program->bind();
 
