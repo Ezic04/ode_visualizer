@@ -27,25 +27,26 @@ std::vector<unsigned int> indices = {0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2};
 Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
 
   // init here
+
 }
 
 Viewport::~Viewport(void) {
-
-  // free resources
-
   delete (m_program);
 }
 
 void Viewport::initializeGL(void) {
 
-  // make the program shit the bed
   if (!this->initializeOpenGLFunctions()) {
     throw std::runtime_error("Failed to initialize viewport's OpenGL context.");
   }
 
+  m_program = new QOpenGLShaderProgram;
+  if (!m_program) { 
+    throw std::runtime_error("Failed to initialize Viewport's GPU program"); 
+  }
+  
   m_mesh.initializeGL(vertices, indices);
 
-  m_program = new QOpenGLShaderProgram;
   m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vert_source);
   m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, frag_source);
   m_program->link();

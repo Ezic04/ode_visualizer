@@ -5,9 +5,7 @@
 static const QVector3D k_world_up(0.0f, 1.0f, 0.0f);
 static const QVector3D k_world_origin(0.0f, 0.0f, 0.0f);
 
-Camera::Camera(void) {
-  this->resetTransform();
-}
+Camera::Camera(void) { this->resetTransform(); }
 
 void Camera::zoom(const float zoom_distance) {
   m_focus_point_distance -= zoom_distance;
