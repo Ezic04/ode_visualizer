@@ -39,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   this->addDockWidget(Qt::LeftDockWidgetArea, dockable_container);
   this->setMinimumSize(640, 360);
   this->resize(1280, 720);
+
+  m_show_controls_shortcut = new QShortcut(QKeySequence(Qt::Key_C), this);
+  connect(m_show_controls_shortcut, &QShortcut::activated, this, [=](){
+    if (!dockable_container->isVisible()) { dockable_container->show(); } 
+    else { dockable_container->hide(); }
+  });
 }
 
 MainWindow::~MainWindow(void) {
