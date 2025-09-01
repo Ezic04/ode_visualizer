@@ -9,25 +9,20 @@ ControlPanel::ControlPanel(
     QWidget *parent, 
     Qt::WindowFlags f
 ) {
-  this->setFixedWidth(400);
-  this->setMinimumWidth(0);
+  this->setMinimumWidth(300);
+  this->setMaximumWidth(400);
   this->setStyleSheet("background-color: #2E3440");
 
   auto layout = new QVBoxLayout();
   m_textbox = new QTextEdit(this);
   m_submit_button = new QPushButton("Submit", this);
-  m_animation = new QPropertyAnimation(this, "maximumWidth");
 
   if (!layout) { throw std::runtime_error("Failed to create Control Panel layout"); }
   if (!m_textbox) { throw std::runtime_error("Failed to create Control Panel textbox"); }
   if (!m_submit_button) { throw std::runtime_error("Failed to create Control Panel submit button"); }
-  if (!m_animation) { throw std::runtime_error("Failed to create Control Panel animation"); }
 
   connect(m_submit_button, &QPushButton::pressed, this, &ControlPanel::onSubmit);
   
-  m_animation->setDuration(300);
-  m_animation->setEasingCurve(QEasingCurve::InOutQuad);
-
   layout->addWidget(m_textbox);
   layout->addWidget(m_submit_button);
 
@@ -37,26 +32,6 @@ ControlPanel::ControlPanel(
 ControlPanel::~ControlPanel(void) {
   delete m_textbox;
   delete m_submit_button;
-  delete m_animation;
-}
-
-void ControlPanel::mousePressEvent(QMouseEvent* event) {
-  m_hidden ? this->show() : this->hide();
-  m_hidden = !m_hidden;
-}
-
-void ControlPanel::hide(void) {
-  m_animation->stop();
-  m_animation->setStartValue(this->width());
-  m_animation->setEndValue(100);
-  m_animation->start();
-}
-
-void ControlPanel::show(void) {
-  m_animation->stop();
-  m_animation->setStartValue(this->width());
-  m_animation->setEndValue(400);
-  m_animation->start();
 }
 
 void ControlPanel::onSubmit(void) {
