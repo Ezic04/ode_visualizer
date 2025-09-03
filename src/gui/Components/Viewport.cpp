@@ -1,8 +1,10 @@
 #include "gui/Components/Viewport.hpp"
 
 #include <array>
-#include <stdexcept>
 #include <vector>
+#include <stdexcept>
+
+#include <QVector3D>
 
 /* DELETE THIS */
 
@@ -12,9 +14,15 @@ std::vector<std::array<float, 3>> instances = {};
 
 /* DELETE THIS */
 
-Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
+static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f);
 
-  // init here
+Viewport::Viewport(
+  QWindow *parent
+) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) 
+{
+  // QSurfaceFormat format;
+  // format.setSamples(8);
+  // this->setFormat(format);
 }
 
 Viewport::~Viewport(void) {
@@ -26,15 +34,13 @@ void Viewport::initializeGL(void) {
     throw std::runtime_error("Failed to initialize viewport's OpenGL context.");
   }
 
-  m_program = new QOpenGLShaderProgram;
-  if (!m_program) { throw std::runtime_error("Failed to initialize Viewport's GPU program"); }
-
   m_mesh.initializeGL(vertices, indices, instances);
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
   std::string frag_path = shader_path + "/shader.frag";
 
+  m_program = new QOpenGLShaderProgram;
   m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, vert_path.c_str());
   m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, frag_path.c_str());
   m_program->link();
@@ -51,14 +57,16 @@ void Viewport::resizeGL(int w, int h) {}
 void Viewport::paintGL(void) {
   QVector4D vieport_size = getVieportSize();
   glViewport(GLint(vieport_size.x()), GLint(vieport_size.y()), GLint(vieport_size.z()), GLint(vieport_size.w()));
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
 
   m_program->bind();
-  m_program->setUniformValue(m_model_uniform, QMatrix4x4());
-  m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
-
   glBindVertexArray(m_mesh.getVAO());
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
+
+  m_program->setUniformValue(m_model_uniform, QMatrix4x4());
+  m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
   glDrawElementsInstanced(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh.getInstanceCount());
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

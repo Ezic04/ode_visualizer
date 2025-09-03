@@ -51,7 +51,10 @@ add_executable(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCE_DIR}/main.cpp ${GUI_SRC} ${GUI_INC})
 target_link_libraries(${PROJECT_NAME} PRIVATE backend ${GUI_LIB})
-target_compile_definitions(${PROJECT_NAME} PRIVATE SHADER_PATH="${CMAKE_SOURCE_DIR}/src/gui/Graphics/shaders")
+target_compile_definitions(${PROJECT_NAME} PRIVATE 
+  SHADER_PATH="${CMAKE_SOURCE_DIR}/src/gui/Graphics/shaders"
+  STYLESHEET_FILE="${CMAKE_SOURCE_DIR}/src/gui/App/App.qss"
+)
 
 
 # Qt deployment

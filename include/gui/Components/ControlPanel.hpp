@@ -3,9 +3,6 @@
 #include <QFrame>
 #include <QPushButton>
 #include <QTextEdit>
-#include <QWidget>
-
-#include <QMouseEvent>
 
 class ControlPanel : public QFrame {
   Q_OBJECT
