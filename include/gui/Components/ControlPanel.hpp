@@ -7,6 +7,7 @@
 class ControlPanel : public QFrame {
   Q_OBJECT
 public:
+
   ControlPanel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
   ~ControlPanel(void);
 

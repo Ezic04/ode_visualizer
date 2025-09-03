@@ -1,4 +1,4 @@
-#include "gui/Components/Viewport.hpp"
+#include "gui/components/Viewport.hpp"
 
 #include <array>
 #include <vector>

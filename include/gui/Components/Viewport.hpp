@@ -10,8 +10,8 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLWindow>
 
-#include "gui/Graphics/Camera.hpp"
-#include "gui/Graphics/Mesh.hpp"
+#include "gui/graphics/Camera.hpp"
+#include "gui/graphics/Mesh.hpp"
 
 class Viewport : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core {
   Q_OBJECT

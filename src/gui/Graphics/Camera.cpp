@@ -1,4 +1,4 @@
-#include "gui/Graphics/Camera.hpp"
+#include "gui/graphics/Camera.hpp"
 
 #include <QtMath>
 

@@ -31,14 +31,14 @@ target_sources(backend PRIVATE
 
 
 file(GLOB GUI_INC CMAKE_CONFIGURE_DEPENDS
-  ${INCLUDE_DIR}/gui/App/*.hpp
-  ${INCLUDE_DIR}/gui/Components/*.hpp
-  ${INCLUDE_DIR}/gui/Graphics/*.hpp
+  ${INCLUDE_DIR}/gui/app/*.hpp
+  ${INCLUDE_DIR}/gui/components/*.hpp
+  ${INCLUDE_DIR}/gui/graphics/*.hpp
 )
 file(GLOB GUI_SRC CMAKE_CONFIGURE_DEPENDS
-  ${SOURCE_DIR}/gui/App/*.cpp
-  ${SOURCE_DIR}/gui/Components/*.cpp
-  ${SOURCE_DIR}/gui/Graphics/*.cpp
+  ${SOURCE_DIR}/gui/app/*.cpp
+  ${SOURCE_DIR}/gui/components/*.cpp
+  ${SOURCE_DIR}/gui/graphics/*.cpp
 )
 set(GUI_LIB
   Qt6::Widgets
