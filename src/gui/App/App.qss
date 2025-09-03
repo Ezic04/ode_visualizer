@@ -1,6 +1,7 @@
 QWidget {
+  color: #D0D0D0;
   background-color: #202020;
-  color: #4A4A4A;
+
   font-family: "Segoe UI";
   font-size: 14px;
   font-weight: bold;
@@ -15,22 +16,13 @@ QDockWidget::title {
 QWidget#control-panel {
   background-color: #161616;
 
-  border: 1px solid #2A2A2A;
+  border: 1px solid #4A4A4A;
   border-radius: 10px;
 
   padding: 10px;
 
-  margin: 8px;
+  margin: 10px;
   margin-top: 0px;
-}
-
-QTextEdit {
-  background-color: #202020;
-
-  border: 1px solid #2A2A2A;
-  border-radius: 10px;
-
-  height: 100px;
 }
 
 QPushButton {

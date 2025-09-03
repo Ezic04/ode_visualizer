@@ -20,8 +20,5 @@ private slots:
   void onSubmit(void);
 
 private:
-
-  QTextEdit *m_textbox = nullptr;
-  QPushButton *m_submit_button = nullptr;
   
 };

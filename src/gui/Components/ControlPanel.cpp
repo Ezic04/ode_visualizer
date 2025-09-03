@@ -1,21 +1,18 @@
 #include "gui/components/ControlPanel.hpp"
 
-#include <QListWidget>
 #include <QVBoxLayout>
-#include <QPainterPath>
+
+#include "gui/components/EquationsList.hpp"
 
 ControlPanel::ControlPanel(
     QWidget *parent, 
     Qt::WindowFlags f
-) : m_textbox(new QTextEdit(this)),
-    m_submit_button(new QPushButton("Submit", this))
-{
+) {
+
+  auto* list = new EquationsList;
 
   auto* layout = new QVBoxLayout(this);
-
-  layout->addWidget(m_textbox);
-  layout->addWidget(m_submit_button);
-  connect(m_submit_button, &QPushButton::pressed, this, &ControlPanel::onSubmit);
+  layout->addWidget(list);
 
   this->setLayout(layout);
   this->setMinimumWidth(300);
@@ -24,11 +21,9 @@ ControlPanel::ControlPanel(
 }
 
 ControlPanel::~ControlPanel(void) {
-  delete m_textbox;
-  delete m_submit_button;
+
 }
 
 void ControlPanel::onSubmit(void) {
-  QString content = m_textbox->toPlainText();
-  emit equationsChanged(content.toStdString());
+  
 }
