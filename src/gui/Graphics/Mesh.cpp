@@ -1,4 +1,4 @@
-#include "gui/Graphics/Mesh.hpp"
+#include "gui/graphics/Mesh.hpp"
 #include <array>
 #include <cstddef>
 #include <qopenglext.h>

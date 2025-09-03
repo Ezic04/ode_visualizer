@@ -1,4 +1,4 @@
-#include "gui/Components/SimulationController.hpp"
+#include "gui/components/SimulationController.hpp"
 
 #include <iostream>
 

@@ -15,14 +15,22 @@ QDockWidget::title {
 QWidget#control-panel {
   background-color: #161616;
 
+  border: 1px solid #2A2A2A;
+  border-radius: 10px;
+
+  padding: 10px;
+
   margin: 8px;
   margin-top: 0px;
 }
 
 QTextEdit {
   background-color: #202020;
+
   border: 1px solid #2A2A2A;
   border-radius: 10px;
+
+  height: 100px;
 }
 
 QPushButton {

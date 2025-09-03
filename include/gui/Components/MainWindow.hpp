@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "gui/Components/SimulationController.hpp"
+#include "gui/components/SimulationController.hpp"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

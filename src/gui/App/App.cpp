@@ -1,4 +1,4 @@
-#include "gui/App/App.hpp"
+#include "gui/app/App.hpp"
 
 #include <QFile>
 #include <QString>

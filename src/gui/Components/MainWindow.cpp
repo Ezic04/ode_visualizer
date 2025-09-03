@@ -1,4 +1,4 @@
-#include "gui/Components/MainWindow.hpp"
+#include "gui/components/MainWindow.hpp"
 
 #include <QWidget>
 #include <QShortcut>
@@ -7,8 +7,8 @@
 #include <qdockwidget.h>
 #include <qnamespace.h>
 
-#include "gui/Components/Viewport.hpp"
-#include "gui/Components/ControlPanel.hpp"
+#include "gui/components/Viewport.hpp"
+#include "gui/components/ControlPanel.hpp"
 
 MainWindow::MainWindow(
   QWidget *parent
