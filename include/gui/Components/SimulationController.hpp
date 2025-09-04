@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Qobject>
+#include <QObject>
 #include <vector>
 
 #include "backend/Simulation.hpp"

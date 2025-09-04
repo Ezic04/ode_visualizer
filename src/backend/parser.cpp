@@ -1,5 +1,6 @@
 #include "backend/parser.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <ranges>
