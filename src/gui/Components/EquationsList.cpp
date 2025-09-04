@@ -1,6 +1,5 @@
 #include "gui/components/EquationsList.hpp"
 
-#include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -13,6 +12,14 @@ EquationsList::EquationsList(
 {
   auto* add_btn = new QPushButton("+", this);
   auto* rem_btn = new QPushButton("-", this);
+
+  m_list->setBaseSize(300, 400);
+  m_list->setMinimumSize(150, 200);
+  m_list->setMaximumSize(300, 400);
+  m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  add_btn->setFixedSize(40, 40);
+  rem_btn->setFixedSize(40, 40);
 
   auto* buttons_layout = new QVBoxLayout();
   buttons_layout->addWidget(add_btn);
@@ -27,15 +34,15 @@ EquationsList::EquationsList(
 
   connect(rem_btn, &QPushButton::clicked, 
     this, &EquationsList::removeEquation);
-
 }
-
 
 void EquationsList::addEquation(void) {
   auto* new_item = new QListWidgetItem;
-  auto* content = new EquationsListItem;
+  auto* content = new EquationTextBox;
 
   new_item->setSizeHint(content->sizeHint());
+  //add list item resizing on input text change,
+  //ideally using signals and slots
   m_list->addItem(new_item);
   m_list->setItemWidget(new_item, content);
 }
@@ -47,11 +54,24 @@ void EquationsList::removeEquation(void) {
 
 
 
-EquationsListItem::EquationsListItem(
+EquationTextBox::EquationTextBox(
   QWidget* parent
-) : QWidget(parent)
+) : QTextEdit("x' = 0", parent)
 {
-  auto* layout = new QHBoxLayout(this);
-  auto* line_edit = new QLineEdit("x' = x", this);
-  layout->addWidget(line_edit);
+  this->setLineWrapMode(QTextEdit::NoWrap);
+  this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  this->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+  this->setMinimumWidth(100);
+  this->setMaximumWidth(250);
+}
+
+QSize EquationTextBox::sizeHint(void) const {
+  return this->document()->size().toSize();
+}
+
+void EquationTextBox::resizeEvent(QResizeEvent* event) {
+  this->updateGeometry();
+  QTextEdit::resizeEvent(event);
 }

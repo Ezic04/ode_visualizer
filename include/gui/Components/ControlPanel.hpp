@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QFrame>
-#include <QPushButton>
-#include <QTextEdit>
 
 class ControlPanel : public QFrame {
   Q_OBJECT
