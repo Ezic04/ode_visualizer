@@ -15,8 +15,6 @@ ControlPanel::ControlPanel(
   layout->addWidget(list);
 
   this->setLayout(layout);
-  this->setMinimumWidth(300);
-  this->setMaximumWidth(400);
   this->setObjectName("control-panel");
 }
 

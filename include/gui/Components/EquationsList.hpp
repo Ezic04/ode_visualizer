@@ -1,12 +1,19 @@
 #pragma once
 
-#include <QWidget>
+#include <QSize>
+#include <QTextEdit>
 #include <QListWidget>
 
-class EquationsListItem : public QWidget {
+class EquationTextBox : public QTextEdit{
   Q_OBJECT
 public:
-  EquationsListItem(QWidget* parent = nullptr);
+
+  EquationTextBox(QWidget* parent = nullptr);
+
+  virtual QSize sizeHint(void) const override;
+
+protected:
+  virtual void resizeEvent(QResizeEvent* event) override;
 
 private:
 
