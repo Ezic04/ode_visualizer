@@ -1,8 +1,9 @@
 #include "gui/components/Viewport.hpp"
 
+#include <GL/gl.h>
 #include <array>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include <QVector3D>
 
@@ -16,10 +17,7 @@ std::vector<std::array<float, 3>> instances = {};
 
 static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f);
 
-Viewport::Viewport(
-  QWindow *parent
-) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) 
-{
+Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
   // QSurfaceFormat format;
   // format.setSamples(8);
   // this->setFormat(format);

@@ -1,18 +1,17 @@
 #pragma once
 
-#include <QVector2D>
-#include <QVector3D>
 #include <QMatrix4x4>
 #include <QQuaternion>
+#include <QVector2D>
+#include <QVector3D>
 
 class Camera {
 public:
-
   Camera(void);
 
   void zoom(const float zoom);
-  void move(const QVector2D& offset);
-  void orbit(const QVector2D& offset);
+  void move(const QVector2D &offset);
+  void orbit(const QVector2D &offset);
   void resetTransform(void);
 
   inline void setFOV(const float FOV) { m_FOV = FOV; }
@@ -31,7 +30,6 @@ public:
   inline float getAspectRatio(void) const { return m_aspect_ratio; }
 
 private:
-
   void recalculateVectors(void);
   void recalculatePosition(void);
 
@@ -45,11 +43,10 @@ private:
   QVector3D m_focus_point;
 
   float m_focus_point_distance;
-  
+
   float m_FOV = 45.0f;
   float m_near_clip_distance = 0.1f;
   float m_far_clip_distance = 100.0f;
 
   float m_aspect_ratio = 16.0f / 9.0f;
-
 };
