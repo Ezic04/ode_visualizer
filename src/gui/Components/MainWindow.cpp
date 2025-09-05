@@ -1,30 +1,27 @@
 #include "gui/components/MainWindow.hpp"
 
-#include <QWidget>
-#include <QShortcut>
 #include <QDockWidget>
+#include <QShortcut>
 #include <QSurfaceFormat>
+#include <QWidget>
 #include <qdockwidget.h>
 #include <qnamespace.h>
 
-#include "gui/components/Viewport.hpp"
 #include "gui/components/ControlPanel.hpp"
+#include "gui/components/SimulationController.hpp"
+#include "gui/components/Viewport.hpp"
 
-MainWindow::MainWindow(
-  QWidget *parent
-) : QMainWindow(parent), 
-    m_simulation_controller(new SimulationController)
-{
-  // disable vsync globally 
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_simulation_controller(new SimulationController) {
+  // disable vsync globally
   QSurfaceFormat format;
   format.setSwapInterval(0);
   QSurfaceFormat::setDefaultFormat(format);
 
   // allocations
-  auto* viewport = new Viewport;
-  auto* control_panel = new ControlPanel;
-  auto* dock = new QDockWidget("Control Panel", this);
-  
+  auto *viewport = new Viewport;
+  auto *control_panel = new ControlPanel;
+  auto *dock = new QDockWidget("Control Panel", this);
+
   // widget setup
   control_panel->setMaximumWidth(400);
   control_panel->setMinimumSize(250, 200);
@@ -35,11 +32,13 @@ MainWindow::MainWindow(
   // inter-panel communication
   connect(m_simulation_controller, &SimulationController::simulationUpdated, viewport, &Viewport::renderFrame);
   connect(viewport, &Viewport::frameFinished, m_simulation_controller, &SimulationController::updateSimulation);
-  connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller, &SimulationController::updateEquations);
+  connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller,
+          &SimulationController::updateEquations);
+  connect(m_simulation_controller, &SimulationController::parserFailed, control_panel, &ControlPanel::onParserFailed);
 
   // shortcuts
-  connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, 
-    this, [=](void){ dock->isVisible() ? dock->hide() : dock->show(); });
+  connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, this,
+          [=](void) { dock->isVisible() ? dock->hide() : dock->show(); });
 
   // main window properties
   this->resize(1280, 720);

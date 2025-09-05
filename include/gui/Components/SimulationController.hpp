@@ -13,6 +13,7 @@ public:
 
 signals:
   void simulationUpdated(const std::vector<std::array<float, 3>> &positions);
+  void parserFailed(const std::string &message);
 
 public slots:
   void updateEquations(const std::string &equations);
