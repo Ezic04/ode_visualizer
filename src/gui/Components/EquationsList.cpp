@@ -40,6 +40,17 @@ EquationsList::~EquationsList(void) {
   delete m_list;
 }
 
+
+QString EquationsList::getCurrentEquation(void) {
+  auto* item = m_list->item(m_list->currentRow());
+  if (!item) { return ""; }
+
+  auto* text_box = static_cast<EquationTextBox*>(m_list->itemWidget(item)); // trust me bro
+  if (!text_box) { return ""; }
+
+  return text_box->toPlainText();
+}
+
 void EquationsList::addEquation(void) {
   auto* content = new EquationTextBox;
   content->resize(m_list->viewport()->size());
@@ -57,7 +68,9 @@ void EquationsList::addEquation(void) {
 }
 
 void EquationsList::removeEquation(void) {
-  delete m_list->takeItem(m_list->currentRow());
+  auto* item = m_list->takeItem(m_list->currentRow());
+  delete m_list->itemWidget(item);
+  delete item;
 }
 
 void EquationsList::resizeEvent(QResizeEvent* event) {
