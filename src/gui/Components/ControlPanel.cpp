@@ -25,7 +25,7 @@ ControlPanel::ControlPanel(
 }
 
 ControlPanel::~ControlPanel(void) {
-
+  delete m_equations_list;
 }
 
 void ControlPanel::onSubmit(void) {
