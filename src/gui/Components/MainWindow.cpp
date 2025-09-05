@@ -27,7 +27,7 @@ MainWindow::MainWindow(
   
   // widget setup
   control_panel->setMaximumWidth(400);
-  control_panel->setMinimumSize(200, 150);
+  control_panel->setMinimumSize(250, 200);
 
   dock->setWidget(control_panel);
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);

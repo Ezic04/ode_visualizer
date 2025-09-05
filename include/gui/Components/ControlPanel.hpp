@@ -1,7 +1,8 @@
 #pragma once
 
-#include "gui/components/EquationsList.hpp"
 #include <QFrame>
+
+#include "gui/components/EquationsList.hpp"
 
 class ControlPanel : public QFrame {
   Q_OBJECT
@@ -17,7 +18,6 @@ private slots:
   void onSubmit(void);
 
 private:
-  
   EquationsList* m_equations_list = nullptr;
 
 };
