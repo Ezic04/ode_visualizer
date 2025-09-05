@@ -15,6 +15,8 @@ public:
   EquationsList(QWidget* parent = nullptr);
   ~EquationsList(void);
 
+  QString getCurrentEquation(void);
+
 public slots:
 
   void addEquation(void);

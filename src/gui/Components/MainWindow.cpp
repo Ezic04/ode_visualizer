@@ -35,7 +35,7 @@ MainWindow::MainWindow(
   // inter-panel communication
   connect(m_simulation_controller, &SimulationController::simulationUpdated, viewport, &Viewport::renderFrame);
   connect(viewport, &Viewport::frameFinished, m_simulation_controller, &SimulationController::updateSimulation);
-  // connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller, &SimulationController::updateEquations);
+  connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller, &SimulationController::updateEquations);
 
   // shortcuts
   connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, 
