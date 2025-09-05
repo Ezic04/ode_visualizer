@@ -1,8 +1,11 @@
 #include "gui/components/EquationsList.hpp"
 
+#include <QSize>
+#include <QScrollBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QResizeEvent>
 #include <QListWidgetItem>
 
 EquationsList::EquationsList(
@@ -36,42 +39,78 @@ EquationsList::EquationsList(
     this, &EquationsList::removeEquation);
 }
 
-void EquationsList::addEquation(void) {
-  auto* new_item = new QListWidgetItem;
-  auto* content = new EquationTextBox;
+EquationsList::~EquationsList(void) {
+  delete m_list;
+}
 
+void EquationsList::addEquation(void) {
+  auto* content = new EquationTextBox;
+  content->resize(m_list->viewport()->size());
+
+  auto* new_item = new QListWidgetItem;
   new_item->setSizeHint(content->sizeHint());
-  //add list item resizing on input text change,
-  //ideally using signals and slots
+  connect(content, &EquationTextBox::resized,
+    [=](const QSize& new_size){ new_item->setSizeHint(content->sizeHint()); });
+
   m_list->addItem(new_item);
   m_list->setItemWidget(new_item, content);
+
+  connect(this, &EquationsList::resized,
+    content, &EquationTextBox::onParentResize);
 }
 
 void EquationsList::removeEquation(void) {
   delete m_list->takeItem(m_list->currentRow());
 }
 
+void EquationsList::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  emit resized(m_list->viewport()->size());
+}
 
-
+/************/
+/* TEXT BOX */
+/************/
 
 EquationTextBox::EquationTextBox(
   QWidget* parent
 ) : QTextEdit("x' = 0", parent)
 {
   this->setLineWrapMode(QTextEdit::NoWrap);
-  this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-
-  this->setMinimumWidth(100);
-  this->setMaximumWidth(250);
+  connect(this, &EquationTextBox::textChanged, 
+    this, &EquationTextBox::onTextChanged);
 }
 
 QSize EquationTextBox::sizeHint(void) const {
-  return this->document()->size().toSize();
+  const QSize document_size = this->document()->size().toSize();
+  return {
+    this->width(),
+    document_size.width() > this->width() ? (
+      document_size.height() + this->horizontalScrollBar()->height()
+    ) : (document_size.height())
+  };
 }
 
 void EquationTextBox::resizeEvent(QResizeEvent* event) {
-  this->updateGeometry();
   QTextEdit::resizeEvent(event);
+  this->updateGeometry();
+  emit resized({ this->width(), this->height() });
+}
+
+void EquationTextBox::onTextChanged(void) {
+  const QSize document_size = this->document()->size().toSize();
+  if (document_size.height() == this->height()) { return; }
+  this->resize({ 
+    this->width(), 
+    document_size.width() > this->width() ?
+      document_size.height() + this->horizontalScrollBar()->height()
+      : document_size.height()
+  });
+}
+
+void EquationTextBox::onParentResize(const QSize& size) {
+  if (size.width() == this->width()) { return; }
+  this->resize({ size.width(), this->height() });
 }

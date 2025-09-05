@@ -34,10 +34,8 @@ MainWindow::MainWindow(
   // connect(control_panel, &ControlPanel::equationsChanged, m_simulation_controller, &SimulationController::updateEquations);
 
   // shortcuts
-  connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, this, [=](){
-    if (!dock->isVisible()) { dock->show(); } 
-    else { dock->hide(); }
-  });
+  connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, 
+    this, [=](void){ dock->isVisible() ? dock->hide() : dock->show(); });
 
   // main window properties
   this->resize(1280, 720);
