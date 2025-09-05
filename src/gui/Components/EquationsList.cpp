@@ -16,13 +16,10 @@ EquationsList::EquationsList(
   auto* add_btn = new QPushButton("+", this);
   auto* rem_btn = new QPushButton("-", this);
 
-  m_list->setBaseSize(300, 400);
-  m_list->setMinimumSize(150, 200);
-  m_list->setMaximumSize(300, 400);
-  m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
   add_btn->setFixedSize(40, 40);
   rem_btn->setFixedSize(40, 40);
+
+  m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   auto* buttons_layout = new QVBoxLayout();
   buttons_layout->addWidget(add_btn);
