@@ -20,11 +20,15 @@ MainWindow::MainWindow(
   format.setSwapInterval(0);
   QSurfaceFormat::setDefaultFormat(format);
 
+  // allocations
   auto* viewport = new Viewport;
   auto* control_panel = new ControlPanel;
   auto* dock = new QDockWidget("Control Panel", this);
   
   // widget setup
+  control_panel->setMaximumWidth(400);
+  control_panel->setMinimumSize(200, 150);
+
   dock->setWidget(control_panel);
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
@@ -44,4 +48,6 @@ MainWindow::MainWindow(
   this->setCentralWidget(QWidget::createWindowContainer(viewport));
 }
 
-MainWindow::~MainWindow(void) {}
+MainWindow::~MainWindow(void) {
+  delete m_simulation_controller;
+}
