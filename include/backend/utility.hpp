@@ -1,7 +1,7 @@
 #pragma once
 #include <cassert>
 
-#define assertm(exp, msg) assert((msg, exp))
+#define assertm(exp, msg) assert(((msg), exp))
 
 namespace expr {
 /**
@@ -22,4 +22,4 @@ inline float intPow(double x, int n) {
   return result;
 }
 
-} // namespace expr
+}  // namespace expr

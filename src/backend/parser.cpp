@@ -6,10 +6,9 @@
 #include <ranges>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "backend/expr.hpp"
-
-#include <vector>
 
 using namespace expr;
 
@@ -79,9 +78,9 @@ ExprPtr Parser::parseAdd(std::string_view &s) {
     BinaryOpType type;
 
     switch (op) {
-    case '+': type = BinaryOpType::kAdd; break;
-    case '-': type = BinaryOpType::kSub; break;
-    default: return lhs;
+      case '+': type = BinaryOpType::kAdd; break;
+      case '-': type = BinaryOpType::kSub; break;
+      default: return lhs;
     }
     s.remove_prefix(1);
     auto rhs = parseMul(s);
@@ -97,9 +96,9 @@ ExprPtr Parser::parseMul(std::string_view &s) {
     BinaryOpType type;
 
     switch (op) {
-    case '*': type = BinaryOpType::kMul; break;
-    case '/': type = BinaryOpType::kDiv; break;
-    default: return lhs;
+      case '*': type = BinaryOpType::kMul; break;
+      case '/': type = BinaryOpType::kDiv; break;
+      default: return lhs;
     }
     s.remove_prefix(1);
     auto rhs = parseUnary(s);
@@ -204,4 +203,4 @@ bool Parser::consume(std::string_view &s, char c) {
   return false;
 }
 
-} // namespace parser
+}  // namespace parser

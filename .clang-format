@@ -1,13 +1,21 @@
-BasedOnStyle: LLVM
+BasedOnStyle: Google
 IndentWidth: 2
 UseTab: Never
 ColumnLimit: 120
 
-PointerAlignment: Right
-ReferenceAlignment: Right
-
+BreakBeforeBraces: Attach
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortBlocksOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
+
+PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
+
+NamespaceIndentation: None
+SortIncludes: true
+IncludeBlocks: Regroup
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 2

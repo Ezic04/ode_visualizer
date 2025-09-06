@@ -28,4 +28,4 @@ const std::vector<std::array<float, 3>> &Simulation::getPositions() {
   return m_positions;
 }
 
-} // namespace simulation
+}  // namespace simulation
