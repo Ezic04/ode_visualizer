@@ -30,7 +30,7 @@ static constexpr float kEps = 1e-12;
 struct Const : Expr {
   explicit Const(float value) : m_value(value) {}
   inline float eval(const std::vector<float> &vars) const override { return m_value; }
-  const float m_value; ///< constant value
+  const float m_value;  ///< constant value
 };
 
 /**
@@ -38,8 +38,8 @@ struct Const : Expr {
  */
 struct Var : Expr {
   explicit Var(size_t idx) : m_idx(idx) {}
-  inline float eval(const std::vector<float> &vars) const override { return vars.at(m_idx); }
-  size_t m_idx; ///< variable index
+  inline float eval(const std::vector<float> &vars) const override { return vars[m_idx]; }
+  size_t m_idx;  ///< variable index
 };
 
 /**
@@ -50,8 +50,8 @@ struct IntPow : Expr {
   ~IntPow() { delete m_base; }
   float eval(const std::vector<float> &vars) const override;
 
-  ExprPtr m_base; ///< base expression
-  int m_exponent; ///< integer exponent
+  ExprPtr m_base;  ///< base expression
+  int m_exponent;  ///< integer exponent
 };
 
 /**
@@ -62,8 +62,8 @@ struct UnaryOp : Expr {
   ~UnaryOp() { delete m_operand; }
   float eval(const std::vector<float> &vars) const override;
 
-  UnaryOpType m_operator; ///< operator type
-  ExprPtr m_operand;      ///< operand
+  UnaryOpType m_operator;  ///< operator type
+  ExprPtr m_operand;       ///< operand
 };
 
 /**
@@ -71,13 +71,13 @@ struct UnaryOp : Expr {
  */
 struct BinaryOp : Expr {
   explicit BinaryOp(BinaryOpType op, ExprPtr left, ExprPtr right)
-      : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
+    : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
   ~BinaryOp() { delete m_left, delete m_right; }
   float eval(const std::vector<float> &vars) const override;
 
-  BinaryOpType m_operator; ///< operator type
-  ExprPtr m_left;          ///< left operand
-  ExprPtr m_right;         ///< right operand
+  BinaryOpType m_operator;  ///< operator type
+  ExprPtr m_left;           ///< left operand
+  ExprPtr m_right;          ///< right operand
 };
 
-} // namespace expr
+}  // namespace expr

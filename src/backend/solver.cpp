@@ -1,19 +1,20 @@
 #include "backend/solver.hpp"
 
-#include "backend/utility.hpp"
 #include <vector>
+
+#include "backend/utility.hpp"
 
 using namespace expr;
 
 namespace solver {
 
-std::vector<float> euler(const std::vector<ExprPtr> &system, const std::vector<float> &vars, float step) {
+std::vector<float> euler(const std::vector<ExprPtr> &system, std::vector<float> &vars, float step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
-  std::vector<float> new_state(system_size);
-  for (size_t i = 0; i < system_size; ++i) { new_state[i] = vars[i] + step * system[i]->eval(vars); }
-  return new_state;
+  for (size_t i = 0; i < system_size; ++i) { vars[i] = vars[i] + step * system[i]->eval(vars); }
+  vars.back() += step;
+  return vars;
 }
 
 std::vector<float> heun(const std::vector<ExprPtr> &system, const std::vector<float> &vars, float step) {
@@ -23,8 +24,8 @@ std::vector<float> heun(const std::vector<ExprPtr> &system, const std::vector<fl
   std::vector<float> system_eval(system_size);
   std::vector<float> euler_vars(vars_size);
   for (size_t i = 0; i < system_size; ++i) {
-    system_eval.emplace_back(system[i]->eval(vars));
-    euler_vars.emplace_back(vars[i] + step * system_eval[i]);
+    system_eval[i] = system[i]->eval(vars);
+    euler_vars[i] = vars[i] + step * system_eval[i];
   }
   euler_vars.back() = vars.back() + step;
   std::vector<float> new_state(system_size);
@@ -77,4 +78,4 @@ std::vector<float> rk4(const std::vector<ExprPtr> &system, const std::vector<flo
   return new_system;
 }
 
-} // namespace solver
+}  // namespace solver

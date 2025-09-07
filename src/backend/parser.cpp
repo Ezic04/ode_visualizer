@@ -22,7 +22,6 @@ std::pair<std::vector<expr::ExprPtr>, VariableMap> parse(const std::string &equa
 std::pair<std::vector<expr::ExprPtr>, VariableMap> Parser::parseSystem(const std::string &equations,
                                                                        const std::string &free_variable) {
   std::vector<expr::ExprPtr> system;
-  // VariableMap var_names;
   std::vector<std::string> exprs;
   for (auto line_range : equations | std::views::split('\n')) {
     std::string line(line_range.begin(), line_range.end());

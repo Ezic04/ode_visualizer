@@ -22,18 +22,18 @@ struct VariableMap {
 };
 
 class Parser {
-public:
+ public:
   friend std::pair<std::vector<expr::ExprPtr>, VariableMap> parse(const std::string &equations,
                                                                   const std::string &free_variable);
   /**
    * Exception thrown by the parser when it encounters an error.
    */
   class Exception : public std::runtime_error {
-  public:
+   public:
     Exception(const std::string &message) : std::runtime_error(message) {}
   };
 
-private:
+ private:
   Parser() = default;
   std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string &equations,
                                                                  const std::string &free_variable);
@@ -60,4 +60,6 @@ private:
   VariableMap m_vars;
 };
 
-} // namespace parser
+}  // namespace parser
+
+// ( x  +  -  ^ 2333 )

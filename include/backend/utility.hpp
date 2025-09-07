@@ -1,7 +1,7 @@
 #pragma once
 #include <cassert>
 
-#define assertm(exp, msg) assert(((msg), exp))
+#define assertm(exp, msg) assert((void(msg), exp))
 
 namespace expr {
 /**
