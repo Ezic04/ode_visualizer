@@ -1,8 +1,6 @@
 #include "gui/components/Viewport.hpp"
 
-#include <GL/gl.h>
 #include <array>
-#include <stdexcept>
 #include <vector>
 
 #include <QVector3D>
@@ -17,27 +15,27 @@ std::vector<std::array<float, 3>> instances = {};
 
 static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f);
 
-Viewport::Viewport(QWindow *parent) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent) {
-  // QSurfaceFormat format;
-  // format.setSamples(8);
-  // this->setFormat(format);
-}
+Viewport::Viewport(
+  QWindow *parent
+) : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent)
+{}
 
 Viewport::~Viewport(void) {
-  delete (m_program);
+  delete m_program;
 }
 
 void Viewport::initializeGL(void) {
-  if (!this->initializeOpenGLFunctions()) {
-    throw std::runtime_error("Failed to initialize viewport's OpenGL context.");
-  }
 
-  m_mesh.initializeGL(vertices, indices, instances);
+  //don't initialize any of this from the constructor
+  m_gl = OpenGLFunctions::getInstance(); 
+
+  m_mesh = new Mesh(vertices, indices, instances);
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
   std::string frag_path = shader_path + "/shader.frag";
 
+  //move this to mesh
   m_program = new QOpenGLShaderProgram;
   m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, vert_path.c_str());
   m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, frag_path.c_str());
@@ -47,28 +45,26 @@ void Viewport::initializeGL(void) {
   m_model_uniform = m_program->uniformLocation("model_matrix");
   m_camera_uniform = m_program->uniformLocation("camera_matrix");
 
-  glEnable(GL_DEPTH_TEST);
+  m_gl->glEnable(GL_DEPTH_TEST);
 }
 
-void Viewport::resizeGL(int w, int h) {}
-
 void Viewport::paintGL(void) {
-  QVector4D vieport_size = getVieportSize();
-  glViewport(GLint(vieport_size.x()), GLint(vieport_size.y()), GLint(vieport_size.z()), GLint(vieport_size.w()));
+  QVector4D vieport_size = this->getVieportSize();
+  m_gl->glViewport(GLint(vieport_size.x()), GLint(vieport_size.y()), GLint(vieport_size.z()), GLint(vieport_size.w()));
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-  glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
+  m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
 
   m_program->bind();
-  glBindVertexArray(m_mesh.getVAO());
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh.getIBO());
+  m_gl->glBindVertexArray(m_mesh->getVAO());
+  m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh->getIBO());
 
   m_program->setUniformValue(m_model_uniform, QMatrix4x4());
   m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
-  glDrawElementsInstanced(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh.getInstanceCount());
+  m_gl->glDrawElementsInstanced(GL_TRIANGLES, m_mesh->getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh->getInstanceCount());
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  m_gl->glBindVertexArray(0);
   m_program->release();
 
   emit frameFinished();
@@ -77,7 +73,9 @@ void Viewport::paintGL(void) {
 void Viewport::mousePressEvent(QMouseEvent *event) {
   Qt::MouseButtons button_flags = event->buttons();
 
-  if (button_flags & Qt::MiddleButton || button_flags & Qt::RightButton) { m_last_mouse_position = event->pos(); }
+  if (button_flags & Qt::MiddleButton 
+    || button_flags & Qt::RightButton
+  ) { m_last_mouse_position = event->pos(); }
 };
 
 void Viewport::mouseDoubleClickEvent(QMouseEvent *event) {
@@ -106,7 +104,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  m_mesh.updateInstances(positions);
+  m_mesh->updateInstances(positions);
   requestUpdate();
 }
 
