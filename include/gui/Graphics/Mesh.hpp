@@ -8,14 +8,20 @@
 class Mesh {
 public:
 
+  static Mesh Plane(float width, float length, const std::vector<std::array<float, 3>>& instances);
+  static Mesh Cube(float width, float height, float lenght, const std::vector<std::array<float, 3>>& instances);
+  static Mesh Sphere(float radius, unsigned char resolution, const std::vector<std::array<float, 3>>& instances);
+
   Mesh(
     const std::vector<float> &vertices, 
     const std::vector<unsigned int> &indices,
     const std::vector<std::array<float, 3>> &instances
   );
-  Mesh(const Mesh &other) = delete;
-  Mesh(Mesh &&other) = delete;
+  Mesh(Mesh &&other);
   ~Mesh(void);
+
+  Mesh(const Mesh &other) = delete;
+  void operator=(const Mesh& other) = delete;
 
   void updateInstances(const std::vector<std::array<float, 3>> &instances);
 
@@ -39,18 +45,4 @@ protected:
   unsigned int m_instance_count = 0;
 
   OpenGLFunctions* m_gl;
-};
-
-class Plane : public Mesh {
-public:
-  Plane(void);
-};
-
-class Cube : public Mesh {
-public:
-  Cube(void);
-};
-
-class Sphere : public Mesh {
-
 };
