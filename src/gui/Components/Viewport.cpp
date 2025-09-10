@@ -1,4 +1,6 @@
 #include "gui/components/Viewport.hpp"
+#include <gl/gl.h>
+#include <qopenglext.h>
 
 #include <array>
 #include <vector>
@@ -31,7 +33,7 @@ void Viewport::initializeGL(void) {
   m_gl = OpenGLFunctions::getInstance(); 
 
   // m_mesh = new Mesh(vertices, indices, instances);
-  m_mesh = new Plane();
+  m_mesh = new Mesh(Mesh::Sphere(1.0f, 18, {{0.0f, 0.0f, 0.0f}}));
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
@@ -48,6 +50,8 @@ void Viewport::initializeGL(void) {
   m_camera_uniform = m_program->uniformLocation("camera_matrix");
 
   m_gl->glEnable(GL_DEPTH_TEST);
+  m_gl->glEnable(GL_CULL_FACE);
+  m_gl->glCullFace(GL_BACK);
 }
 
 void Viewport::paintGL(void) {
@@ -108,7 +112,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  m_mesh->updateInstances(positions);
+  // m_mesh->updateInstances(positions);
   requestUpdate();
 }
 
