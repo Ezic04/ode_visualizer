@@ -21,6 +21,7 @@ Viewport::Viewport(
 {}
 
 Viewport::~Viewport(void) {
+  delete m_mesh;
   delete m_program;
 }
 
@@ -29,7 +30,8 @@ void Viewport::initializeGL(void) {
   //don't initialize any of this from the constructor
   m_gl = OpenGLFunctions::getInstance(); 
 
-  m_mesh = new Mesh(vertices, indices, instances);
+  // m_mesh = new Mesh(vertices, indices, instances);
+  m_mesh = new Cube();
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
@@ -61,6 +63,8 @@ void Viewport::paintGL(void) {
 
   m_program->setUniformValue(m_model_uniform, QMatrix4x4());
   m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
+
+  m_gl->glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   m_gl->glDrawElementsInstanced(GL_TRIANGLES, m_mesh->getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh->getInstanceCount());
 
   m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
