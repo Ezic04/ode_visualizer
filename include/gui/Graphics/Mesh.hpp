@@ -3,17 +3,19 @@
 #include <array>
 #include <vector>
 
-#include <QOpenGLFunctions_4_5_Core>
+#include "gui/graphics/OpenGLFunctions.hpp"
 
-class Mesh : protected QOpenGLFunctions_4_5_Core {
+class Mesh {
 public:
-  Mesh(void) = default;
+
+  Mesh(
+    const std::vector<float> &vertices, 
+    const std::vector<unsigned int> &indices,
+    const std::vector<std::array<float, 3>> &instances
+  );
   Mesh(const Mesh &other) = delete;
   Mesh(Mesh &&other) = delete;
   ~Mesh(void);
-
-  bool initializeGL(const std::vector<float> &vertices, const std::vector<unsigned int> &indices,
-                    const std::vector<std::array<float, 3>> &instances);
 
   void updateInstances(const std::vector<std::array<float, 3>> &instances);
 
@@ -35,4 +37,6 @@ protected:
   unsigned int m_index_count = 0;
   unsigned int m_vertex_count = 0;
   unsigned int m_instance_count = 0;
+
+  OpenGLFunctions* m_gl;
 };

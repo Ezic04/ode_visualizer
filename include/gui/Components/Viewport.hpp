@@ -1,33 +1,22 @@
 #pragma once
 
-#include <qvectornd.h>
 #include <vector>
 
 #include <QMouseEvent>
 #include <QWheelEvent>
 
-#include <QOpenGLFunctions_4_5_Core>
-#include <QOpenGLShaderProgram>
 #include <QOpenGLWindow>
+#include <QOpenGLShaderProgram>
 
-#include "gui/graphics/Camera.hpp"
 #include "gui/graphics/Mesh.hpp"
+#include "gui/graphics/Camera.hpp"
+#include "gui/graphics/OpenGLFunctions.hpp"
 
-class Viewport : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core {
+class Viewport : public QOpenGLWindow {
   Q_OBJECT
 public:
   Viewport(QWindow *parent = nullptr);
   ~Viewport(void);
-
-protected:
-  virtual void initializeGL(void) override;
-  virtual void resizeGL(int w, int h) override;
-  virtual void paintGL(void) override;
-
-  virtual void mousePressEvent(QMouseEvent *event) override;
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-  virtual void mouseMoveEvent(QMouseEvent *event) override;
-  virtual void wheelEvent(QWheelEvent *event) override;
 
 public slots:
 
@@ -38,15 +27,25 @@ signals:
   void frameFinished(void);
 
 private:
-  void updateGLViewport(void);
+
+  virtual void initializeGL(void) override;
+  virtual void paintGL(void) override;
+
+  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual void wheelEvent(QWheelEvent *event) override;
+
   QVector4D getVieportSize(void);
 
   QPoint m_last_mouse_position;
-  QOpenGLShaderProgram *m_program = nullptr;
 
-  Mesh m_mesh;
+  Mesh* m_mesh;
   Camera m_camera;
 
   GLint m_model_uniform;
   GLint m_camera_uniform;
+
+  QOpenGLShaderProgram *m_program = nullptr;
+  OpenGLFunctions *m_gl= nullptr;
 };
