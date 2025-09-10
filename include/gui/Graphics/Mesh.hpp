@@ -40,3 +40,17 @@ protected:
 
   OpenGLFunctions* m_gl;
 };
+
+class Plane : public Mesh {
+public:
+  Plane(void);
+};
+
+class Cube : public Mesh {
+public:
+  Cube(void);
+};
+
+class Sphere : public Mesh {
+
+};
