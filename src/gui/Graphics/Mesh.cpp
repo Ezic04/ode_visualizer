@@ -63,10 +63,10 @@ void Mesh::updateInstances(const std::vector<std::array<float, 3>> &instances) {
 Plane::Plane(
   void
 ) : Mesh({
-    -1.0, -1.0, 0.0,
-    -1.0, 1.0, 0.0,
-    1.0, 1.0, 0.0,
-    1.0, -1.0, 0.0
+    -1.0, 0, -1.0,
+    -1.0, 0, 1.0,
+    1.0, 0, 1.0,
+    1.0, 0, -1.0
   }, {
     0, 1, 2,
     0, 2, 3
