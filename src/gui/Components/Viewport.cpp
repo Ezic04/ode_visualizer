@@ -31,7 +31,7 @@ void Viewport::initializeGL(void) {
   m_gl = OpenGLFunctions::getInstance(); 
 
   // m_mesh = new Mesh(vertices, indices, instances);
-  m_mesh = new Cube();
+  m_mesh = new Plane();
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
