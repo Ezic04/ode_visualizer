@@ -12,11 +12,7 @@
 #include "gui/components/Viewport.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_simulation_controller(new SimulationController) {
-  // disable vsync globally
-  QSurfaceFormat format;
-  format.setSwapInterval(0);
-  QSurfaceFormat::setDefaultFormat(format);
-
+  
   // allocations
   auto *viewport = new Viewport;
   auto *control_panel = new ControlPanel;
