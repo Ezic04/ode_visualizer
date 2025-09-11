@@ -8,16 +8,15 @@ using namespace expr;
 
 namespace solver {
 
-std::vector<float> euler(const std::vector<ExprPtr> &system, std::vector<float> &vars, float step) {
+void euler(const std::vector<ExprPtr> &system, std::vector<float> &vars, float step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
-  for (size_t i = 0; i < system_size; ++i) { vars[i] = vars[i] + step * system[i]->eval(vars); }
+  for (size_t i = 0; i < system_size; ++i) { vars[i] += step * system[i]->eval(vars); }
   vars.back() += step;
-  return vars;
 }
 
-std::vector<float> heun(const std::vector<ExprPtr> &system, const std::vector<float> &vars, float step) {
+void heun(const std::vector<ExprPtr> &system, std::vector<float> &vars, float step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
@@ -28,14 +27,10 @@ std::vector<float> heun(const std::vector<ExprPtr> &system, const std::vector<fl
     euler_vars[i] = vars[i] + step * system_eval[i];
   }
   euler_vars.back() = vars.back() + step;
-  std::vector<float> new_state(system_size);
-  for (size_t i = 0; i < system_size; ++i) {
-    new_state[i] = vars[i] + step / 2 * (system_eval[i] + system[i]->eval(euler_vars));
-  }
-  return new_state;
+  for (size_t i = 0; i < system_size; ++i) { vars[i] += step / 2 * (system_eval[i] + system[i]->eval(euler_vars)); }
 }
 
-std::vector<float> rk4(const std::vector<ExprPtr> &system, const std::vector<float> &vars, float step) {
+void rk4(const std::vector<ExprPtr> &system, std::vector<float> &vars, float step) {
   const size_t vars_size = vars.size();
   const size_t system_size = system.size();
   assertm(vars_size == system_size + 1, "Incorect system or varibles size");
@@ -71,11 +66,7 @@ std::vector<float> rk4(const std::vector<ExprPtr> &system, const std::vector<flo
   // k4
   std::vector<float> k4(system_size);
   for (size_t i = 0; i < system_size; ++i) { k4[i] = (system[i]->eval(k4_vars)); }
-  std::vector<float> new_system(system_size);
-  for (size_t i = 0; i < system_size; ++i) {
-    new_system[i] = vars[i] + step / 6.0 * (k1[i] + 2.0 * (k2[i] + k3[i]) + k4[i]);
-  }
-  return new_system;
+  for (size_t i = 0; i < system_size; ++i) { vars[i] += step / 6.0 * (k1[i] + 2.0 * (k2[i] + k3[i]) + k4[i]); }
 }
 
 }  // namespace solver
