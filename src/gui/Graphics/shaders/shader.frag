@@ -1,8 +1,7 @@
 #version 330
 
 in vec4 vColour;
-out vec4 colour;
 
 void main() {
-    colour = vColour;
+    gl_FragColor = vec4(vColour.xyz, 1.0);
 }

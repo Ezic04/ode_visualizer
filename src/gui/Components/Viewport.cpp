@@ -6,16 +6,9 @@
 #include <vector>
 
 #include <QVector3D>
+#include "gui/graphics/WorldGrid.hpp"
 
-/* DELETE THIS */
-
-std::vector<float> vertices = {-1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-std::vector<unsigned int> indices = {0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2};
-std::vector<std::array<float, 3>> instances = {};
-
-/* DELETE THIS */
-
-static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f);
+static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f); // maybe change this to a member var
 
 Viewport::Viewport(
   QWindow *parent
@@ -25,6 +18,7 @@ Viewport::Viewport(
 Viewport::~Viewport(void) {
   delete m_mesh;
   delete m_program;
+  delete m_world_grid;
 }
 
 void Viewport::initializeGL(void) {
@@ -32,14 +26,14 @@ void Viewport::initializeGL(void) {
   //don't initialize any of this from the constructor
   m_gl = OpenGLFunctions::getInstance(); 
 
-  // m_mesh = new Mesh(vertices, indices, instances);
+  m_world_grid = new WorldGrid;
   m_mesh = new Mesh(Mesh::Sphere(1.0f, 18, {{0.0f, 0.0f, 0.0f}}));
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
   std::string frag_path = shader_path + "/shader.frag";
 
-  //move this to mesh
+  // TODO: move this to mesh
   m_program = new QOpenGLShaderProgram;
   m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, vert_path.c_str());
   m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, frag_path.c_str());
@@ -49,9 +43,13 @@ void Viewport::initializeGL(void) {
   m_model_uniform = m_program->uniformLocation("model_matrix");
   m_camera_uniform = m_program->uniformLocation("camera_matrix");
 
+
   m_gl->glEnable(GL_DEPTH_TEST);
-  m_gl->glEnable(GL_CULL_FACE);
-  m_gl->glCullFace(GL_BACK);
+  m_gl->glEnable(GL_BLEND);
+  m_gl->glBlendEquation(GL_FUNC_ADD);
+  m_gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  m_program->release();
 }
 
 void Viewport::paintGL(void) {
@@ -68,13 +66,15 @@ void Viewport::paintGL(void) {
   m_program->setUniformValue(m_model_uniform, QMatrix4x4());
   m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
 
-  m_gl->glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  m_gl->glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   m_gl->glDrawElementsInstanced(GL_TRIANGLES, m_mesh->getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh->getInstanceCount());
 
   m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   m_gl->glBindVertexArray(0);
   m_program->release();
 
+  m_world_grid->draw(m_camera.getFocusPoint(), m_camera.getCameraMatrix());
+  
   emit frameFinished();
 }
 
