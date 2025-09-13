@@ -10,7 +10,9 @@
 
 #include "gui/graphics/Mesh.hpp"
 #include "gui/graphics/Camera.hpp"
+#include "gui/graphics/WorldGrid.hpp"
 #include "gui/graphics/OpenGLFunctions.hpp"
+
 
 class Viewport : public QOpenGLWindow {
   Q_OBJECT
@@ -40,8 +42,10 @@ private:
 
   QPoint m_last_mouse_position;
 
-  Mesh* m_mesh;
   Camera m_camera;
+  
+  Mesh* m_mesh = nullptr;
+  WorldGrid* m_world_grid = nullptr;
 
   GLint m_model_uniform;
   GLint m_camera_uniform;
