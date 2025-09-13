@@ -2,8 +2,9 @@
 
 layout (location = 0) in vec3 vertex_position;
 
-uniform vec3 camera_position;
 uniform mat4 camera_matrix;
+uniform vec3 camera_position;
+uniform vec3 focus_point_position;
 
 out vec2 uv;
 

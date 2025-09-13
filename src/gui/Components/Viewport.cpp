@@ -73,7 +73,7 @@ void Viewport::paintGL(void) {
   m_gl->glBindVertexArray(0);
   m_program->release();
 
-  m_world_grid->draw(m_camera.getFocusPoint(), m_camera.getCameraMatrix());
+  m_world_grid->draw(m_camera.getCameraMatrix(), m_camera.getPosition(), m_camera.getFocusPoint());
   
   emit frameFinished();
 }
@@ -112,7 +112,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  // m_mesh->updateInstances(positions);
+  m_mesh->updateInstances(positions);
   requestUpdate();
 }
 
