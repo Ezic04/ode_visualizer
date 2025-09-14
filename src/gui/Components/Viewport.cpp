@@ -1,12 +1,9 @@
 #include "gui/components/Viewport.hpp"
-#include <gl/gl.h>
-#include <qopenglext.h>
 
 #include <array>
 #include <vector>
 
 #include <QVector3D>
-#include "gui/graphics/WorldGrid.hpp"
 
 static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f); // maybe change this to a member var
 
@@ -16,40 +13,19 @@ Viewport::Viewport(
 {}
 
 Viewport::~Viewport(void) {
-  delete m_mesh;
-  delete m_program;
+  delete m_particle;
   delete m_world_grid;
 }
 
 void Viewport::initializeGL(void) {
-
-  //don't initialize any of this from the constructor
   m_gl = OpenGLFunctions::getInstance(); 
-
-  m_world_grid = new WorldGrid;
-  m_mesh = new Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }});
-
-  std::string shader_path = SHADER_PATH;
-  std::string vert_path = shader_path + "/shader.vert";
-  std::string frag_path = shader_path + "/shader.frag";
-
-  // TODO: move this to mesh
-  m_program = new QOpenGLShaderProgram;
-  m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, vert_path.c_str());
-  m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, frag_path.c_str());
-  m_program->link();
-  m_program->bind();
-
-  m_model_uniform = m_program->uniformLocation("model_matrix");
-  m_camera_uniform = m_program->uniformLocation("camera_matrix");
-
-
   m_gl->glEnable(GL_DEPTH_TEST);
   m_gl->glEnable(GL_BLEND);
   m_gl->glBlendEquation(GL_FUNC_ADD);
   m_gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  m_program->release();
+  m_world_grid = new WorldGrid;
+  m_particle = new Particle(Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }}));
 }
 
 void Viewport::paintGL(void) {
@@ -58,21 +34,8 @@ void Viewport::paintGL(void) {
 
   m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
-
-  m_program->bind();
-  m_gl->glBindVertexArray(m_mesh->getVAO());
-  m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh->getIBO());
-
-  m_program->setUniformValue(m_model_uniform, QMatrix4x4());
-  m_program->setUniformValue(m_camera_uniform, m_camera.getCameraMatrix());
-
-  m_gl->glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  m_gl->glDrawElementsInstanced(GL_TRIANGLES, m_mesh->getIndexCount(), GL_UNSIGNED_INT, 0, m_mesh->getInstanceCount());
-
-  m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  m_gl->glBindVertexArray(0);
-  m_program->release();
-
+  
+  m_particle->draw(m_camera.getCameraMatrix());
   m_world_grid->draw(m_camera.getCameraMatrix(), m_camera.getPosition(), m_camera.getFocusPoint());
   
   emit frameFinished();
@@ -112,7 +75,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  m_mesh->update(positions);
+  m_particle->update(positions);
   requestUpdate();
 }
 

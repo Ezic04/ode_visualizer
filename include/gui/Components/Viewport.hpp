@@ -8,11 +8,10 @@
 #include <QOpenGLWindow>
 #include <QOpenGLShaderProgram>
 
-#include "gui/graphics/Mesh.hpp"
 #include "gui/graphics/Camera.hpp"
+#include "gui/graphics/Particle.hpp"
 #include "gui/graphics/WorldGrid.hpp"
 #include "gui/graphics/OpenGLFunctions.hpp"
-
 
 class Viewport : public QOpenGLWindow {
   Q_OBJECT
@@ -44,12 +43,9 @@ private:
 
   Camera m_camera;
   
-  Mesh* m_mesh = nullptr;
+  Particle* m_particle = nullptr;
   WorldGrid* m_world_grid = nullptr;
 
-  GLint m_model_uniform;
-  GLint m_camera_uniform;
-
-  QOpenGLShaderProgram *m_program = nullptr;
   OpenGLFunctions *m_gl= nullptr;
+
 };
