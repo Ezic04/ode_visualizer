@@ -4,7 +4,7 @@
 
 WorldGrid::WorldGrid(
     void
-) : Mesh(Mesh::Plane(100.0f, 100.0f, {{0.0f, 0.0f, 0.0f}})),
+) : Plane(100.0f, 100.0f),
     m_gl(OpenGLFunctions::getInstance()),
     m_program(new QOpenGLShaderProgram)
 {
