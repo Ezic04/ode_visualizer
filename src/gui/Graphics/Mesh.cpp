@@ -151,8 +151,6 @@ Sphere::Sphere(
 ) : Mesh(Sphere::construct(radius, resolution, instances))
 {}
 
-#include <iostream>
-
 // taken and modified from https://www.songho.ca/opengl/gl_sphere.html#sphere
 Mesh Sphere::construct(
   float radius,
@@ -172,9 +170,7 @@ Mesh Sphere::construct(
   vertices.reserve((stack_count + 1) * (sector_count + 1) * 3);
   
   std::vector<unsigned int> indices;
-
-  unsigned short num_ind = (stack_count * sector_count - 2) * 6 + sector_count * 4; // something is wrong here
-  indices.reserve(num_ind);
+  indices.reserve(stack_count * (sector_count + 1) * 6);
 
   for(int i = 0; i < stack_count + 1; ++i) {
       stack_angle= std::numbers::pi / 2.0f - (i * stack_step);
@@ -204,8 +200,6 @@ Mesh Sphere::construct(
       }
     }
   }
-
-  std::cout << indices.capacity() << " " << indices.size() << " " << num_ind << "\n";
 
   return std::move(Mesh(vertices, indices, instances)); 
 }
