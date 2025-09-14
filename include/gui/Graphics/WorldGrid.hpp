@@ -6,7 +6,7 @@
 #include "gui/graphics/Mesh.hpp"
 #include "gui/graphics/OpenGLFunctions.hpp"
 
-class WorldGrid : public Mesh {
+class WorldGrid : public Plane {
 public:
 
   WorldGrid(void);

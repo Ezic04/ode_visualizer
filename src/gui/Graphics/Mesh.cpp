@@ -6,108 +6,6 @@
 #include <vector>
 #include <cstddef>
 
-Mesh Mesh::Plane(float width, float length, const std::vector<std::array<float, 3>>& instances) {
-  width /= 2.0f;
-  length /= 2.0f;
-
-  return std::move(Mesh({
-    -width, 0.0f, -length,
-    -width, 0.0f,  length,
-     width, 0.0f,  length,
-     width, 0.0f, -length
-  }, {
-    0, 2, 1,
-    0, 3, 2
-  }, instances));
-}
-
-Mesh Mesh::Cube(float width, float height, float length, const std::vector<std::array<float, 3>>& instances) {
-  width /= 2.0f;
-  height /= 2.0f;
-  length /= 2.0f;
-
-  return std::move(Mesh({
-    -width, -height,  length,
-    -width,  height,  length,
-     width,  height,  length,
-     width, -height,  length,
-
-    -width, -height, -length,
-    -width,  height, -length,
-     width,  height, -length,
-     width, -height, -length
-  }, {
-    0, 2, 1,
-    0, 3, 2,
-    0, 4, 7,
-    0, 7, 3,
-    3, 6, 2,
-    3, 7, 6,
-    4, 0, 1,
-    4, 1, 5,
-    5, 1, 2,
-    5, 2, 6,
-    7, 4, 5,
-    7, 5, 6
-  }, instances));
-}
-
-#include <iostream>
-
-// taken and modified from https://www.songho.ca/opengl/gl_sphere.html#sphere
-Mesh Mesh::Sphere(float radius, unsigned char resolution, const std::vector<std::array<float, 3>>& instances) {
-
-  unsigned int k1 = 0, k2 = 0;
-  unsigned char sector_count = resolution;
-  unsigned char stack_count = resolution / 2;
-  
-  float x = 0.0f, y = 0.0f, z = 0.0f, xz = 0.0f;
-  float sector_step = 2.0f * std::numbers::pi / (float)sector_count;
-  float stack_step = std::numbers::pi / (float)stack_count;
-  float sector_angle = 0.0f, stack_angle = 0.0f;
- 
-  std::vector<float> vertices;
-  vertices.reserve((stack_count + 1) * (sector_count + 1) * 3);
-  
-  std::vector<unsigned int> indices;
-
-  unsigned short num_ind = (stack_count * sector_count - 2) * 6 + sector_count * 4; // something is wrong here
-  indices.reserve(num_ind);
-
-  for(int i = 0; i < stack_count + 1; ++i) {
-      stack_angle= std::numbers::pi / 2.0f - (i * stack_step);
-      xz = radius * cosf(stack_angle);
-      y = radius * sinf(stack_angle);
- 
-      k1 = i * (sector_count+ 1);
-      k2 = k1 + sector_count + 1;
-
-    for(int j = 0; j < sector_count + 1; ++j, ++k1, ++k2) {
-      sector_angle= j * sector_step;
-    
-      vertices.push_back(xz * cosf(sector_angle));
-      vertices.push_back(y);
-      vertices.push_back(xz * sinf(sector_angle));
-
-      if(i) {
-          indices.push_back(k1 + 1);
-          indices.push_back(k2);
-          indices.push_back(k1);
-      }
-      
-      if(i != (stack_count - 1)) {
-          indices.push_back(k2 + 1);
-          indices.push_back(k2);
-          indices.push_back(k1 + 1);
-      }
-    }
-  }
-
-  std::cout << indices.capacity() << " " << indices.size() << " " << num_ind << "\n";
-
-  return std::move(Mesh(vertices, indices, instances));
-}
-
 Mesh::Mesh(
   const std::vector<float> &vertices, 
   const std::vector<unsigned int> &indices,
@@ -169,10 +67,130 @@ void Mesh::updateInstances(const std::vector<std::array<float, 3>> &instances) {
   const size_t data_size = sizeof(std::array<float, 3>) * instance_count;
   const float *const data = instances.data()->data();
   m_gl->glBindBuffer(GL_ARRAY_BUFFER, m_instances_VBO);
-  if (instance_count != m_instance_count) {
-    m_gl->glBufferData(GL_ARRAY_BUFFER, data_size, data, GL_DYNAMIC_DRAW);
+  if (instance_count != m_instance_count) { m_gl->glBufferData(GL_ARRAY_BUFFER, data_size, data, GL_DYNAMIC_DRAW);
     m_instance_count = instance_count;
   } else {
     m_gl->glBufferSubData(GL_ARRAY_BUFFER, 0, data_size, data);
   }
+}
+
+Plane::Plane(
+  float width, 
+  float depth 
+) : Mesh(Plane::construct(width, depth))
+{}
+
+Mesh Plane::construct(float width, float depth) {
+  width /= 2.0f;
+  depth /= 2.0f;
+
+  return std::move(Mesh({
+    -width, 0.0f, -depth,
+    -width, 0.0f,  depth,
+     width, 0.0f,  depth,
+     width, 0.0f, -depth
+  }, {
+    0, 2, 1,
+    0, 3, 2
+  }, {{ 0.0f, 0.0f, 0.0f }})); 
+}
+
+Cube::Cube(
+  float width, 
+  float height, 
+  float depth 
+) : Mesh(Cube::construct(width, height, depth)) 
+{}
+
+Mesh Cube::construct(float width, float height, float depth) {
+  width /= 2.0f;
+  height /= 2.0f;
+  depth /= 2.0f;
+
+  return std::move(Mesh({
+    -width, -height,  depth,
+    -width,  height,  depth,
+     width,  height,  depth,
+     width, -height,  depth,
+
+    -width, -height, -depth,
+    -width,  height, -depth,
+     width,  height, -depth,
+     width, -height, -depth
+  }, {
+    0, 2, 1,
+    0, 3, 2,
+    0, 4, 7,
+    0, 7, 3,
+    3, 6, 2,
+    3, 7, 6,
+    4, 0, 1,
+    4, 1, 5,
+    5, 1, 2,
+    5, 2, 6,
+    7, 4, 5,
+    7, 5, 6
+  }, {{ 0.0f, 0.0f, 0.0f }}));
+ 
+}
+
+Sphere::Sphere(
+  float radius, 
+  unsigned char resolution
+) : Mesh(Sphere::construct(radius, resolution))
+{}
+
+#include <iostream>
+
+// taken and modified from https://www.songho.ca/opengl/gl_sphere.html#sphere
+Mesh Sphere::construct(float radius, unsigned char resolution) {
+  unsigned int k1 = 0, k2 = 0;
+  unsigned char sector_count = resolution;
+  unsigned char stack_count = resolution / 2;
+  
+  float x = 0.0f, y = 0.0f, z = 0.0f, xz = 0.0f;
+  float sector_step = 2.0f * std::numbers::pi / (float)sector_count;
+  float stack_step = std::numbers::pi / (float)stack_count;
+  float sector_angle = 0.0f, stack_angle = 0.0f;
+ 
+  std::vector<float> vertices;
+  vertices.reserve((stack_count + 1) * (sector_count + 1) * 3);
+  
+  std::vector<unsigned int> indices;
+
+  unsigned short num_ind = (stack_count * sector_count - 2) * 6 + sector_count * 4; // something is wrong here
+  indices.reserve(num_ind);
+
+  for(int i = 0; i < stack_count + 1; ++i) {
+      stack_angle= std::numbers::pi / 2.0f - (i * stack_step);
+      xz = radius * cosf(stack_angle);
+      y = radius * sinf(stack_angle);
+ 
+      k1 = i * (sector_count+ 1);
+      k2 = k1 + sector_count + 1;
+
+    for(int j = 0; j < sector_count + 1; ++j, ++k1, ++k2) {
+      sector_angle= j * sector_step;
+    
+      vertices.push_back(xz * cosf(sector_angle));
+      vertices.push_back(y);
+      vertices.push_back(xz * sinf(sector_angle));
+
+      if(i) {
+          indices.push_back(k1 + 1);
+          indices.push_back(k2);
+          indices.push_back(k1);
+      }
+      
+      if(i != (stack_count - 1)) {
+          indices.push_back(k2 + 1);
+          indices.push_back(k2);
+          indices.push_back(k1 + 1);
+      }
+    }
+  }
+
+  std::cout << indices.capacity() << " " << indices.size() << " " << num_ind << "\n";
+
+  return std::move(Mesh(vertices, indices, {{ 0.0f, 0.0f, 0.0f }})); 
 }
