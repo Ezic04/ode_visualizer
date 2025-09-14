@@ -27,7 +27,7 @@ void Viewport::initializeGL(void) {
   m_gl = OpenGLFunctions::getInstance(); 
 
   m_world_grid = new WorldGrid;
-  m_mesh = new Sphere(1.0f, 18);
+  m_mesh = new Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }});
 
   std::string shader_path = SHADER_PATH;
   std::string vert_path = shader_path + "/shader.vert";
@@ -112,7 +112,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  m_mesh->updateInstances(positions);
+  m_mesh->update(positions);
   requestUpdate();
 }
 
