@@ -33,7 +33,7 @@ class Parser {
     Exception(const std::string &message) : std::runtime_error(message) {}
   };
 
- private:
+ public:
   Parser() = default;
   std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string &equations,
                                                                  const std::string &free_variable);
