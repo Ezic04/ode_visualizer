@@ -6,17 +6,29 @@
 #include "gui/graphics/Mesh.hpp"
 #include "gui/graphics/OpenGLFunctions.hpp"
 
-struct GridParameters {
-  float cell_size = 1.0f;
-  float fade_start_distance = 10.0f;
-  float fade_end_distance = 30.0f;
-  QVector3D grid_color = { 0.29f, 0.29f, 0.29f };
-  QVector3D x_axis_color = { 1.0f, 0.0f, 0.0f };
-  QVector3D z_axis_color = { 0.0f, 0.0f, 1.0f };
-};
+
 
 class WorldGrid : public Plane {
 public:
+
+  struct GridParameters {
+    GridParameters(
+      void
+    ) : cell_size(1.0f),
+        fade_start_distance(10.0f),
+        fade_end_distance(30.0f),
+        grid_color({0.29f, 0.29f, 0.29f}),
+        x_axis_color({1.0f, 0.0f, 0.0f}),
+        z_axis_color({0.0f, 0.0f, 1.0f})
+    {}
+    
+    float cell_size = 1.0f;
+    float fade_start_distance;
+    float fade_end_distance;
+    QVector3D grid_color;
+    QVector3D x_axis_color;
+    QVector3D z_axis_color;
+  };
 
   WorldGrid(const GridParameters& params = GridParameters());
   ~WorldGrid(void);
