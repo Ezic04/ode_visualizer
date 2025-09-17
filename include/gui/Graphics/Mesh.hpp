@@ -21,11 +21,6 @@ public:
 
   void update(const std::vector<std::array<float, 3>>& positions);
 
-  inline const GLuint getVAO(void) const { return m_VAO; }
-  inline const GLuint getIBO(void) const { return m_IBO; }
-  inline const GLuint getVerticesVBO(void) const { return m_vertices_VBO; }
-  inline const GLuint getInstancesVBO(void) const { return m_instances_VBO; }
-
   inline const unsigned int getIndexCount(void) const { return m_index_count; }
   inline const unsigned int getVertexCount(void) const { return m_vertex_count; }
   inline const unsigned int getInstanceCount(void) const { return m_instance_count; }
