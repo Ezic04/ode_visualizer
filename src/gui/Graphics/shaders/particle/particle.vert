@@ -1,7 +1,7 @@
 #version 330
 
 layout (location = 0) in vec3 vertex_position;
-layout (location = 1) in vec3 instance_position;
+layout (location = 2) in vec3 instance_position;
 
 uniform mat4 camera_matrix;
 

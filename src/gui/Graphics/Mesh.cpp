@@ -9,6 +9,7 @@
 Mesh::Mesh(
   const std::vector<float> &vertices, 
   const std::vector<unsigned int> &indices,
+  const std::vector<float> &normals, 
   const std::vector<std::array<float, 3>> &instances
 ) : m_index_count(indices.size()),
     m_vertex_count(vertices.size()),
@@ -18,10 +19,14 @@ Mesh::Mesh(
   m_gl->glGenVertexArrays(1, &m_VAO);
   m_gl->glBindVertexArray(m_VAO);
 
+
+  // ibo setup 
   m_gl->glGenBuffers(1, &m_IBO);
   m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
   m_gl->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
+
+  // vertices vbo setup
   m_gl->glGenBuffers(1, &m_vertices_VBO);
   m_gl->glBindBuffer(GL_ARRAY_BUFFER, m_vertices_VBO);
   m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
@@ -29,14 +34,27 @@ Mesh::Mesh(
   m_gl->glEnableVertexAttribArray(0);
   m_gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+
+  // normals vbo setup
+  m_gl->glGenBuffers(1, &m_normals_VBO);
+  m_gl->glBindBuffer(GL_ARRAY_BUFFER, m_normals_VBO);
+  m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * normals.size(), normals.data(), GL_STATIC_DRAW);
+
+  m_gl->glEnableVertexAttribArray(1);
+  m_gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr); 
+
+
+  // instances vbo setup
   m_gl->glGenBuffers(1, &m_instances_VBO);
   m_gl->glBindBuffer(GL_ARRAY_BUFFER, m_instances_VBO);
   m_gl->glBufferData(GL_ARRAY_BUFFER, sizeof(std::array<float, 3>) * instances.size(), instances.data()->data(), GL_DYNAMIC_DRAW);
 
-  m_gl->glEnableVertexAttribArray(1);
-  m_gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
-  m_gl->glVertexAttribDivisor(1, 1);
+  m_gl->glEnableVertexAttribArray(2);
+  m_gl->glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+  m_gl->glVertexAttribDivisor(2, 1);
 
+
+  // unbind buffers
   m_gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
   m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   m_gl->glBindVertexArray(0);
@@ -46,6 +64,7 @@ Mesh::Mesh(Mesh&& other) {
   m_VAO = other.m_VAO;                        other.m_VAO = 0;
   m_IBO = other.m_IBO;                        other.m_IBO = 0;
   m_vertices_VBO = other.m_vertices_VBO;      other.m_vertices_VBO = 0;
+  m_normals_VBO = other.m_normals_VBO;        other.m_normals_VBO = 0;
   m_instances_VBO = other.m_instances_VBO;    other.m_instances_VBO = 0;
 
   m_index_count = other.m_index_count;        other.m_index_count = 0;
@@ -59,6 +78,7 @@ Mesh::~Mesh(void) {
   if (m_VAO != 0) { m_gl->glDeleteVertexArrays(1, &m_VAO); }
   if (m_IBO != 0) { m_gl->glDeleteBuffers(1, &m_IBO); }
   if (m_vertices_VBO != 0) { m_gl->glDeleteBuffers(1, &m_vertices_VBO); }
+  if (m_normals_VBO!= 0) { m_gl->glDeleteBuffers(1, &m_normals_VBO); }
   if (m_instances_VBO != 0) { m_gl->glDeleteBuffers(1, &m_instances_VBO); }
 }
 
@@ -97,6 +117,8 @@ Mesh Plane::construct(
   }, {
     0, 2, 1,
     0, 3, 2
+  }, {
+    // add normals
   }, instances)); 
 }
 
@@ -141,6 +163,8 @@ Mesh Cube::construct(
     5, 2, 6,
     7, 4, 5,
     7, 5, 6
+  }, {
+    // add normals
   }, instances));
 }
 
@@ -166,11 +190,16 @@ Mesh Sphere::construct(
   float stack_step = std::numbers::pi / (float)stack_count;
   float sector_angle = 0.0f, stack_angle = 0.0f;
  
+  unsigned int vertex_count = (stack_count + 1) * (sector_count + 1) * 3;
+
   std::vector<float> vertices;
-  vertices.reserve((stack_count + 1) * (sector_count + 1) * 3);
+  vertices.reserve(vertex_count);
   
   std::vector<unsigned int> indices;
   indices.reserve(stack_count * (sector_count + 1) * 6);
+
+  std::vector<float> normals;
+  normals.reserve(vertex_count);
 
   for(int i = 0; i < stack_count + 1; ++i) {
       stack_angle= std::numbers::pi / 2.0f - (i * stack_step);
@@ -201,5 +230,5 @@ Mesh Sphere::construct(
     }
   }
 
-  return std::move(Mesh(vertices, indices, instances)); 
+  return std::move(Mesh(vertices, indices, normals, instances)); 
 }
