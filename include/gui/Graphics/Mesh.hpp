@@ -11,6 +11,7 @@ public:
   Mesh(
     const std::vector<float> &vertices, 
     const std::vector<unsigned int> &indices,
+    const std::vector<float> &normals,
     const std::vector<std::array<float, 3>> &instances
   );
   Mesh(Mesh &&other);
@@ -30,6 +31,7 @@ protected:
   GLuint m_VAO = 0;
   GLuint m_IBO = 0;
   GLuint m_vertices_VBO = 0;
+  GLuint m_normals_VBO = 0;
   GLuint m_instances_VBO = 0;
 
   unsigned int m_index_count = 0;
