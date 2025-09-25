@@ -118,7 +118,10 @@ Mesh Plane::construct(
     0, 2, 1,
     0, 3, 2
   }, {
-    // add normals
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f
   }, instances)); 
 }
 
