@@ -26,7 +26,7 @@ void Viewport::initializeGL(void) {
 
   m_world_grid = new WorldGrid;
   // m_particle = new Particle(Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }}));
-  m_particle = new Particle(Plane(1.0f, 1.0f, {{ 0.0f, 0.0f, 0.0f }}));
+  m_particle = new Particle(Cube(1.0f, 1.0f, 1.0f, {{ 0.0f, 0.0f, 0.0f }}));
 }
 
 void Viewport::paintGL(void) {
@@ -76,7 +76,7 @@ void Viewport::wheelEvent(QWheelEvent *event) {
 }
 
 void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  // m_particle->update(positions);
+  m_particle->update(positions);
   requestUpdate();
 }
 

@@ -144,30 +144,101 @@ Mesh Cube::construct(
   depth /= 2.0f;
 
   return std::move(Mesh({
+    // top face
+    -width,  height, -depth,
+     width,  height, -depth,
+     width,  height,  depth,
+    -width,  height,  depth,
+    
+    // bottom face
+    -width, -height, -depth,
+    -width, -height,  depth,
+     width, -height,  depth,
+     width, -height, -depth,
+
+    // right face
+     width, -height, -depth,
+     width, -height,  depth,
+     width,  height,  depth,
+     width,  height, -depth,
+
+    // left face
+    -width, -height, -depth,
+    -width,  height, -depth,
+    -width,  height,  depth,
+    -width, -height,  depth,
+
+    // front face
+    -width, -height, -depth,
+     width, -height, -depth,
+     width,  height, -depth,
+    -width,  height, -depth,
+
+    // back face
     -width, -height,  depth,
     -width,  height,  depth,
      width,  height,  depth,
-     width, -height,  depth,
+     width, -height,  depth
+  }, {
+    // top face
+     0,  1,  2,
+     0,  2,  3,
 
-    -width, -height, -depth,
-    -width,  height, -depth,
-     width,  height, -depth,
-     width, -height, -depth
+    // bottom face
+     4,  5,  6,
+     4,  6,  7,
+
+    // right face
+     8,  9, 10,
+     8, 10, 11,
+
+    // left face
+    12, 13, 14,
+    12, 14, 15,
+
+    // front face
+    16, 17, 18,
+    16, 18, 19,
+
+    //back face
+    20, 21, 22,
+    20, 22, 23
   }, {
-    0, 2, 1,
-    0, 3, 2,
-    0, 4, 7,
-    0, 7, 3,
-    3, 6, 2,
-    3, 7, 6,
-    4, 0, 1,
-    4, 1, 5,
-    5, 1, 2,
-    5, 2, 6,
-    7, 4, 5,
-    7, 5, 6
-  }, {
-    // add normals
+    // top face
+     0.0f,  1.0f,  0.0f,
+     0.0f,  1.0f,  0.0f,
+     0.0f,  1.0f,  0.0f,
+     0.0f,  1.0f,  0.0f,
+
+    // bottom face
+     0.0f, -1.0f,  0.0f,
+     0.0f, -1.0f,  0.0f,
+     0.0f, -1.0f,  0.0f,
+     0.0f, -1.0f,  0.0f,
+
+    // right face
+     1.0f,  0.0f,  0.0f,
+     1.0f,  0.0f,  0.0f,
+     1.0f,  0.0f,  0.0f,
+     1.0f,  0.0f,  0.0f,
+
+    // left face
+    -1.0f,  0.0f,  0.0f,
+    -1.0f,  0.0f,  0.0f,
+    -1.0f,  0.0f,  0.0f,
+    -1.0f,  0.0f,  0.0f,
+
+    // front face
+     0.0f,  0.0f, -1.0f,
+     0.0f,  0.0f, -1.0f,
+     0.0f,  0.0f, -1.0f,
+     0.0f,  0.0f, -1.0f,
+
+    // back face
+     0.0f,  0.0f,  1.0f,
+     0.0f,  0.0f,  1.0f,
+     0.0f,  0.0f,  1.0f,
+     0.0f,  0.0f,  1.0f
   }, instances));
 }
 
