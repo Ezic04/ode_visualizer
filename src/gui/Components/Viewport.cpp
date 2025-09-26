@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <QVector3D>
+#include <QVector4D>
 
 static const QVector3D k_background_color(22 / 255.0f, 22 / 255.0f, 22 / 255.0f); // maybe change this to a member var
 
@@ -19,6 +20,13 @@ Viewport::~Viewport(void) {
   delete m_particle_shader;
 }
 
+void Viewport::renderFrame(
+  const std::vector<std::array<float, 3>> &positions
+) {
+  m_particle->update(positions);
+  requestUpdate();
+}
+
 void Viewport::initializeGL(void) {
   m_gl = OpenGLFunctions::getInstance(); 
   m_gl->glEnable(GL_DEPTH_TEST);
@@ -26,21 +34,17 @@ void Viewport::initializeGL(void) {
   m_gl->glBlendEquation(GL_FUNC_ADD);
   m_gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  m_world_grid = new WorldGrid;
   // m_particle = new Particle(Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }}));
   m_particle = new Particle(Cube(1.0f, 1.0f, 1.0f, {{ 0.0f, 0.0f, 0.0f }}));
-
   m_particle_shader = new ParticleShader;
+
+  m_world_grid = new WorldGrid;
   m_grid_shader = new GridShader;
 }
 
 void Viewport::paintGL(void) {
-  QVector4D vieport_size = this->getVieportSize();
-  m_gl->glViewport(GLint(vieport_size.x()), GLint(vieport_size.y()), GLint(vieport_size.z()), GLint(vieport_size.w()));
+  this->clearViewport();
 
-  m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-  m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
-  
   this->drawParticles();
   this->drawGrid();
 
@@ -80,26 +84,12 @@ void Viewport::wheelEvent(QWheelEvent *event) {
   if (!degrees.isNull()) { m_camera.zoom(degrees.y() / 100.0f); }
 }
 
-void Viewport::renderFrame(const std::vector<std::array<float, 3>> &positions) {
-  m_particle->update(positions);
-  requestUpdate();
-}
+void Viewport::clearViewport(void) {
+  QVector4D vieport_size = this->getVieportSize();
+  m_gl->glViewport(GLint(vieport_size.x()), GLint(vieport_size.y()), GLint(vieport_size.z()), GLint(vieport_size.w()));
 
-QVector4D Viewport::getVieportSize(void) {
-  const qreal retinaScale = devicePixelRatio();
-
-  float target_aspect_ratio = m_camera.getAspectRatio();
-  float window_aspect_ratio = this->width() / (float)this->height();
-
-  if (window_aspect_ratio > target_aspect_ratio) { // window is wider
-    int target_height = this->width() / target_aspect_ratio;
-    return QVector4D(0, (this->height() - target_height) / 2.0f, this->width() * retinaScale,
-                     target_height * retinaScale);
-  } else { // window is taller
-    int target_width = this->height() * target_aspect_ratio;
-    return QVector4D((this->width() - target_width) / 2.0f, 0, target_width * retinaScale,
-                     this->height() * retinaScale);
-  }
+  m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f); 
 }
 
 void Viewport::drawParticles(void) {
@@ -122,4 +112,27 @@ void Viewport::drawGrid(void) {
   
   m_world_grid->draw(m_grid_shader);
   m_grid_shader->release();
+}
+
+QVector4D Viewport::getVieportSize(void) {
+  const qreal retinaScale = devicePixelRatio();
+
+  float target_aspect_ratio = m_camera.getAspectRatio();
+  float window_aspect_ratio = this->width() / (float)this->height();
+
+  if (window_aspect_ratio > target_aspect_ratio) { // window is wider
+    int target_height = this->width() / target_aspect_ratio;
+    return QVector4D(
+      0, 
+      (this->height() - target_height) / 2.0f, 
+      this->width() * retinaScale,
+      target_height * retinaScale);
+  } else { // window is taller
+    int target_width = this->height() * target_aspect_ratio;
+    return QVector4D(
+      (this->width() - target_width) / 2.0f, 
+      0, 
+      target_width * retinaScale,
+      this->height() * retinaScale);
+  }
 }
