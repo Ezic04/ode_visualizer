@@ -19,7 +19,8 @@ public:
 
 private:
 
-  GLuint m_object_color = 0;
+  GLuint m_object_color_uniform = 0;
+  GLuint m_model_matrix_uniform = 0;
   GLuint m_camera_matrix_uniform = 0;
   GLuint m_camera_position_uniform = 0;
 

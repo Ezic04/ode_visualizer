@@ -3,6 +3,8 @@
 #include <array>
 #include <vector>
 
+#include <QMatrix4x4>
+
 #include "gui/graphics/OpenGLFunctions.hpp"
 
 class Mesh {
@@ -20,13 +22,20 @@ public:
   Mesh(const Mesh &other) = delete;
   void operator=(const Mesh& other) = delete;
 
+  inline void rotate(float x, float y, float z) { m_model_matrix.rotate(x, y, z); }
+  inline void scale(float x, float y, float z) { m_model_matrix.scale(x, y, z); }
+  inline void resetTransforms(void) { m_model_matrix.setToIdentity(); }
+
   void update(const std::vector<std::array<float, 3>>& positions);
 
-  inline const unsigned int getIndexCount(void) const { return m_index_count; }
-  inline const unsigned int getVertexCount(void) const { return m_vertex_count; }
-  inline const unsigned int getInstanceCount(void) const { return m_instance_count; }
+  inline QMatrix4x4 getModelMatrix(void) const { return m_model_matrix; }
+  inline unsigned int getIndexCount(void) const { return m_index_count; }
+  inline unsigned int getVertexCount(void) const { return m_vertex_count; }
+  inline unsigned int getInstanceCount(void) const { return m_instance_count; }
 
 protected:
+
+  QMatrix4x4 m_model_matrix;
 
   GLuint m_VAO = 0;
   GLuint m_IBO = 0;
