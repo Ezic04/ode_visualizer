@@ -34,26 +34,29 @@ private:
   virtual void initializeGL(void) override;
   virtual void paintGL(void) override;
 
+  // ** move this to an event handler
   virtual void wheelEvent(QWheelEvent *event) override;
   virtual void mouseMoveEvent(QMouseEvent *event) override;
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  // ** move this to an event handler
 
-  QVector4D getVieportSize(void);
-
+  void clearViewport(void);
   void drawParticles(void);
   void drawGrid(void);
+
+  QVector4D getVieportSize(void);
 
   QPoint m_last_mouse_position;
 
   Camera m_camera;
   
   Particle* m_particle = nullptr;
+  ParticleShader* m_particle_shader = nullptr;
+
   WorldGrid* m_world_grid = nullptr;
+  GridShader* m_grid_shader = nullptr;
 
   OpenGLFunctions *m_gl= nullptr;
-
-  ParticleShader* m_particle_shader = nullptr;
-  GridShader* m_grid_shader = nullptr;
 
 };
