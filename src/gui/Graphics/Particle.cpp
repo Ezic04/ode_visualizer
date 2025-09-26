@@ -15,15 +15,17 @@ Particle::Particle(
   m_program->link();
   m_program->bind();
 
-  m_camera_uniform = m_program->uniformLocation("camera_matrix");
+  m_camera_matrix_uniform = m_program->uniformLocation("u_camera_matrix");
+  m_camera_position_uniform = m_program->uniformLocation("u_camera_position");
 }
 
-void Particle::draw(const QMatrix4x4& camera_matrix) {
+void Particle::draw(const QMatrix4x4& camera_matrix, const QVector3D& camera_position) {
   m_program->bind();
   m_gl->glBindVertexArray(m_VAO);
   m_gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 
-  m_program->setUniformValue(m_camera_uniform, camera_matrix);
+  m_program->setUniformValue(m_camera_matrix_uniform, camera_matrix);
+  m_program->setUniformValue(m_camera_position_uniform, camera_position);
   
   m_gl->glDrawElementsInstanced(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0, m_instance_count);
 

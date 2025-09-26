@@ -36,7 +36,7 @@ void Viewport::paintGL(void) {
   m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
   
-  m_particle->draw(m_camera.getCameraMatrix());
+  m_particle->draw(m_camera.getCameraMatrix(), m_camera.getPosition());
   m_world_grid->draw(m_camera.getCameraMatrix(), m_camera.getPosition(), m_camera.getFocusPoint());
   
   emit frameFinished();
