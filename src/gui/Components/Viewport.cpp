@@ -15,6 +15,8 @@ Viewport::Viewport(
 Viewport::~Viewport(void) {
   delete m_particle;
   delete m_world_grid;
+  delete m_grid_shader;
+  delete m_particle_shader;
 }
 
 void Viewport::initializeGL(void) {
@@ -27,6 +29,9 @@ void Viewport::initializeGL(void) {
   m_world_grid = new WorldGrid;
   // m_particle = new Particle(Sphere(1.0f, 18, {{ 0.0f, 0.0f, 0.0f }}));
   m_particle = new Particle(Cube(1.0f, 1.0f, 1.0f, {{ 0.0f, 0.0f, 0.0f }}));
+
+  m_particle_shader = new ParticleShader;
+  m_grid_shader = new GridShader;
 }
 
 void Viewport::paintGL(void) {
@@ -36,9 +41,9 @@ void Viewport::paintGL(void) {
   m_gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   m_gl->glClearColor(k_background_color.x(), k_background_color.y(), k_background_color.z(), 1.0f);
   
-  m_particle->draw(m_camera.getCameraMatrix(), m_camera.getPosition());
-  m_world_grid->draw(m_camera.getCameraMatrix(), m_camera.getPosition(), m_camera.getFocusPoint());
-  
+  this->drawParticles();
+  this->drawGrid();
+
   emit frameFinished();
 }
 
@@ -95,4 +100,26 @@ QVector4D Viewport::getVieportSize(void) {
     return QVector4D((this->width() - target_width) / 2.0f, 0, target_width * retinaScale,
                      this->height() * retinaScale);
   }
+}
+
+void Viewport::drawParticles(void) {
+  m_particle_shader->bind();
+
+  // ** this should be in an SSBO 
+  m_particle_shader->updateCameraParams(m_camera);
+  // ** this should be in an SSBO 
+
+  m_particle->draw(m_particle_shader);
+  m_particle_shader->release();
+}
+
+void Viewport::drawGrid(void) {
+  m_grid_shader->bind();
+
+  // ** also should be in an SSBO
+  m_grid_shader->updateCameraParams(m_camera);
+  // ** also should be in an SSBO
+  
+  m_world_grid->draw(m_grid_shader);
+  m_grid_shader->release();
 }
