@@ -12,7 +12,8 @@ ParticleShader::ParticleShader(void) : QOpenGLShaderProgram() {
   this->link();
   QOpenGLShaderProgram::bind();
 
-  m_object_color = this->uniformLocation("u_object_color");
+  m_object_color_uniform = this->uniformLocation("u_object_color");
+  m_model_matrix_uniform = this->uniformLocation("u_model_matrix");
   m_camera_matrix_uniform = this->uniformLocation("u_camera_matrix");
   m_camera_position_uniform = this->uniformLocation("u_camera_position");
 
@@ -25,5 +26,6 @@ void ParticleShader::updateCameraParams(const Camera& camera) {
 }
 
 void ParticleShader::updateParticleParams(const Particle& particle) {
-  this->setUniformValue(m_object_color, {1.0f, 1.0f, 1.0f});
+  this->setUniformValue(m_object_color_uniform, {1.0f, 1.0f, 1.0f});
+  this->setUniformValue(m_model_matrix_uniform, particle.getModelMatrix());
 }
