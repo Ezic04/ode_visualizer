@@ -26,6 +26,8 @@ target_sources(backend PRIVATE
   ${BACKEND_SOURCE_DIR}/parser.cpp
   ${BACKEND_SOURCE_DIR}/solver.cpp
   ${BACKEND_SOURCE_DIR}/simulation.cpp
+  ${BACKEND_SOURCE_DIR}/MotionSystem.cpp
+
 )
 
 
