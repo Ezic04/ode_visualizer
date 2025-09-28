@@ -1,7 +1,7 @@
 #pragma once
 
 #include "backend/Simulation.hpp"
-#include "gui/Components/Viewport.hpp"
+#include "gui/components/Viewport.hpp"
 
 #include <forward_list>
 #include <QObject>

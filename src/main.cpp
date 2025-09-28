@@ -1,6 +1,4 @@
-#include "gui/App/App.hpp"
-
-#include <print>
+#include "gui/app/App.hpp"
 
 int main(int argc, char **argv) {
   App app(argc, argv);
