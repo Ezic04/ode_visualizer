@@ -1,21 +1,20 @@
 #include "gui/components/MainWindow.hpp"
 
-#include "gui/components/ControlPanel.hpp"
-#include "gui/components/SimulationManager.hpp"
-#include "gui/components/Viewport.hpp"
-
-#include <qdockwidget.h>
-#include <QDockWidget>
-#include <qnamespace.h>
-#include <QShortcut>
-#include <QSurfaceFormat>
 #include <QWidget>
+#include <QMenuBar>
+#include <QShortcut>
+#include <QDockWidget>
+#include <QSurfaceFormat>
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
+#include "gui/components/ControlPanel.hpp"
+#include "gui/components/PreferencesPanel.hpp"
+
+MainWindow::MainWindow(
+  QWidget *parent
+) : QMainWindow(parent),
+    m_simulation_manager(&m_viewport)
+{
   // allocations
-  auto *viewport = new Viewport;
-  m_simulation_manager = new SimulationManager(viewport);
-
   auto *control_panel = new ControlPanel;
   auto *dock = new QDockWidget("Control Panel", this);
 
@@ -27,11 +26,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
   // inter-panel communication
-  // connect(m_simulation_manager, &SimulationManager::simulationUpdated,
-  // viewport, &Viewport::renderFrame);
-  connect(viewport, &Viewport::frameFinished, m_simulation_manager, &SimulationManager::update);
-  connect(control_panel, &ControlPanel::equationsChanged, m_simulation_manager, &SimulationManager::addMotionSystem);
-  connect(m_simulation_manager, &SimulationManager::parserFailed, control_panel, &ControlPanel::onParserFailed);
+  connect(&m_viewport, &Viewport::frameFinished, &m_simulation_manager, &SimulationManager::update);
+  connect(control_panel, &ControlPanel::equationsChanged, &m_simulation_manager, &SimulationManager::addMotionSystem);
+  connect(&m_simulation_manager, &SimulationManager::parserFailed, control_panel, &ControlPanel::onParserFailed);
 
   // shortcuts
   connect(new QShortcut(QKeySequence(Qt::Key_C), this), &QShortcut::activated, this, [dock](void) {
@@ -39,10 +36,28 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
   });
 
   // main window properties
+  this->setupMenuBar();
   this->resize(1280, 720);
   this->setMinimumSize(640, 360);
   this->addDockWidget(Qt::LeftDockWidgetArea, dock);
-  this->setCentralWidget(QWidget::createWindowContainer(viewport));
+  this->setCentralWidget(QWidget::createWindowContainer(&m_viewport));
 }
 
-MainWindow::~MainWindow(void) { delete m_simulation_manager; }
+void MainWindow::openPreferences(void) {
+  PreferencesPanel* panel = new PreferencesPanel(this);
+  panel->exec(); 
+}
+
+void MainWindow::setupMenuBar(void) {
+  auto* menu_bar = this->menuBar();
+
+  // file menu
+  QMenu* file_menu = menu_bar->addMenu("File");
+  QAction* preferences_action = file_menu->addAction("Preferences");
+  QAction* exit_action = file_menu->addAction("Exit");
+
+  connect(preferences_action, &QAction::triggered, this, &MainWindow::openPreferences);
+  connect(exit_action, &QAction::triggered, &QCoreApplication::quit);
+
+  // other menus?
+}

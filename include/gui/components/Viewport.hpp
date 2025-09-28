@@ -1,17 +1,18 @@
 #pragma once
 
-#include "gui/graphics/Camera.hpp"
-#include "gui/graphics/GridShader.hpp"
-#include "gui/graphics/OpenGLFunctions.hpp"
-#include "gui/graphics/Particle.hpp"
-#include "gui/graphics/ParticleShader.hpp"
-#include "gui/graphics/WorldGrid.hpp"
-
-#include <QMouseEvent>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLWindow>
-#include <QWheelEvent>
 #include <vector>
+
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QOpenGLWindow>
+#include <QOpenGLShaderProgram>
+
+#include "gui/graphics/Camera.hpp"
+#include "gui/graphics/Particle.hpp"
+#include "gui/graphics/WorldGrid.hpp"
+#include "gui/graphics/GridShader.hpp"
+#include "gui/graphics/ParticleShader.hpp"
+#include "gui/graphics/OpenGLFunctions.hpp"
 
 class Viewport: public QOpenGLWindow {
   Q_OBJECT
@@ -20,6 +21,9 @@ public:
   ~Viewport(void);
 
   void renderFrame(const std::vector<std::array<float, 3>> &positions);
+
+  inline WorldGrid::GridParameters getGridParameters(void) const { return m_world_grid->getParameters(); }
+  inline void setGridParameters(const WorldGrid::GridParameters& params) { m_world_grid->setParameters(params); }  
 
 signals:
   void frameFinished(void);
