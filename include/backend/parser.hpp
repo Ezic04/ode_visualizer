@@ -21,10 +21,12 @@ struct VariableMap {
   }
 };
 
+}  // namespace parser
+
 class Parser {
  public:
-  friend std::pair<std::vector<expr::ExprPtr>, VariableMap> parse(const std::string &equations,
-                                                                  const std::string &free_variable);
+  friend std::pair<std::vector<expr::ExprPtr>, parser::VariableMap> parse(const std::string &equations,
+                                                                          const std::string &free_variable);
   /**
    * Exception thrown by the parser when it encounters an error.
    */
@@ -35,8 +37,8 @@ class Parser {
 
  public:
   Parser() = default;
-  std::pair<std::vector<expr::ExprPtr>, VariableMap> parseSystem(const std::string &equations,
-                                                                 const std::string &free_variable);
+  std::pair<std::vector<expr::ExprPtr>, parser::VariableMap> parseSystem(const std::string &equations,
+                                                                         const std::string &free_variable);
 
   /**
    * Parses a string expression into an expression tree.
@@ -57,9 +59,5 @@ class Parser {
   bool consumeWord(std::string_view &s, std::string_view w);
   bool consume(std::string_view &s, char c);
 
-  VariableMap m_vars;
+  parser::VariableMap m_vars;
 };
-
-}  // namespace parser
-
-// ( x  +  -  ^ 2333 )

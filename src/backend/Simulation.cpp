@@ -1,39 +1,33 @@
 #include "backend/Simulation.hpp"
 
-#include <chrono>
-#include <print>
+#include "backend/MotionSystem.hpp"
+#include "backend/parser.hpp"
+
+#include <cstddef>
 #include <ranges>
+#include <variant>
 #include <vector>
 
-#include "backend/solver.hpp"
-
-using namespace std::chrono_literals;
-
-namespace simulation {
-
-void Simulation::addEquationsSystem(const std::vector<expr::ExprPtr> &system, parser::VariableMap var_names) {
-  m_equation_systems.emplace_front(system, var_names);
+void Simulation::addMotionSystem(const std::string &equations) {
+  auto [system, var_names] = parser::parse(equations);
+  m_motion_systems.emplace_front(MotionSystem{.m_equations_system = system, .var_names = var_names, .dt = 1.0f / 60.f});
 }
 
-void Simulation::addEntity(std::vector<float> &&initial_conditions) {
-  m_equation_systems.begin()->entities.emplace_back(1, std::move(initial_conditions));
-  m_equation_systems.begin()->entity_positions.emplace_back();
+void Simulation::removeMotionSystemBase(size_t idx) {
+  auto it = m_motion_systems.begin();
+  for (size_t i = 0; i < idx; ++i) { ++it; }
+  m_motion_systems.erase_after(it);
 }
 
-void Simulation::update() {
-  auto now = std::chrono::steady_clock::now();
-  float dt = std::chrono::duration<float>(std::chrono::steady_clock::now() - m_prev_time).count();
-  for (auto &system : m_equation_systems) {
-    for (auto &&[entity, pos] : std::views::zip(system.entities, system.entity_positions)) {
-      solver::rk4(system.m_equations_system, entity.vars, dt);
-      std::copy_n(entity.vars.begin(), 3, pos.begin());
-    }
+void Simulation::addEntity(std::vector<float> initial_conditions) {
+  static size_t counter = 0;
+  std::visit([initial_conditions = std::move(initial_conditions)](
+                 auto &obj) { obj.entities.emplace_back(++counter, std::move(initial_conditions)); },
+             m_motion_systems.front());
+}
+
+void Simulation::update(std::forward_list<std::vector<std::array<float, 3>>> &entities_positions) {
+  for (auto &&[system, entity_positions]: std::views::zip(m_motion_systems, entities_positions)) {
+    std::visit([&entity_positions](auto &obj) { obj.update(entity_positions); }, system);
   }
-  m_prev_time = std::chrono::steady_clock::now();
 }
-
-const std::vector<std::array<float, 3>> &Simulation::getPositions() {
-  return m_equation_systems.begin()->entity_positions;
-}
-
-}  // namespace simulation

@@ -1,46 +1,22 @@
 #pragma once
 
 #include <array>
-#include <chrono>
-#include <cstdint>
+#include <cstddef>
 #include <forward_list>
 #include <vector>
 
-#include "backend/parser.hpp"
-
-namespace simulation {
-
-struct Entity {
-  uint16_t id;
-  std::vector<float> vars;
-};
-
-struct MotionSystemState {
-  std::vector<expr::ExprPtr> m_equations_system;
-  parser::VariableMap var_names;
-  std::vector<Entity> entities;
-  std::vector<std::array<float, 3>> entity_positions;
-};
-
-struct Emiter {
-  MotionSystemState system;
-  std::vector<float> initial_conditions;
-  float time_limit;
-};
+#include "backend/MotionSystem.hpp"
 
 class Simulation {
- public:
+public:
   Simulation() = default;
-  void addEquationsSystem(const std::vector<expr::ExprPtr> &system, parser::VariableMap var_names);
-  void update();
-  void addEntity(std::vector<float> &&initial_conditions);
-  const std::vector<std::array<float, 3>> &getPositions();
+  void addMotionSystem(const std::string &equations);
+  void addEmiter(const std::string &equations, int initial);
+  void addEntity(std::vector<float> initial_conditions);
+  void removeMotionSystemBase(size_t idx);
+  void update(
+      std::forward_list<std::vector<std::array<float, 3>>> &entities_positions);
 
- private:
-  std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<float>> m_prev_time =
-      std::chrono::steady_clock::now();
-  std::forward_list<MotionSystemState> m_equation_systems;
-  std::forward_list<Emiter> m_emiter_systems;
+private:
+  std::forward_list<MotionSystemBase> m_motion_systems;
 };
-
-}  // namespace simulation

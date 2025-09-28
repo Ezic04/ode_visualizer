@@ -14,13 +14,15 @@ using namespace expr;
 
 namespace parser {
 
-std::pair<std::vector<expr::ExprPtr>, VariableMap> parse(const std::string &equations,
-                                                         const std::string &free_variable) {
+std::pair<std::vector<expr::ExprPtr>, parser::VariableMap> parse(const std::string &equations,
+                                                                 const std::string &free_variable) {
   return Parser{}.parseSystem(equations, free_variable);
 }
 
-std::pair<std::vector<expr::ExprPtr>, VariableMap> Parser::parseSystem(const std::string &equations,
-                                                                       const std::string &free_variable) {
+}  // namespace parser
+
+std::pair<std::vector<expr::ExprPtr>, parser::VariableMap> Parser::parseSystem(
+    const std::string &equations, const std::string &free_variable) {
   std::vector<expr::ExprPtr> system;
   std::vector<std::string> exprs;
   for (auto line_range : equations | std::views::split('\n')) {
@@ -119,7 +121,8 @@ ExprPtr Parser::parsePow(std::string_view &s) {
   if (auto unary = dynamic_cast<UnaryOp *>(exp); unary && unary->m_operator == UnaryOpType::kNeg) {
     if (auto c = dynamic_cast<Const *>(unary->m_operand)) {
       double val = -c->m_value;
-      if (std::abs(val - std::round(val)) < kEps) return new IntPow(base, static_cast<int>(std::round(val)));
+      if (std::abs(val - std::round(val)) < kEps)
+        return new IntPow(base, static_cast<int>(std::round(val)));
     }
   }
   if (auto c = dynamic_cast<Const *>(exp)) {
@@ -143,7 +146,9 @@ ExprPtr Parser::parseAtom(std::string_view &s) {
     if (!consume(s, ')')) { throw Parser::Exception("expected ')' after function call"); }
     return new UnaryOp(getUnaryOp(name), arg);
   }
-  if (!m_vars.name_to_index.contains(name)) { throw Parser::Exception("unknown variable: " + name); }
+  if (!m_vars.name_to_index.contains(name)) {
+    throw Parser::Exception("unknown variable: " + name);
+  }
   return new Var(m_vars.name_to_index[name]);
 }
 
@@ -173,8 +178,12 @@ std::string Parser::parseVarName(std::string_view &s) {
 
 UnaryOpType Parser::getUnaryOp(std::string_view id) {
   static const std::unordered_map<std::string_view, UnaryOpType> kUnaryMap = {
-      {"sin", UnaryOpType::kSin},   {"cos", UnaryOpType::kCos},   {"tan", UnaryOpType::kTan},
-      {"sqrt", UnaryOpType::kSqrt}, {"cbrt", UnaryOpType::kCbrt}, {"exp", UnaryOpType::kExp},
+      {"sin", UnaryOpType::kSin},
+      {"cos", UnaryOpType::kCos},
+      {"tan", UnaryOpType::kTan},
+      {"sqrt", UnaryOpType::kSqrt},
+      {"cbrt", UnaryOpType::kCbrt},
+      {"exp", UnaryOpType::kExp},
       {"ln", UnaryOpType::kLog}};
   auto it = kUnaryMap.find(id);
   if (it == kUnaryMap.end()) { throw Parser::Exception("unknown function: " + std::string(id)); }
@@ -201,5 +210,3 @@ bool Parser::consume(std::string_view &s, char c) {
   }
   return false;
 }
-
-}  // namespace parser
