@@ -8,6 +8,7 @@
 
 #include "gui/components/ControlPanel.hpp"
 #include "gui/components/PreferencesPanel.hpp"
+#include "gui/components/Viewport.hpp"
 
 MainWindow::MainWindow(
   QWidget *parent
@@ -45,7 +46,12 @@ MainWindow::MainWindow(
 
 void MainWindow::openPreferences(void) {
   PreferencesPanel* panel = new PreferencesPanel(this);
-  panel->exec(); 
+
+  connect(panel, &PreferencesPanel::changeWorldGridCellSize, &m_viewport, &Viewport::setWorldGridCellSize);
+  connect(panel, &PreferencesPanel::changeWorldGridFadeStart, &m_viewport, &Viewport::setWorldGridFadeStart);
+  connect(panel, &PreferencesPanel::changeWorldGridFadeEnd, &m_viewport, &Viewport::setWorldGridFadeEnd);
+
+  panel->show(); 
 }
 
 void MainWindow::setupMenuBar(void) {

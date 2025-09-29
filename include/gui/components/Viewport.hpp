@@ -25,6 +25,12 @@ public:
   inline WorldGrid::GridParameters getGridParameters(void) const { return m_world_grid->getParameters(); }
   inline void setGridParameters(const WorldGrid::GridParameters& params) { m_world_grid->setParameters(params); }  
 
+public slots:
+
+  inline void setWorldGridCellSize(float cell_size) { m_world_grid->setCellSize(cell_size); }
+  inline void setWorldGridFadeStart(float fade_start) { m_world_grid->setFadeStartDistance(fade_start); }
+  inline void setWorldGridFadeEnd(float fade_end) { m_world_grid->setFadeEndDistance(fade_end); }
+
 signals:
   void frameFinished(void);
 
